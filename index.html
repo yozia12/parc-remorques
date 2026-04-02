@@ -9,33 +9,33 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  /* FOND CLAIR DE LA PAGE */
+  /* FOND CLAIR DE LA PAGE POUR LA LISIBILITÉ */
   --bg: #f0f2f5; 
-  --text-main: #1e293b; 
+  --text-page: #1e293b;
 
-  /* COULEURS SOMBRES ORIGINALES POUR LES ZONES ET MENUS */
+  /* COULEURS SOMBRES ORIGINALES POUR LES SECTIONS */
   --surface: #16213e;
   --surface2: #0f1929;
-  --blanc: #e0e0e0;
   
-  /* COULEURS DE BASE */
+  /* Couleurs de base */
   --orange: #ff6b2b;
   --orange2: #ff9a5c;
   --vert: #00e5a0;
   --cyan: #00d4ff;
   --gris: #8892a4;
+  --blanc: #e0e0e0;
 }
 
 body {
   background: var(--bg);
   font-family: 'Segoe UI', Arial, sans-serif;
-  color: var(--text-main);
+  color: var(--blanc); 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* HEADER (Reste sombre) */
+/* HEADER (Sombre) */
 .header {
   background: var(--surface);
   border-bottom: 2px solid var(--orange);
@@ -48,8 +48,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  color: var(--blanc);
 }
+
 .header h1 { font-size: 1rem; font-weight: 800; color: #fff; }
 .header h1 span { color: var(--orange); }
 
@@ -69,81 +69,69 @@ body {
 .dot.error { background: #ff4444; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-/* TOOLBAR & TOGGLES DE VUE (Reste sombre) */
+/* TOOLBAR & VIEWS (Sombre) */
 .toolbar {
   display: flex; gap: 12px; padding: 8px 20px; background: #12192e;
-  border-bottom: 1px solid rgba(0,0,0,0.1); flex-wrap: wrap; align-items: center; color: var(--blanc);
+  border-bottom: 1px solid rgba(0,0,0,0.1); flex-wrap: wrap; align-items: center;
 }
 
 .view-toggles { display: flex; gap: 8px; }
 .view-btn {
-  padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);
-  background: transparent; color: var(--blanc); font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s;
+  padding: 6px 14px; border-radius: 6px; border: none;
+  background: var(--surface2); color: var(--gris);
+  font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s;
 }
-.view-btn:hover { background: rgba(255,255,255,0.05); }
-.view-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+.view-btn.active { background: var(--orange); color: #fff; }
 
-/* BOUTON ÉDITION DU PLAN (Spécial) */
-#btnEditMap { display: none; margin-left: auto; background: var(--surface2); border-color: var(--cyan); color: var(--cyan); }
+/* BOUTON ÉDITION DU PLAN (🔑/🔒) */
+#btnEditMap { display: none; margin-left: auto; color: var(--cyan); border: 1px solid var(--cyan); background: rgba(0,212,255,0.1); }
 #btnEditMap.editing { background: #ff4444; border-color: #ff4444; color: #fff; animation: pulseEdit 1.5s infinite; }
 @keyframes pulseEdit { 0% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); } 70% { box-shadow: 0 0 0 6px rgba(255,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0); } }
 
 .leg { display: flex; align-items: center; gap: 5px; font-size: 0.68rem; color: var(--gris); }
 .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-.sep { width: 1px; height: 20px; background: rgba(255,255,255,0.1); }
+.sep { width: 1px; height: 20px; background: rgba(255,255,255,0.08); }
 
 .filter-btn {
-  padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
-  background: transparent; color: var(--blanc); font-size: 0.68rem; cursor: pointer; transition: all 0.2s;
+  padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+  background: transparent; color: var(--gris); font-size: 0.68rem; cursor: pointer; transition: all 0.2s;
 }
 .filter-btn:hover, .filter-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
 
 /* LOADING SCREEN */
-.loading-screen { position: fixed; inset: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 9999; color: var(--blanc); }
+.loading-screen { position: fixed; inset: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 9999; }
 .loading-screen.hidden { display: none; }
 .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,43,0.2); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* CONTENEURS DES DEUX VUES */
-.main-view { display: none; padding: 16px 20px; flex-direction: column; gap: 16px; flex-grow: 1; }
+/* MAIN CONTAINERS */
+.main-view { display: none; padding: 16px 20px; flex-direction: column; gap: 14px; flex-grow: 1; }
 .main-view.active { display: flex; }
 
-/* VUE 1 : GRILLE (Zones Sombres) */
-.group-row { display: flex; gap: 16px; flex-wrap: wrap; }
+/* GRID VIEW STYLES (Sombre comme au premier jour) */
+.group-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .group-row .zone-block { flex: 1; min-width: 180px; }
-.zone-block { 
-  background: var(--surface); 
-  border: 1px solid rgba(0,0,0,0.1); 
-  border-radius: 8px; 
-  overflow: hidden; 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-}
-.zone-header { 
-  display: flex; align-items: center; justify-content: space-between; 
-  padding: 8px 12px; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05); 
-}
-.zone-name { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-.zone-count { font-size: 0.65rem; font-weight: bold; color: var(--gris); }
-.zone-body { padding: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+.zone-block { background: var(--surface); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.zone-header { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.zone-name { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.zone-count { font-size: 0.6rem; color: var(--gris); }
+.zone-body { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
 
-/* VUE 2 : CARTE AGRANDIE */
-#mapView { padding: 10px; align-items: center; justify-content: center; } 
+/* MAP VIEW STYLES (Agrandie) */
+#mapView { align-items: center; justify-content: center; }
 #mapContainer {
-  position: relative; 
-  width: 100%; 
-  max-width: 100%; 
-  height: 85vh; /* Très grand plan */
-  background-image: url('plan-cour.png'); /* TA PHOTO ICI */
-  background-size: contain; 
-  background-repeat: no-repeat; 
-  background-position: center;
-  border-radius: 8px; 
-  background-color: #e5e7eb; /* Fond gris clair pour les bords vides */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  overflow: hidden;
+  position: relative; width: 100%; max-width: 100%; height: 86vh; 
+  background-image: url('plan-cour.png'); /* LA PHOTO DE TA COUR ICI */
+  background-size: contain; background-repeat: no-repeat; background-position: center;
+  border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); overflow: hidden;
+  background-color: #fff; /* Fond clair pour les bords vides */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
-/* STYLE GÉNÉRAL DES PLACES (Grille) */
+/* ========================================= */
+/* BASE SPOT STYLES (UTILISÉ POUR LA GRILLE) */
+/* Reste exactement comme dans ta photo !    */
+/* ========================================= */
 .spot {
   width: 42px; height: 52px; border-radius: 5px; display: flex; flex-direction: column;
   align-items: center; justify-content: center; cursor: pointer; font-size: 0.58rem;
@@ -153,10 +141,6 @@ body {
 .spot:hover { transform: scale(1.12); filter: brightness(1.25); z-index: 10; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
 .spot:active { transform: scale(0.96); }
 
-/* STYLE CARRÉ POUR LA GRILLE (Si on veut) */
-.spot-square { width: 48px !important; height: 48px !important; }
-
-/* COULEURS DES PLACES (Originales) */
 .spot.libre { background: rgba(0,229,160,0.15); border-color: var(--vert); color: var(--vert); }
 .spot.occupe { background: rgba(255,107,43,0.18); border-color: var(--orange); color: var(--orange2); }
 .spot.reserve { background: rgba(0,212,255,0.13); border-color: var(--cyan); color: var(--cyan); }
@@ -166,53 +150,49 @@ body {
 .spot-id { font-size: 0.65rem; font-weight: 800; }
 
 /* ========================================= */
-/* STYLE DES PLACES SUR LA CARTE             */
+/* STYLE DES PLACES SUR LA CARTE (Surcharge) */
 /* ========================================= */
 .spot-map {
   position: absolute !important;
-  width: 0.5% !important;  /* Rectangle par défaut (Gravel, K, L, M, N, Remorques) */
+  width: 1.2% !important;  /* Rectangle par défaut (Remorques, Gravel, K, L, M, N) */
   height: 4% !important; 
-  display: block !important; 
-  transform: translate(-50%, -50%); 
+  display: block !important; /* Enlève le flex */
+  transform: translate(-50%, -50%); /* Centrage X,Y */
   border-radius: 2px !important;
-  border: 1px solid rgba(0,0,0,0.6) !important;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  border: 1px solid rgba(0,0,0,0.7) !important;
 }
-/* Style Carré (Tailcone, FWD, Hstab, Vstab) */
+
+/* Surcharge Carré sur la carte (Tailcone, Hstab, Vstab) */
 .spot-map.spot-square { 
-  width: 1.1% !important; 
-  height: 0 !important; 
-  padding-bottom: 1.1% !important; /* Astuce CSS pour un carré parfait responsive */
+  width: 2.3% !important; height: 0 !important; padding-bottom: 2.3% !important; /* Carré parfait responsive */
+}
+
+/* Surcharge Caisse sur la carte (FWD) */
+.spot-map.spot-box {
+  width: 2% !important; height: 2.8% !important;
+  border-radius: 4px !important;
+  border-width: 1.5px !important; /* Bord épais visuel sur carte */
+  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
 }
 
 /* Cache icônes et textes sur la carte */
 .spot-map .spot-icon, .spot-map .spot-id { display: none; } 
 
-/* Couleurs pleines pour la carte */
+/* Couleurs pleines UNIQUEMENT pour la carte */
 .spot-map.libre { background-color: var(--vert) !important; }
 .spot-map.occupe { background-color: var(--orange) !important; }
 .spot-map.reserve { background-color: var(--cyan) !important; }
 .spot-map.maintenance { background-color: var(--gris) !important; }
 
 /* RÈGLE MAGIQUE : MASQUER LES PLACES LIBRES SUR LA CARTE (sauf en mode édition) */
-body:not(.map-edit-mode) #mapView .spot-map.libre {
-  display: none !important;
-}
+body:not(.map-edit-mode) #mapView .spot-map.libre { display: none !important; }
 
-/* ========================================= */
-/* MODE ÉDITION (DRAG AND DROP)              */
-/* ========================================= */
-body.map-edit-mode .spot-map {
-  cursor: grab !important;
-  border: 2px dashed #fff !important; /* Montre qu'ils sont modifiables */
-}
+/* MODE ÉDITION DU PLAN (🔑 Glisser-Déposer) */
+body.map-edit-mode .spot-map { cursor: grab !important; border: 2px dashed #fff !important; }
 body.map-edit-mode .spot-map:active { cursor: grabbing !important; }
-body.map-edit-mode .spot-map.libre {
-  display: block !important; /* Force l'affichage des places libres pendant l'édition */
-  opacity: 0.6; /* Un peu transparentes pour les différencier */
-}
+body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } /* Force l'affichage */
 
-/* TOOLTIP (Sombre original) */
+/* TOOLTIP (Sombre) */
 #tooltip { position: fixed; background: #0a1020; border: 1px solid var(--orange); border-radius: 8px; padding: 10px 13px; font-size: 0.72rem; pointer-events: none; z-index: 500; display: none; max-width: 210px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); line-height: 1.5; color: var(--blanc); }
 #tooltip .tt-id { font-weight: 800; font-size: 0.88rem; color: var(--orange2); margin-bottom: 3px; }
 #tooltip .tt-zone { font-size: 0.62rem; color: var(--gris); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
@@ -220,7 +200,7 @@ body.map-edit-mode .spot-map.libre {
 #tooltip .tt-row span:first-child { color: var(--gris); }
 #tooltip .tt-status { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 0.62rem; font-weight: 700; margin-top: 5px; }
 
-/* MODAL (Sombre original) */
+/* MODAL (Sombre) */
 .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
 .modal-bg.open { display: flex; }
 .modal { background: var(--surface); border: 1px solid var(--orange); border-radius: 12px; padding: 22px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; color: var(--blanc); }
@@ -327,7 +307,7 @@ const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =============================================
-// ZONES CONFIG (Définition des carrés et rectangles)
+// ZONES CONFIG (Définition des 3 formes : square, box, et rectangle(défaut))
 // =============================================
 const ZONES = [
   { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'🔩', desc:'Cônes de queue', shape: 'square' },
@@ -335,7 +315,7 @@ const ZONES = [
   { id:'vstab',          label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'Stabilisateurs verticaux', shape: 'square' },
   { id:'remorque',       label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques générales' },
   { id:'remorque-vide',  label:'Zone Remorque Vide',    count:8,  color:'#fb923c', icon:'🚛', desc:'Remorques vides' },
-  { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'📦', desc:'Section avant / Forward', shape: 'square' },
+  { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'📦', desc:'Section avant / Forward', shape: 'box' },
   { id:'gravel',         label:'Zone Gravel (MID/Aile)', count:20, color:'#fbbf24', icon:'🪨', desc:'MID ou Ailes' },
   { id:'k',              label:'Zone K',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K' },
   { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone L' },
@@ -350,23 +330,19 @@ let parcData = {};
 let PLACES = [];
 let isMapEditMode = false;
 
-// Génère les places par défaut (elles s'entasseront en haut à gauche la première fois)
+// Génère les places par défaut
 ZONES.forEach((zone, zIndex) => {
   for(let i=1; i<=zone.count; i++) {
     PLACES.push({ spotId: `${zone.id}-${i}`, zoneId: zone.id, num: i, x: 5 + (i * 1.5), y: 10 + (zIndex * 5) });
   }
 });
 
-// Charge les positions sauvegardées localement
 function loadMapPositions() {
   const saved = localStorage.getItem('mapLayout');
   if (saved) {
     const parsed = JSON.parse(saved);
     PLACES.forEach(p => {
-      if (parsed[p.spotId]) {
-        p.x = parsed[p.spotId].x;
-        p.y = parsed[p.spotId].y;
-      }
+      if (parsed[p.spotId]) { p.x = parsed[p.spotId].x; p.y = parsed[p.spotId].y; }
     });
   }
 }
@@ -374,7 +350,7 @@ function saveMapPositions() {
   const layout = {};
   PLACES.forEach(p => { layout[p.spotId] = { x: p.x, y: p.y }; });
   localStorage.setItem('mapLayout', JSON.stringify(layout));
-  alert("✅ Plan sauvegardé avec succès !");
+  alert("✅ Plan sauvegardé localement sur ce navigateur !");
 }
 
 // =============================================
@@ -387,13 +363,12 @@ function switchView(viewName, btnElement) {
   document.getElementById('mapView').classList.remove('active');
   document.getElementById(viewName + 'View').classList.add('active');
 
-  // Gère l'affichage du bouton d'édition
   document.getElementById('btnEditMap').style.display = (viewName === 'map') ? 'block' : 'none';
-  if (viewName !== 'map' && isMapEditMode) toggleMapEdit(); // Désactive l'édition si on quitte la carte
+  if (viewName !== 'map' && isMapEditMode) toggleMapEdit(); 
 }
 
 // =============================================
-// MODE ÉDITION DU PLAN (DRAG & DROP)
+// MODE ÉDITION DU PLAN (🔑 DRAG & DROP)
 // =============================================
 function toggleMapEdit() {
   isMapEditMode = !isMapEditMode;
@@ -408,20 +383,17 @@ function toggleMapEdit() {
     body.classList.remove('map-edit-mode');
     btn.classList.remove('editing');
     btn.innerHTML = '🔓 Configurer le Plan';
-    saveMapPositions(); // Sauvegarde automatique quand on verrouille
+    saveMapPositions();
   }
 }
 
-// Logique de glisser-déposer
 let dragData = { isDragging: false, el: null };
 
 document.addEventListener('mousedown', e => {
   if (!isMapEditMode) return;
   const spot = e.target.closest('.spot-map');
   if (spot) {
-    dragData.isDragging = true;
-    dragData.el = spot;
-    spot.style.zIndex = 1000;
+    dragData.isDragging = true; dragData.el = spot; spot.style.zIndex = 1000;
   }
 });
 
@@ -431,24 +403,17 @@ document.addEventListener('mousemove', e => {
   const rect = container.getBoundingClientRect();
   let x = ((e.clientX - rect.left) / rect.width) * 100;
   let y = ((e.clientY - rect.top) / rect.height) * 100;
-  x = Math.max(0, Math.min(x, 100)); // Garde dans le cadre
-  y = Math.max(0, Math.min(y, 100));
-  dragData.el.style.left = x + '%';
-  dragData.el.style.top = y + '%';
+  x = Math.max(0, Math.min(x, 100)); y = Math.max(0, Math.min(y, 100));
+  dragData.el.style.left = x + '%'; dragData.el.style.top = y + '%';
 });
 
 document.addEventListener('mouseup', e => {
   if (dragData.isDragging && dragData.el) {
     dragData.el.style.zIndex = '';
-    // Met à jour la variable en mémoire
     const spotId = dragData.el.dataset.spotId;
     const p = PLACES.find(pl => pl.spotId === spotId);
-    if (p) {
-      p.x = parseFloat(dragData.el.style.left);
-      p.y = parseFloat(dragData.el.style.top);
-    }
-    dragData.isDragging = false;
-    dragData.el = null;
+    if (p) { p.x = parseFloat(dragData.el.style.left); p.y = parseFloat(dragData.el.style.top); }
+    dragData.isDragging = false; dragData.el = null;
   }
 });
 
@@ -461,15 +426,10 @@ async function loadFromSupabase() {
     const { data, error } = await db.from('spots').select('*');
     if (error) throw error;
     parcData = {};
-    (data || []).forEach(row => {
-      parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', client: row.client || '', date: row.date_entree || '', notes: row.notes || '' };
-    });
+    (data || []).forEach(row => { parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', client: row.client || '', date: row.date_entree || '', notes: row.notes || '' }; });
     setSyncStatus('ok', 'Synchronisé');
     return true;
-  } catch(e) {
-    setSyncStatus('error', 'Erreur de connexion');
-    return false;
-  }
+  } catch(e) { setSyncStatus('error', 'Erreur de connexion'); return false; }
 }
 
 async function saveToSupabase(spotId, zoneId, num, data) {
@@ -504,25 +464,25 @@ function subscribeRealtime() {
   }).subscribe();
 }
 
+// Fonction de mise à jour: On s'assure que la grille N'A PAS les formes !
 function updateSpotElement(spotId) {
   const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
   const data = getSpotData(spotId);
   const zone = ZONES.find(z => spotId.startsWith(z.id + '-'));
+  
   elements.forEach(el => {
     if(el.classList.contains('spot-map')) {
+      // SI C'EST SUR LA CARTE : On met la couleur ET la forme spéciale
       el.className = `spot spot-map ${data.status}`;
-      if (zone && zone.shape === 'square') el.classList.add('spot-square');
+      if (zone && zone.shape) el.classList.add('spot-' + zone.shape); 
     } else {
+      // SI C'EST DANS LA GRILLE : On met UNIQUEMENT la couleur (ça reste un rectangle)
       el.className = `spot ${data.status}`;
-      if (zone && zone.shape === 'square') el.classList.add('spot-square');
     }
   });
 }
 
-function setSyncStatus(type, label) {
-  document.getElementById('syncDot').className = 'dot ' + type;
-  document.getElementById('syncLabel').textContent = label;
-}
+function setSyncStatus(type, label) { document.getElementById('syncDot').className = 'dot ' + type; document.getElementById('syncLabel').textContent = label; }
 function getSpotData(spotId) { return parcData[spotId] || { status:'libre', content:'', ref:'', client:'', date:'', notes:'' }; }
 
 // =============================================
@@ -552,9 +512,10 @@ function renderGrid() {
       for (let i = 1; i <= zone.count; i++) {
         const spotId = `${zone.id}-${i}`;
         const data = getSpotData(spotId);
+        
+        // GRILLE = CLASSE SPOT DE BASE UNIQUEMENT
         const div = document.createElement('div');
         div.className = `spot ${data.status}`;
-        if (zone.shape === 'square') div.classList.add('spot-square');
         
         div.dataset.spotId = spotId;
         div.innerHTML = `<div class="spot-icon">${zone.icon}</div><div class="spot-id">${i}</div>`;
@@ -581,9 +542,10 @@ function renderMap() {
     if(!zone) return;
     const data = getSpotData(place.spotId);
     
+    // CARTE = CLASSE SPOT-MAP + LA FORME 
     const div = document.createElement('div');
     div.className = `spot spot-map ${data.status}`; 
-    if (zone.shape === 'square') div.classList.add('spot-square');
+    if (zone.shape) { div.classList.add('spot-' + zone.shape); }
 
     div.dataset.spotId = place.spotId;
     div.style.left = `${place.x}%`;
@@ -593,7 +555,7 @@ function renderMap() {
     div.addEventListener('mousemove', moveTooltip);
     div.addEventListener('mouseleave', hideTooltip);
     div.addEventListener('click', () => { 
-      if(isMapEditMode) return; // Bloque le clique si on est en train d'éditer
+      if(isMapEditMode) return; 
       hideTooltip(); openModal(place.spotId, place.num, zone); 
     });
 
@@ -607,7 +569,7 @@ function renderMap() {
 const tooltip = document.getElementById('tooltip');
 
 function showTooltip(e, spotId, num, zone) {
-  if (isMapEditMode) return; // Pas de tooltip en mode édition
+  if (isMapEditMode) return;
   const data = getSpotData(spotId);
   const labels = { libre:'Libre', occupe:'Occupée', reserve:'Réservée', maintenance:'Maintenance' };
   tooltip.innerHTML = `
@@ -690,7 +652,7 @@ function updateStats() {
 // INIT
 // =============================================
 async function init() {
-  loadMapPositions(); // Charge les coordonnées depuis le navigateur
+  loadMapPositions();
   const ok = await loadFromSupabase();
   document.getElementById('loadingScreen').classList.add('hidden');
   render();
