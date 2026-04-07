@@ -549,6 +549,7 @@ function renderMap() {
     // APPLICATION DIRECTE DES DIMENSIONS PERSONNALISÉES
     if (zone.mapWidth) div.style.width = `${zone.mapWidth}%`;
     if (zone.mapHeight) div.style.height = `${zone.mapHeight}%`;
+    if (zone.mapRotation) div.style.setProperty('--rot', `${zone.mapRotation}deg`);
     
     div.addEventListener('mouseenter', (e) => showTooltip(e, place.spotId, place.num, zone));
     div.addEventListener('mousemove', moveTooltip);
