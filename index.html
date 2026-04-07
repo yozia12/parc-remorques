@@ -21,7 +21,6 @@
   --orange: #ff6b2b;
   --orange2: #ff9a5c;
   --vert: #00e5a0;
-  --cyan: #00d4ff;
   --gris: #8892a4;
   --blanc: #e0e0e0;
 }
@@ -35,7 +34,7 @@ body {
   flex-direction: column;
 }
 
-/* HEADER (Sombre) */
+/* HEADER */
 .header {
   background: var(--surface);
   border-bottom: 2px solid var(--orange);
@@ -59,7 +58,6 @@ body {
 .stat-box .lbl { font-size: 0.58rem; opacity: 0.6; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blanc); }
 .val.libre { color: var(--vert); }
 .val.occupe { color: var(--orange); }
-.val.reserve { color: var(--cyan); }
 
 /* SYNC STATUS */
 .sync-dot { display: flex; align-items: center; gap: 6px; font-size: 0.65rem; color: var(--gris); }
@@ -69,7 +67,7 @@ body {
 .dot.error { background: #ff4444; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-/* TOOLBAR & VIEWS (Sombre) */
+/* TOOLBAR & VIEWS */
 .toolbar {
   display: flex; gap: 12px; padding: 8px 20px; background: #12192e;
   border-bottom: 1px solid rgba(0,0,0,0.1); flex-wrap: wrap; align-items: center;
@@ -83,8 +81,8 @@ body {
 }
 .view-btn.active { background: var(--orange); color: #fff; }
 
-/* BOUTON ÉDITION DU PLAN (🔑/🔒) */
-#btnEditMap { display: none; margin-left: auto; color: var(--cyan); border: 1px solid var(--cyan); background: rgba(0,212,255,0.1); }
+/* BOUTON ÉDITION DU PLAN */
+#btnEditMap { display: none; margin-left: auto; color: #00d4ff; border: 1px solid #00d4ff; background: rgba(0,212,255,0.1); }
 #btnEditMap.editing { background: #ff4444; border-color: #ff4444; color: #fff; animation: pulseEdit 1.5s infinite; }
 @keyframes pulseEdit { 0% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); } 70% { box-shadow: 0 0 0 6px rgba(255,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0); } }
 
@@ -108,7 +106,7 @@ body {
 .main-view { display: none; padding: 16px 20px; flex-direction: column; gap: 14px; flex-grow: 1; }
 .main-view.active { display: flex; }
 
-/* GRID VIEW STYLES (Sombre comme au premier jour) */
+/* GRID VIEW STYLES */
 .group-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .group-row .zone-block { flex: 1; min-width: 180px; }
 .zone-block { background: var(--surface); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -117,13 +115,12 @@ body {
 .zone-count { font-size: 0.6rem; color: var(--gris); }
 .zone-body { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
 
-/* MAP VIEW STYLES (Agrandie & Fixée) */
+/* MAP VIEW STYLES */
 #mapView { align-items: center; justify-content: center; }
 #mapContainer {
   position: relative; width: 100%; max-width: 100%; height: 86vh; 
-  /* ⚠️ REMPLACE 16 / 9 PAR LA VRAIE TAILLE DE TON IMAGE EN PIXELS SI ELLE SE DÉFORME (ex: 1920 / 1080) ⚠️ */
-  aspect-ratio: 16 / 9; 
-  background-size: 100% 100%; /* Force l'image à coller aux bords pour éviter les décalages */
+  aspect-ratio: 16 / 9; /* Remplace par les vraies dimensions de ton image si besoin */
+  background-size: 100% 100%; 
   background-image: url('plan-cour.png'); 
   background-repeat: no-repeat; background-position: center;
   border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); overflow: hidden;
@@ -132,8 +129,7 @@ body {
 }
 
 /* ========================================= */
-/* BASE SPOT STYLES (UTILISÉ POUR LA GRILLE) */
-/* Reste exactement comme dans ta photo !    */
+/* STYLE DES PLACES DANS LA GRILLE           */
 /* ========================================= */
 .spot {
   width: 42px; height: 52px; border-radius: 5px; display: flex; flex-direction: column;
@@ -146,40 +142,20 @@ body {
 
 .spot.libre { background: rgba(0,229,160,0.15); border-color: var(--vert); color: var(--vert); }
 .spot.occupe { background: rgba(255,107,43,0.18); border-color: var(--orange); color: var(--orange2); }
-.spot.reserve { background: rgba(0,212,255,0.13); border-color: var(--cyan); color: var(--cyan); }
 .spot.maintenance { background: rgba(136,146,164,0.12); border-color: var(--gris); color: var(--gris); }
 
 .spot-icon { font-size: 0.95rem; margin-bottom: 1px; }
 .spot-id { font-size: 0.65rem; font-weight: 800; }
 
 /* ========================================= */
-/* STYLE DES PLACES SUR LA CARTE (Surcharge) */
+/* STYLE DES PLACES SUR LA CARTE             */
 /* ========================================= */
 .spot-map {
   position: absolute !important;
-  width: 0.8% !important;  /* Rectangle par défaut (Remorques, Gravel, K, L, M, N) */
-  height: 7% !important; 
-  display: block !important; /* Enlève le flex */
+  display: block !important; 
   transform: translate(-50%, -50%); /* Centrage X,Y */
   border-radius: 2px !important;
   border: 1px solid rgba(0,0,0,0.7) !important;
-}
-
-/* Surcharge tailcone sur la carte (Tailcone, Hstab, Vstab) */
-.spot-map.spot-square { 
-  width: 1% !important; height: 0.8% !important;
- display: block !important; /* Enlève le flex */
-  transform: translate(-50%, -50%); /* Centrage X,Y */
-  border-radius: 2px !important;
-  border: 1px solid rgba(0,0,0,0.7) !important;
-}
-
-/* Surcharge FWD sur la carte (FWD) */
-.spot-map.spot-box {
-  width: 1.3% !important; height: 1.5% !important;
-  border-radius: 4px !important;
-  border-width: 1.5px !important; /* Bord épais visuel sur carte */
-  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
 }
 
 /* Cache icônes et textes sur la carte */
@@ -188,18 +164,17 @@ body {
 /* Couleurs pleines UNIQUEMENT pour la carte */
 .spot-map.libre { background-color: var(--vert) !important; }
 .spot-map.occupe { background-color: var(--orange) !important; }
-.spot-map.reserve { background-color: var(--cyan) !important; }
 .spot-map.maintenance { background-color: var(--gris) !important; }
 
-/* RÈGLE MAGIQUE : MASQUER LES PLACES LIBRES SUR LA CARTE (sauf en mode édition) */
+/* Masquer les places libres sur la carte (sauf en édition) */
 body:not(.map-edit-mode) #mapView .spot-map.libre { display: none !important; }
 
 /* MODE ÉDITION DU PLAN (🔑 Glisser-Déposer) */
 body.map-edit-mode .spot-map { cursor: grab !important; border: 2px dashed #fff !important; }
 body.map-edit-mode .spot-map:active { cursor: grabbing !important; }
-body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } /* Force l'affichage */
+body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; }
 
-/* TOOLTIP (Sombre) */
+/* TOOLTIP */
 #tooltip { position: fixed; background: #0a1020; border: 1px solid var(--orange); border-radius: 8px; padding: 10px 13px; font-size: 0.72rem; pointer-events: none; z-index: 500; display: none; max-width: 210px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); line-height: 1.5; color: var(--blanc); }
 #tooltip .tt-id { font-weight: 800; font-size: 0.88rem; color: var(--orange2); margin-bottom: 3px; }
 #tooltip .tt-zone { font-size: 0.62rem; color: var(--gris); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
@@ -207,7 +182,7 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } 
 #tooltip .tt-row span:first-child { color: var(--gris); }
 #tooltip .tt-status { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 0.62rem; font-weight: 700; margin-top: 5px; }
 
-/* MODAL (Sombre) */
+/* MODAL */
 .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
 .modal-bg.open { display: flex; }
 .modal { background: var(--surface); border: 1px solid var(--orange); border-radius: 12px; padding: 22px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; color: var(--blanc); }
@@ -215,6 +190,7 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } 
 .modal .modal-zone { font-size: 0.62rem; color: var(--gris); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
 .modal label { display: block; font-size: 0.68rem; color: #aaa; margin-bottom: 3px; margin-top: 10px; }
 .modal input, .modal select { width: 100%; background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 10px; color: var(--blanc); font-size: 0.78rem; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
+.modal input[type="datetime-local"] { color-scheme: dark; } /* Permet d'avoir le calendrier en sombre */
 .modal input:focus, .modal select:focus { border-color: var(--orange); }
 .modal select option { background: var(--surface); }
 .modal-btns { display: flex; gap: 8px; margin-top: 18px; }
@@ -246,17 +222,14 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } 
     <select id="modalStatus">
       <option value="libre">🟢 Libre</option>
       <option value="occupe">🟠 Occupée</option>
-      <option value="reserve">🔵 Réservée</option>
       <option value="maintenance">⚪ Maintenance</option>
     </select>
     <label>Contenu (type de pièce)</label>
     <input type="text" id="modalContent" placeholder="Ex: Tailcone A320, Aile gauche…">
     <label>Référence / N° de série</label>
     <input type="text" id="modalRef" placeholder="Ex: MSN-4521-TC">
-    <label>Client / Compagnie</label>
-    <input type="text" id="modalClient" placeholder="Ex: Air France, Airbus…">
-    <label>Date d'entrée</label>
-    <input type="date" id="modalDate">
+    <label>Date et Heure d'entrée</label>
+    <input type="datetime-local" id="modalDate">
     <label>Notes</label>
     <input type="text" id="modalNotes" placeholder="Notes libres…">
     <div class="modal-btns">
@@ -277,10 +250,9 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } 
     </div>
   </div>
   <div class="stats-bar">
-    <div class="stat-box"><div class="val" id="totalSpots">128</div><div class="lbl">Total</div></div>
+    <div class="stat-box"><div class="val" id="totalSpots">152</div><div class="lbl">Total</div></div>
     <div class="stat-box"><div class="val libre" id="countLibre">—</div><div class="lbl">Libres</div></div>
     <div class="stat-box"><div class="val occupe" id="countOccupe">—</div><div class="lbl">Occupées</div></div>
-    <div class="stat-box"><div class="val reserve" id="countReserve">—</div><div class="lbl">Réservées</div></div>
   </div>
 </div>
 
@@ -292,7 +264,6 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } 
   <div class="sep"></div>
   <div class="leg"><div class="leg-dot" style="background:var(--vert)"></div>Libre</div>
   <div class="leg"><div class="leg-dot" style="background:var(--orange)"></div>Occupée</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--cyan)"></div>Réservée</div>
   <div class="leg"><div class="leg-dot" style="background:var(--gris)"></div>Maintenance</div>
   
   <button class="view-btn" id="btnEditMap" onclick="toggleMapEdit()">🔓 Configurer le Plan</button>
@@ -314,20 +285,23 @@ const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =============================================
-// ZONES CONFIG (Définition des 3 formes : square, box, et rectangle(défaut))
+// ZONES CONFIG (Avec mapWidth et mapHeight pour chaque zone !)
 // =============================================
 const ZONES = [
-  { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'🔩', desc:'Cônes de queue', shape: 'square' },
-  { id:'hstab',          label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'Stabilisateurs horizontaux', shape: 'square' },
-  { id:'vstab',          label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'Stabilisateurs verticaux', shape: 'square' },
-  { id:'remorque',       label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques générales' },
-  { id:'remorque-vide',  label:'Zone Remorque Vide',    count:8,  color:'#fb923c', icon:'🚛', desc:'Remorques vides' },
-  { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'📦', desc:'Section avant / Forward', shape: 'box' },
-  { id:'gravel',         label:'Zone Gravel (MID/Aile)', count:20, color:'#fbbf24', icon:'🪨', desc:'MID ou Ailes' },
-  { id:'k',              label:'Zone K',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K' },
-  { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone L' },
-  { id:'m',              label:'Zone M',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone M' },
-  { id:'n',              label:'Zone N',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone N' },
+  { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'🔩', desc:'Cônes de queue', mapWidth: 2.3, mapHeight: 3.5 },
+  { id:'hstab',          label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'Stabilisateurs horizontaux', mapWidth: 2.3, mapHeight: 3.5 },
+  { id:'vstab',          label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'Stabilisateurs verticaux', mapWidth: 2.3, mapHeight: 3.5 },
+  { id:'remorque',       label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques générales', mapWidth: 1.2, mapHeight: 4 },
+  { id:'remorque-vide',  label:'Zone Remorque Vide',    count:8,  color:'#fb923c', icon:'🚛', desc:'Remorques vides', mapWidth: 1.2, mapHeight: 4 },
+  { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'📦', desc:'Section avant / Forward', mapWidth: 2.5, mapHeight: 4.5 },
+  { id:'gravel',         label:'Zone Gravel (MID/Aile)', count:20, color:'#fbbf24', icon:'🪨', desc:'MID ou Ailes', mapWidth: 1.5, mapHeight: 3 },
+  { id:'k',              label:'Zone K',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K', mapWidth: 1.8, mapHeight: 2.5 },
+  { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone L', mapWidth: 1.8, mapHeight: 2.5 },
+  { id:'m',              label:'Zone M',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone M', mapWidth: 1.8, mapHeight: 2.5 },
+  { id:'n',              label:'Zone N',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone N', mapWidth: 1.8, mapHeight: 2.5 },
+  
+  // NOUVELLE ZONE : REAR (Avec ses propres dimensions)
+  { id:'rear',           label:'Stockage REAR',         count:24, color:'#ef4444', icon:'⚙️', desc:'Section arrière', mapWidth: 2.0, mapHeight: 4.0 },
 ];
 
 // =============================================
@@ -412,7 +386,6 @@ document.addEventListener('mousemove', e => {
   let rawX = ((e.clientX - rect.left) / rect.width) * 100;
   let rawY = ((e.clientY - rect.top) / rect.height) * 100;
   
-  // SYSTÈME DE MAGNÉTISME (Snap to grid) - Modifie le 0.5 si besoin
   const step = 0.25; 
   let x = Math.round(rawX / step) * step;
   let y = Math.round(rawY / step) * step;
@@ -442,7 +415,9 @@ async function loadFromSupabase() {
     const { data, error } = await db.from('spots').select('*');
     if (error) throw error;
     parcData = {};
-    (data || []).forEach(row => { parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', client: row.client || '', date: row.date_entree || '', notes: row.notes || '' }; });
+    (data || []).forEach(row => { 
+      parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', date: row.date_entree || '', notes: row.notes || '' }; 
+    });
     setSyncStatus('ok', 'Synchronisé');
     return true;
   } catch(e) { setSyncStatus('error', 'Erreur de connexion'); return false; }
@@ -454,7 +429,7 @@ async function saveToSupabase(spotId, zoneId, num, data) {
   try {
     const { error } = await db.from('spots').upsert({
       id: spotId, zone_id: zoneId, num: num, status: data.status,
-      content: data.content, ref: data.ref, client: data.client,
+      content: data.content, ref: data.ref, 
       date_entree: data.date, notes: data.notes, updated_at: new Date().toISOString(),
     });
     if (error) throw error;
@@ -474,32 +449,27 @@ function subscribeRealtime() {
     const row = payload.new || payload.old;
     if (!row) return;
     if (payload.eventType === 'DELETE') { delete parcData[row.id]; } 
-    else { parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', client: row.client || '', date: row.date_entree || '', notes: row.notes || '' }; }
+    else { parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', date: row.date_entree || '', notes: row.notes || '' }; }
     updateSpotElement(row.id);
     updateStats();
   }).subscribe();
 }
 
-// Fonction de mise à jour: On s'assure que la grille N'A PAS les formes !
 function updateSpotElement(spotId) {
   const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
   const data = getSpotData(spotId);
-  const zone = ZONES.find(z => spotId.startsWith(z.id + '-'));
   
   elements.forEach(el => {
     if(el.classList.contains('spot-map')) {
-      // SI C'EST SUR LA CARTE : On met la couleur ET la forme spéciale
       el.className = `spot spot-map ${data.status}`;
-      if (zone && zone.shape) el.classList.add('spot-' + zone.shape); 
     } else {
-      // SI C'EST DANS LA GRILLE : On met UNIQUEMENT la couleur (ça reste le rectangle par défaut)
       el.className = `spot ${data.status}`;
     }
   });
 }
 
 function setSyncStatus(type, label) { document.getElementById('syncDot').className = 'dot ' + type; document.getElementById('syncLabel').textContent = label; }
-function getSpotData(spotId) { return parcData[spotId] || { status:'libre', content:'', ref:'', client:'', date:'', notes:'' }; }
+function getSpotData(spotId) { return parcData[spotId] || { status:'libre', content:'', ref:'', date:'', notes:'' }; }
 
 // =============================================
 // RENDER (GRILLE ET CARTE)
@@ -512,7 +482,7 @@ function render() {
 function renderGrid() {
   const gridMain = document.getElementById('gridView');
   gridMain.innerHTML = '';
-  const rows = [ ['tailcone','hstab','vstab'], ['remorque','remorque-vide'], ['fwd','gravel'], ['k','l','m','n'] ];
+  const rows = [ ['tailcone','hstab','vstab'], ['remorque','remorque-vide'], ['fwd','gravel'], ['k','l','m','n'], ['rear'] ];
 
   rows.forEach(ids => {
     const row = document.createElement('div');
@@ -529,10 +499,8 @@ function renderGrid() {
         const spotId = `${zone.id}-${i}`;
         const data = getSpotData(spotId);
         
-        // GRILLE = CLASSE SPOT DE BASE UNIQUEMENT
         const div = document.createElement('div');
         div.className = `spot ${data.status}`;
-        
         div.dataset.spotId = spotId;
         div.innerHTML = `<div class="spot-icon">${zone.icon}</div><div class="spot-id">${i}</div>`;
         
@@ -558,14 +526,16 @@ function renderMap() {
     if(!zone) return;
     const data = getSpotData(place.spotId);
     
-    // CARTE = CLASSE SPOT-MAP + LA FORME 
     const div = document.createElement('div');
     div.className = `spot spot-map ${data.status}`; 
-    if (zone.shape) { div.classList.add('spot-' + zone.shape); }
-
+    
     div.dataset.spotId = place.spotId;
     div.style.left = `${place.x}%`;
     div.style.top = `${place.y}%`;
+
+    // APPLICATION DIRECTE DES DIMENSIONS PERSONNALISÉES
+    if (zone.mapWidth) div.style.width = `${zone.mapWidth}%`;
+    if (zone.mapHeight) div.style.height = `${zone.mapHeight}%`;
     
     div.addEventListener('mouseenter', (e) => showTooltip(e, place.spotId, place.num, zone));
     div.addEventListener('mousemove', moveTooltip);
@@ -587,15 +557,22 @@ const tooltip = document.getElementById('tooltip');
 function showTooltip(e, spotId, num, zone) {
   if (isMapEditMode) return;
   const data = getSpotData(spotId);
-  const labels = { libre:'Libre', occupe:'Occupée', reserve:'Réservée', maintenance:'Maintenance' };
+  const labels = { libre:'Libre', occupe:'Occupée', maintenance:'Maintenance' };
+  
+  // Formatage propre pour la date et l'heure dans l'infobulle
+  let displayDate = '';
+  if (data.date) {
+    const d = new Date(data.date);
+    displayDate = d.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
   tooltip.innerHTML = `
     <div class="tt-id">${zone.label} — #${num}</div>
     <div class="tt-zone">${zone.desc}</div>
     <span class="tt-status tt-${data.status}">${labels[data.status]}</span>
     ${data.content ? `<div class="tt-row"><span>Contenu</span><span>${data.content}</span></div>` : ''}
-    ${data.client  ? `<div class="tt-row"><span>Client</span><span>${data.client}</span></div>`  : ''}
     ${data.ref     ? `<div class="tt-row"><span>Réf.</span><span>${data.ref}</span></div>`       : ''}
-    ${data.date    ? `<div class="tt-row"><span>Entrée</span><span>${data.date}</span></div>`    : ''}
+    ${displayDate  ? `<div class="tt-row"><span>Entrée</span><span>${displayDate}</span></div>`   : ''}
     <div style="margin-top:5px;font-size:0.6rem;color:var(--gris)">Appuyer pour modifier</div>
   `;
   tooltip.style.display = 'block';
@@ -613,8 +590,14 @@ function openModal(spotId, num, zone) {
   document.getElementById('modalStatus').value = data.status;
   document.getElementById('modalContent').value = data.content;
   document.getElementById('modalRef').value = data.ref;
-  document.getElementById('modalClient').value = data.client;
-  document.getElementById('modalDate').value = data.date;
+  
+  // Format the date for the datetime-local input (YYYY-MM-DDThh:mm)
+  let dateVal = '';
+  if (data.date) {
+      dateVal = data.date.substring(0, 16); 
+  }
+  document.getElementById('modalDate').value = dateVal;
+  
   document.getElementById('modalNotes').value = data.notes;
   document.getElementById('savingIndicator').textContent = '';
   document.getElementById('modalBg').classList.add('open');
@@ -628,7 +611,6 @@ async function saveSpot() {
     status:  document.getElementById('modalStatus').value,
     content: document.getElementById('modalContent').value,
     ref:     document.getElementById('modalRef').value,
-    client:  document.getElementById('modalClient').value,
     date:    document.getElementById('modalDate').value,
     notes:   document.getElementById('modalNotes').value,
   };
@@ -640,7 +622,7 @@ async function saveSpot() {
 }
 
 document.getElementById('btnClear').addEventListener('click', () => {
-  ['modalContent','modalRef','modalClient','modalNotes'].forEach(id => document.getElementById(id).value = '');
+  ['modalContent','modalRef','modalNotes'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('modalStatus').value = 'libre';
   document.getElementById('modalDate').value = '';
 });
@@ -650,18 +632,17 @@ document.getElementById('modalBg').addEventListener('click', (e) => { if (e.targ
 // STATS
 // =============================================
 function updateStats() {
-  let libre = 0, occupe = 0, reserve = 0, total = 0;
+  let libre = 0, occupe = 0, total = 0;
   ZONES.forEach(zone => {
     for (let i = 1; i <= zone.count; i++) {
       const d = getSpotData(`${zone.id}-${i}`);
       total++;
-      if (d.status === 'libre') libre++; else if (d.status === 'occupe') occupe++; else if (d.status === 'reserve') reserve++;
+      if (d.status === 'libre') libre++; else if (d.status === 'occupe') occupe++; 
     }
   });
   document.getElementById('totalSpots').textContent = total;
   document.getElementById('countLibre').textContent = libre;
   document.getElementById('countOccupe').textContent = occupe;
-  document.getElementById('countReserve').textContent = reserve;
 }
 
 // =============================================
