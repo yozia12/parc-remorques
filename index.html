@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -9,261 +10,370 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  /* FOND CLAIR DE LA PAGE POUR LA LISIBILITÉ */
-  --bg: #f0f2f5; 
-  --text-page: #1e293b;
-
-  /* COULEURS SOMBRES ORIGINALES POUR LES SECTIONS */
-  --surface: #16213e;
-  --surface2: #0f1929;
-  
-  /* Couleurs de base */
-  --orange: #ff6b2b;
-  --orange2: #ff9a5c;
-  --vert: #00e5a0;
-  --cyan: #00d4ff;
-  --gris: #8892a4;
-  --blanc: #e0e0e0;
+–bg: #1a1a2e;
+–surface: #16213e;
+–surface2: #0f1929;
+–orange: #ff6b2b;
+–orange2: #ff9a5c;
+–vert: #00e5a0;
+–cyan: #00d4ff;
+–gris: #8892a4;
+–blanc: #e0e0e0;
 }
 
 body {
-  background: var(--bg);
-  font-family: 'Segoe UI', Arial, sans-serif;
-  color: var(--blanc); 
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+background: var(–bg);
+font-family: ‘Segoe UI’, Arial, sans-serif;
+color: var(–blanc);
+min-height: 100vh;
 }
 
-/* HEADER (Sombre) */
+/* HEADER */
 .header {
-  background: var(--surface);
-  border-bottom: 2px solid var(--orange);
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+background: var(–surface);
+border-bottom: 2px solid var(–orange);
+padding: 12px 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 10px;
+position: sticky;
+top: 0;
+z-index: 100;
 }
 
 .header h1 { font-size: 1rem; font-weight: 800; color: #fff; }
-.header h1 span { color: var(--orange); }
+.header h1 span { color: var(–orange); }
 
 .stats-bar { display: flex; gap: 10px; flex-wrap: wrap; }
-.stat-box { text-align: center; background: var(--surface2); border-radius: 6px; padding: 5px 12px; min-width: 60px; }
+
+.stat-box {
+text-align: center;
+background: var(–surface2);
+border-radius: 6px;
+padding: 5px 12px;
+min-width: 60px;
+}
+
 .stat-box .val { font-size: 1.2rem; font-weight: 800; line-height: 1; }
-.stat-box .lbl { font-size: 0.58rem; opacity: 0.6; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blanc); }
-.val.libre { color: var(--vert); }
-.val.occupe { color: var(--orange); }
-.val.reserve { color: var(--cyan); }
+.stat-box .lbl { font-size: 0.58rem; opacity: 0.6; letter-spacing: 0.1em; text-transform: uppercase; }
+.val.libre { color: var(–vert); }
+.val.occupe { color: var(–orange); }
+.val.reserve { color: var(–cyan); }
 
 /* SYNC STATUS */
-.sync-dot { display: flex; align-items: center; gap: 6px; font-size: 0.65rem; color: var(--gris); }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gris); transition: background 0.3s; }
-.dot.ok { background: var(--vert); animation: pulse 2s infinite; }
-.dot.loading { background: var(--orange); animation: pulse 0.5s infinite; }
+.sync-dot {
+display: flex;
+align-items: center;
+gap: 6px;
+font-size: 0.65rem;
+color: var(–gris);
+}
+
+.dot {
+width: 8px; height: 8px;
+border-radius: 50%;
+background: var(–gris);
+transition: background 0.3s;
+}
+
+.dot.ok { background: var(–vert); animation: pulse 2s infinite; }
+.dot.loading { background: var(–orange); animation: pulse 0.5s infinite; }
 .dot.error { background: #ff4444; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-/* TOOLBAR & VIEWS (Sombre) */
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.4; }
+}
+
+/* LEGEND + FILTERS */
 .toolbar {
-  display: flex; gap: 12px; padding: 8px 20px; background: #12192e;
-  border-bottom: 1px solid rgba(0,0,0,0.1); flex-wrap: wrap; align-items: center;
+display: flex;
+gap: 12px;
+padding: 8px 20px;
+background: #12192e;
+border-bottom: 1px solid rgba(255,255,255,0.05);
+flex-wrap: wrap;
+align-items: center;
 }
 
-.view-toggles { display: flex; gap: 8px; }
-.view-btn {
-  padding: 6px 14px; border-radius: 6px; border: none;
-  background: var(--surface2); color: var(--gris);
-  font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s;
-}
-.view-btn.active { background: var(--orange); color: #fff; }
-
-/* BOUTON ÉDITION DU PLAN (🔑/🔒) */
-#btnEditMap { display: none; margin-left: auto; color: var(--cyan); border: 1px solid var(--cyan); background: rgba(0,212,255,0.1); }
-#btnEditMap.editing { background: #ff4444; border-color: #ff4444; color: #fff; animation: pulseEdit 1.5s infinite; }
-@keyframes pulseEdit { 0% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); } 70% { box-shadow: 0 0 0 6px rgba(255,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0); } }
-
-.leg { display: flex; align-items: center; gap: 5px; font-size: 0.68rem; color: var(--gris); }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 0.68rem; color: var(–gris); }
 .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
 .sep { width: 1px; height: 20px; background: rgba(255,255,255,0.08); }
 
 .filter-btn {
-  padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-  background: transparent; color: var(--gris); font-size: 0.68rem; cursor: pointer; transition: all 0.2s;
+padding: 4px 12px;
+border-radius: 20px;
+border: 1px solid rgba(255,255,255,0.1);
+background: transparent;
+color: var(–gris);
+font-size: 0.68rem;
+cursor: pointer;
+transition: all 0.2s;
 }
-.filter-btn:hover, .filter-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+.filter-btn:hover, .filter-btn.active {
+background: var(–orange);
+border-color: var(–orange);
+color: #fff;
+}
 
 /* LOADING SCREEN */
-.loading-screen { position: fixed; inset: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 9999; }
+.loading-screen {
+position: fixed;
+inset: 0;
+background: var(–bg);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 16px;
+z-index: 9999;
+}
+
 .loading-screen.hidden { display: none; }
-.spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,43,0.2); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+.spinner {
+width: 40px; height: 40px;
+border: 3px solid rgba(255,107,43,0.2);
+border-top-color: var(–orange);
+border-radius: 50%;
+animation: spin 0.8s linear infinite;
+}
+
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* MAIN CONTAINERS */
-.main-view { display: none; padding: 16px 20px; flex-direction: column; gap: 14px; flex-grow: 1; }
-.main-view.active { display: flex; }
+.loading-screen p { font-size: 0.8rem; color: var(–gris); }
 
-/* GRID VIEW STYLES (Sombre comme au premier jour) */
+/* MAIN */
+.main { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+
 .group-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .group-row .zone-block { flex: 1; min-width: 180px; }
-.zone-block { background: var(--surface); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-.zone-header { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* ZONE */
+.zone-block {
+background: var(–surface);
+border: 1px solid rgba(255,255,255,0.07);
+border-radius: 8px;
+overflow: hidden;
+}
+
+.zone-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 7px 12px;
+background: rgba(0,0,0,0.2);
+border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
 .zone-name { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-.zone-count { font-size: 0.6rem; color: var(--gris); }
-.zone-body { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+.zone-count { font-size: 0.6rem; color: var(–gris); }
 
-/* MAP VIEW STYLES (Agrandie) */
-#mapView { align-items: center; justify-content: center; }
-#mapContainer {
-  position: relative; width: 100%; max-width: 100%; height: 86vh; 
-  background-image: url('plan-cour.png'); /* LA PHOTO DE TA COUR ICI */
-  background-size: contain; background-repeat: no-repeat; background-position: center;
-  border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); overflow: hidden;
-  background-color: #fff; /* Fond clair pour les bords vides */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+.zone-body {
+padding: 10px 12px;
+display: flex;
+flex-wrap: wrap;
+gap: 5px;
 }
 
-/* ========================================= */
-/* BASE SPOT STYLES (UTILISÉ POUR LA GRILLE) */
-/* Reste exactement comme dans ta photo !    */
-/* ========================================= */
+/* SPOT */
 .spot {
-  width: 42px; height: 52px; border-radius: 5px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; cursor: pointer; font-size: 0.58rem;
-  font-weight: 700; transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
-  position: relative; user-select: none; border: 2px solid transparent;
+width: 42px; height: 52px;
+border-radius: 5px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+font-size: 0.58rem;
+font-weight: 700;
+transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
+position: relative;
+user-select: none;
+border: 2px solid transparent;
 }
+
 .spot:hover { transform: scale(1.12); filter: brightness(1.25); z-index: 10; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
 .spot:active { transform: scale(0.96); }
 
-.spot.libre { background: rgba(0,229,160,0.15); border-color: var(--vert); color: var(--vert); }
-.spot.occupe { background: rgba(255,107,43,0.18); border-color: var(--orange); color: var(--orange2); }
-.spot.reserve { background: rgba(0,212,255,0.13); border-color: var(--cyan); color: var(--cyan); }
-.spot.maintenance { background: rgba(136,146,164,0.12); border-color: var(--gris); color: var(--gris); }
+.spot.libre { background: rgba(0,229,160,0.15); border-color: var(–vert); color: var(–vert); }
+.spot.occupe { background: rgba(255,107,43,0.18); border-color: var(–orange); color: var(–orange2); }
+.spot.reserve { background: rgba(0,212,255,0.13); border-color: var(–cyan); color: var(–cyan); }
+.spot.maintenance { background: rgba(136,146,164,0.12); border-color: var(–gris); color: var(–gris); }
 
 .spot-icon { font-size: 0.95rem; margin-bottom: 1px; }
 .spot-id { font-size: 0.65rem; font-weight: 800; }
 
-/* ========================================= */
-/* STYLE DES PLACES SUR LA CARTE (Surcharge) */
-/* ========================================= */
-.spot-map {
-  position: absolute !important;
-  width: 0.8% !important;  /* Rectangle par défaut (Remorques, Gravel, K, L, M, N) */
-  height: 7% !important; 
-  display: block !important; /* Enlève le flex */
-  transform: translate(-50%, -50%); /* Centrage X,Y */
-  border-radius: 2px !important;
-  border: 1px solid rgba(0,0,0,0.7) !important;
+/* TOOLTIP */
+#tooltip {
+position: fixed;
+background: #0a1020;
+border: 1px solid var(–orange);
+border-radius: 8px;
+padding: 10px 13px;
+font-size: 0.72rem;
+pointer-events: none;
+z-index: 500;
+display: none;
+max-width: 210px;
+box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+line-height: 1.5;
 }
 
-/* Surcharge tailcone sur la carte (Tailcone, Hstab, Vstab) */
-.spot-map.spot-square { 
-  width: 1% !important; height: 0.8% !important;
- display: block !important; /* Enlève le flex */
-  transform: translate(-50%, -50%); /* Centrage X,Y */
-  border-radius: 2px !important;
-  border: 1px solid rgba(0,0,0,0.7) !important;
-}
-
-/* Surcharge FWD sur la carte (FWD) */
-.spot-map.spot-box {
-  width: 1.3% !important; height: 1.5% !important;
-  border-radius: 4px !important;
-  border-width: 1.5px !important; /* Bord épais visuel sur carte */
-  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
-}
-
-/* Cache icônes et textes sur la carte */
-.spot-map .spot-icon, .spot-map .spot-id { display: none; } 
-
-/* Couleurs pleines UNIQUEMENT pour la carte */
-.spot-map.libre { background-color: var(--vert) !important; }
-.spot-map.occupe { background-color: var(--orange) !important; }
-.spot-map.reserve { background-color: var(--cyan) !important; }
-.spot-map.maintenance { background-color: var(--gris) !important; }
-
-/* RÈGLE MAGIQUE : MASQUER LES PLACES LIBRES SUR LA CARTE (sauf en mode édition) */
-body:not(.map-edit-mode) #mapView .spot-map.libre { display: none !important; }
-
-/* MODE ÉDITION DU PLAN (🔑 Glisser-Déposer) */
-body.map-edit-mode .spot-map { cursor: grab !important; border: 2px dashed #fff !important; }
-body.map-edit-mode .spot-map:active { cursor: grabbing !important; }
-body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } /* Force l'affichage */
-
-/* TOOLTIP (Sombre) */
-#tooltip { position: fixed; background: #0a1020; border: 1px solid var(--orange); border-radius: 8px; padding: 10px 13px; font-size: 0.72rem; pointer-events: none; z-index: 500; display: none; max-width: 210px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); line-height: 1.5; color: var(--blanc); }
-#tooltip .tt-id { font-weight: 800; font-size: 0.88rem; color: var(--orange2); margin-bottom: 3px; }
-#tooltip .tt-zone { font-size: 0.62rem; color: var(--gris); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
+#tooltip .tt-id { font-weight: 800; font-size: 0.88rem; color: var(–orange2); margin-bottom: 3px; }
+#tooltip .tt-zone { font-size: 0.62rem; color: var(–gris); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
 #tooltip .tt-row { display: flex; justify-content: space-between; gap: 8px; font-size: 0.68rem; margin-top: 2px; }
-#tooltip .tt-row span:first-child { color: var(--gris); }
+#tooltip .tt-row span:first-child { color: var(–gris); }
 #tooltip .tt-status { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 0.62rem; font-weight: 700; margin-top: 5px; }
+.tt-libre { background: rgba(0,229,160,0.15); color: var(–vert); }
+.tt-occupe { background: rgba(255,107,43,0.15); color: var(–orange2); }
+.tt-reserve { background: rgba(0,212,255,0.12); color: var(–cyan); }
+.tt-maintenance { background: rgba(136,146,164,0.12); color: var(–gris); }
 
-/* MODAL (Sombre) */
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
+/* MODAL */
+.modal-bg {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.75);
+z-index: 2000;
+align-items: center;
+justify-content: center;
+padding: 16px;
+}
+
 .modal-bg.open { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--orange); border-radius: 12px; padding: 22px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; color: var(--blanc); }
-.modal h2 { font-size: 0.95rem; font-weight: 800; color: var(--orange2); margin-bottom: 2px; }
-.modal .modal-zone { font-size: 0.62rem; color: var(--gris); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+
+.modal {
+background: var(–surface);
+border: 1px solid var(–orange);
+border-radius: 12px;
+padding: 22px;
+width: 100%;
+max-width: 380px;
+box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+max-height: 90vh;
+overflow-y: auto;
+}
+
+.modal h2 { font-size: 0.95rem; font-weight: 800; color: var(–orange2); margin-bottom: 2px; }
+.modal .modal-zone { font-size: 0.62rem; color: var(–gris); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+
 .modal label { display: block; font-size: 0.68rem; color: #aaa; margin-bottom: 3px; margin-top: 10px; }
-.modal input, .modal select { width: 100%; background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 10px; color: var(--blanc); font-size: 0.78rem; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
-.modal input:focus, .modal select:focus { border-color: var(--orange); }
-.modal select option { background: var(--surface); }
+
+.modal input, .modal select {
+width: 100%;
+background: var(–surface2);
+border: 1px solid rgba(255,255,255,0.1);
+border-radius: 6px;
+padding: 8px 10px;
+color: var(–blanc);
+font-size: 0.78rem;
+outline: none;
+transition: border-color 0.2s;
+-webkit-appearance: none;
+}
+
+.modal input:focus, .modal select:focus { border-color: var(–orange); }
+.modal select option { background: var(–surface); }
+
 .modal-btns { display: flex; gap: 8px; margin-top: 18px; }
-.btn { flex: 1; padding: 9px; border-radius: 6px; border: none; font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
+
+.btn {
+flex: 1;
+padding: 9px;
+border-radius: 6px;
+border: none;
+font-size: 0.76rem;
+font-weight: 700;
+cursor: pointer;
+transition: opacity 0.2s, transform 0.1s;
+}
+
 .btn:active { transform: scale(0.97); }
 .btn:hover { opacity: 0.85; }
-.btn-save { background: var(--orange); color: #fff; }
+.btn-save { background: var(–orange); color: #fff; }
 .btn-cancel { background: rgba(255,255,255,0.07); color: #ccc; }
 .btn-clear { background: rgba(255,50,50,0.15); color: #ff7070; border: 1px solid rgba(255,50,50,0.25); }
-.saving-indicator { text-align: center; font-size: 0.68rem; color: var(--gris); margin-top: 8px; min-height: 16px; }
 
-@media (max-width: 480px) { .spot { width: 36px; height: 46px; } .spot-icon { font-size: 0.8rem; } .toolbar { padding: 8px 10px; gap: 8px; } }
+.saving-indicator {
+text-align: center;
+font-size: 0.68rem;
+color: var(–gris);
+margin-top: 8px;
+min-height: 16px;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+.spot { width: 36px; height: 46px; }
+.spot-icon { font-size: 0.8rem; }
+.main { padding: 10px; }
+.toolbar { padding: 8px 10px; gap: 8px; }
+}
 </style>
+
 </head>
 <body>
+
+<!-- LOADING -->
 
 <div class="loading-screen" id="loadingScreen">
   <div class="spinner"></div>
   <p>Connexion à la base de données…</p>
 </div>
 
+<!-- TOOLTIP -->
+
 <div id="tooltip"></div>
+
+<!-- MODAL -->
 
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h2 id="modalTitle">Place</h2>
     <div class="modal-zone" id="modalZone"></div>
-    <label>Statut</label>
-    <select id="modalStatus">
-      <option value="libre">🟢 Libre</option>
-      <option value="occupe">🟠 Occupée</option>
-      <option value="reserve">🔵 Réservée</option>
-      <option value="maintenance">⚪ Maintenance</option>
-    </select>
-    <label>Contenu (type de pièce)</label>
-    <input type="text" id="modalContent" placeholder="Ex: Tailcone A320, Aile gauche…">
-    <label>Référence / N° de série</label>
-    <input type="text" id="modalRef" placeholder="Ex: MSN-4521-TC">
-    <label>Client / Compagnie</label>
-    <input type="text" id="modalClient" placeholder="Ex: Air France, Airbus…">
-    <label>Date d'entrée</label>
-    <input type="date" id="modalDate">
-    <label>Notes</label>
-    <input type="text" id="modalNotes" placeholder="Notes libres…">
-    <div class="modal-btns">
-      <button class="btn btn-clear" id="btnClear">Vider</button>
-      <button class="btn btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn btn-save" onclick="saveSpot()">💾 Enregistrer</button>
-    </div>
-    <div class="saving-indicator" id="savingIndicator"></div>
+
+```
+<label>Statut</label>
+<select id="modalStatus">
+  <option value="libre">🟢 Libre</option>
+  <option value="occupe">🟠 Occupée</option>
+  <option value="reserve">🔵 Réservée</option>
+  <option value="maintenance">⚪ Maintenance</option>
+</select>
+
+<label>Contenu (type de pièce)</label>
+<input type="text" id="modalContent" placeholder="Ex: Tailcone A320, Aile gauche…">
+
+<label>Référence / N° de série</label>
+<input type="text" id="modalRef" placeholder="Ex: MSN-4521-TC">
+
+<label>Client / Compagnie</label>
+<input type="text" id="modalClient" placeholder="Ex: Air France, Airbus…">
+
+<label>Date d'entrée</label>
+<input type="date" id="modalDate">
+
+<label>Notes</label>
+<input type="text" id="modalNotes" placeholder="Notes libres…">
+
+<div class="modal-btns">
+  <button class="btn btn-clear" id="btnClear">Vider</button>
+  <button class="btn btn-cancel" onclick="closeModal()">Annuler</button>
+  <button class="btn btn-save" onclick="saveSpot()">💾 Enregistrer</button>
+</div>
+<div class="saving-indicator" id="savingIndicator"></div>
+```
+
   </div>
 </div>
+
+<!-- HEADER -->
 
 <div class="header">
   <div>
@@ -274,32 +384,42 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } 
     </div>
   </div>
   <div class="stats-bar">
-    <div class="stat-box"><div class="val" id="totalSpots">128</div><div class="lbl">Total</div></div>
-    <div class="stat-box"><div class="val libre" id="countLibre">—</div><div class="lbl">Libres</div></div>
-    <div class="stat-box"><div class="val occupe" id="countOccupe">—</div><div class="lbl">Occupées</div></div>
-    <div class="stat-box"><div class="val reserve" id="countReserve">—</div><div class="lbl">Réservées</div></div>
+    <div class="stat-box">
+      <div class="val" id="totalSpots">128</div>
+      <div class="lbl">Total</div>
+    </div>
+    <div class="stat-box">
+      <div class="val libre" id="countLibre">—</div>
+      <div class="lbl">Libres</div>
+    </div>
+    <div class="stat-box">
+      <div class="val occupe" id="countOccupe">—</div>
+      <div class="lbl">Occupées</div>
+    </div>
+    <div class="stat-box">
+      <div class="val reserve" id="countReserve">—</div>
+      <div class="lbl">Réservées</div>
+    </div>
   </div>
 </div>
+
+<!-- TOOLBAR -->
 
 <div class="toolbar">
-  <div class="view-toggles">
-    <button class="view-btn active" onclick="switchView('grid', this)">🔲 Vue Grille</button>
-    <button class="view-btn" onclick="switchView('map', this)">🗺️ Vue Carte</button>
-  </div>
+  <div class="leg"><div class="leg-dot" style="background:#00e5a0"></div>Libre</div>
+  <div class="leg"><div class="leg-dot" style="background:#ff6b2b"></div>Occupée</div>
+  <div class="leg"><div class="leg-dot" style="background:#00d4ff"></div>Réservée</div>
+  <div class="leg"><div class="leg-dot" style="background:#8892a4"></div>Maintenance</div>
   <div class="sep"></div>
-  <div class="leg"><div class="leg-dot" style="background:var(--vert)"></div>Libre</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--orange)"></div>Occupée</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--cyan)"></div>Réservée</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--gris)"></div>Maintenance</div>
-  
-  <button class="view-btn" id="btnEditMap" onclick="toggleMapEdit()">🔓 Configurer le Plan</button>
+  <button class="filter-btn active" onclick="filterSpots('all',this)">Tout</button>
+  <button class="filter-btn" onclick="filterSpots('libre',this)">Libres</button>
+  <button class="filter-btn" onclick="filterSpots('occupe',this)">Occupées</button>
+  <button class="filter-btn" onclick="filterSpots('reserve',this)">Réservées</button>
 </div>
 
-<div class="main-view active" id="gridView"></div>
+<!-- MAIN -->
 
-<div class="main-view" id="mapView">
-  <div id="mapContainer"></div>
-</div>
+<div class="main" id="mainContent"></div>
 
 <script>
 // =============================================
@@ -307,273 +427,224 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; } 
 // =============================================
 const SUPABASE_URL = 'https://ddeucqcjrmkasptupohd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkZXVjcWNqcm1rYXNwdHVwb2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzE2ODAsImV4cCI6MjA5MDY0NzY4MH0.DNcKFACTd9HKj1pBus5Rt0mRASe6PxBNkVv7we0d-9I';
+
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =============================================
-// ZONES CONFIG (Définition des 3 formes : square, box, et rectangle(défaut))
+// ZONES CONFIG
 // =============================================
 const ZONES = [
-  { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'🔩', desc:'Cônes de queue', shape: 'square' },
-  { id:'hstab',          label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'Stabilisateurs horizontaux', shape: 'square' },
-  { id:'vstab',          label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'Stabilisateurs verticaux', shape: 'square' },
-  { id:'remorque',       label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques générales' },
-  { id:'remorque-vide',  label:'Zone Remorque Vide',    count:8,  color:'#fb923c', icon:'🚛', desc:'Remorques vides' },
-  { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'📦', desc:'Section avant / Forward', shape: 'box' },
+  { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'🔩', desc:'Cônes de queue' },
+  { id:'hstab',          label:'Zone Hstab',             count:8,  color:'#a78bfa', icon:'✈️', desc:'Stabilisateurs horizontaux' },
+  { id:'vstab',          label:'Zone Vstab',             count:8,  color:'#60a5fa', icon:'✈️', desc:'Stabilisateurs verticaux' },
+  { id:'remorque',       label:'Zone Remorque',          count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques générales' },
+  { id:'remorque-vide',  label:'Zone Remorque Vide',     count:8,  color:'#fb923c', icon:'🚛', desc:'Remorques vides' },
+  { id:'fwd',            label:'Zone FWD',               count:20, color:'#34d399', icon:'📦', desc:'Section avant / Forward' },
   { id:'gravel',         label:'Zone Gravel (MID/Aile)', count:20, color:'#fbbf24', icon:'🪨', desc:'MID ou Ailes' },
-  { id:'k',              label:'Zone K',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K' },
-  { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone L' },
-  { id:'m',              label:'Zone M',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone M' },
-  { id:'n',              label:'Zone N',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone N' },
+  { id:'k',              label:'Zone K',                 count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K' },
+  { id:'l',              label:'Zone L',                 count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone L' },
+  { id:'m',              label:'Zone M',                 count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone M' },
+  { id:'n',              label:'Zone N',                 count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone N' },
 ];
 
 // =============================================
-// STATE & PLACES
+// STATE
 // =============================================
 let parcData = {};
-let PLACES = [];
-let isMapEditMode = false;
-
-// Génère les places par défaut
-ZONES.forEach((zone, zIndex) => {
-  for(let i=1; i<=zone.count; i++) {
-    PLACES.push({ spotId: `${zone.id}-${i}`, zoneId: zone.id, num: i, x: 5 + (i * 1.5), y: 10 + (zIndex * 5) });
-  }
-});
-
-function loadMapPositions() {
-  const saved = localStorage.getItem('mapLayout');
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    PLACES.forEach(p => {
-      if (parsed[p.spotId]) { p.x = parsed[p.spotId].x; p.y = parsed[p.spotId].y; }
-    });
-  }
-}
-function saveMapPositions() {
-  const layout = {};
-  PLACES.forEach(p => { layout[p.spotId] = { x: p.x, y: p.y }; });
-  localStorage.setItem('mapLayout', JSON.stringify(layout));
-  alert("✅ Plan sauvegardé localement sur ce navigateur !");
-}
+let currentSpot = null;
+let currentFilter = 'all';
 
 // =============================================
-// NAVIGATION DE VUE
-// =============================================
-function switchView(viewName, btnElement) {
-  document.querySelectorAll('.view-btn.active').forEach(btn => btn.classList.remove('active'));
-  btnElement.classList.add('active');
-  document.getElementById('gridView').classList.remove('active');
-  document.getElementById('mapView').classList.remove('active');
-  document.getElementById(viewName + 'View').classList.add('active');
-
-  document.getElementById('btnEditMap').style.display = (viewName === 'map') ? 'block' : 'none';
-  if (viewName !== 'map' && isMapEditMode) toggleMapEdit(); 
-}
-
-// =============================================
-// MODE ÉDITION DU PLAN (🔑 DRAG & DROP)
-// =============================================
-function toggleMapEdit() {
-  isMapEditMode = !isMapEditMode;
-  const btn = document.getElementById('btnEditMap');
-  const body = document.body;
-
-  if (isMapEditMode) {
-    body.classList.add('map-edit-mode');
-    btn.classList.add('editing');
-    btn.innerHTML = '🔒 Sauvegarder le Plan';
-  } else {
-    body.classList.remove('map-edit-mode');
-    btn.classList.remove('editing');
-    btn.innerHTML = '🔓 Configurer le Plan';
-    saveMapPositions();
-  }
-}
-
-let dragData = { isDragging: false, el: null };
-
-document.addEventListener('mousedown', e => {
-  if (!isMapEditMode) return;
-  const spot = e.target.closest('.spot-map');
-  if (spot) {
-    dragData.isDragging = true; dragData.el = spot; spot.style.zIndex = 1000;
-  }
-});
-
-document.addEventListener('mousemove', e => {
-  if (!dragData.isDragging || !dragData.el) return;
-  const container = document.getElementById('mapContainer');
-  const rect = container.getBoundingClientRect();
-  let x = ((e.clientX - rect.left) / rect.width) * 100;
-  let y = ((e.clientY - rect.top) / rect.height) * 100;
-  x = Math.max(0, Math.min(x, 100)); y = Math.max(0, Math.min(y, 100));
-  dragData.el.style.left = x + '%'; dragData.el.style.top = y + '%';
-});
-
-document.addEventListener('mouseup', e => {
-  if (dragData.isDragging && dragData.el) {
-    dragData.el.style.zIndex = '';
-    const spotId = dragData.el.dataset.spotId;
-    const p = PLACES.find(pl => pl.spotId === spotId);
-    if (p) { p.x = parseFloat(dragData.el.style.left); p.y = parseFloat(dragData.el.style.top); }
-    dragData.isDragging = false; dragData.el = null;
-  }
-});
-
-// =============================================
-// SUPABASE (Chargement et sauvegarde)
+// SUPABASE — CHARGEMENT
 // =============================================
 async function loadFromSupabase() {
   setSyncStatus('loading', 'Chargement…');
   try {
     const { data, error } = await db.from('spots').select('*');
     if (error) throw error;
+
     parcData = {};
-    (data || []).forEach(row => { parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', client: row.client || '', date: row.date_entree || '', notes: row.notes || '' }; });
+    (data || []).forEach(row => {
+      parcData[row.id] = {
+        status: row.status || 'libre',
+        content: row.content || '',
+        ref: row.ref || '',
+        client: row.client || '',
+        date: row.date_entree || '',
+        notes: row.notes || '',
+      };
+    });
+
     setSyncStatus('ok', 'Synchronisé');
     return true;
-  } catch(e) { setSyncStatus('error', 'Erreur de connexion'); return false; }
+  } catch(e) {
+    setSyncStatus('error', 'Erreur de connexion');
+    console.error(e);
+    return false;
+  }
 }
 
+// =============================================
+// SUPABASE — SAUVEGARDE
+// =============================================
 async function saveToSupabase(spotId, zoneId, num, data) {
   setSyncStatus('loading', 'Sauvegarde…');
   document.getElementById('savingIndicator').textContent = '⏳ Enregistrement…';
+
   try {
     const { error } = await db.from('spots').upsert({
-      id: spotId, zone_id: zoneId, num: num, status: data.status,
-      content: data.content, ref: data.ref, client: data.client,
-      date_entree: data.date, notes: data.notes, updated_at: new Date().toISOString(),
+      id: spotId,
+      zone_id: zoneId,
+      num: num,
+      status: data.status,
+      content: data.content,
+      ref: data.ref,
+      client: data.client,
+      date_entree: data.date,
+      notes: data.notes,
+      updated_at: new Date().toISOString(),
     });
+
     if (error) throw error;
+
     setSyncStatus('ok', 'Synchronisé');
     document.getElementById('savingIndicator').textContent = '✅ Enregistré !';
     setTimeout(() => document.getElementById('savingIndicator').textContent = '', 2000);
     return true;
   } catch(e) {
     setSyncStatus('error', 'Erreur sauvegarde');
-    document.getElementById('savingIndicator').textContent = '❌ Erreur';
+    document.getElementById('savingIndicator').textContent = '❌ Erreur — réessaie';
+    console.error(e);
     return false;
   }
 }
 
+// =============================================
+// REALTIME — mise à jour automatique
+// =============================================
 function subscribeRealtime() {
-  db.channel('spots-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'spots' }, (payload) => {
-    const row = payload.new || payload.old;
-    if (!row) return;
-    if (payload.eventType === 'DELETE') { delete parcData[row.id]; } 
-    else { parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', client: row.client || '', date: row.date_entree || '', notes: row.notes || '' }; }
-    updateSpotElement(row.id);
-    updateStats();
-  }).subscribe();
+  db.channel('spots-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'spots' }, (payload) => {
+      const row = payload.new || payload.old;
+      if (!row) return;
+
+      if (payload.eventType === 'DELETE') {
+        delete parcData[row.id];
+      } else {
+        parcData[row.id] = {
+          status: row.status || 'libre',
+          content: row.content || '',
+          ref: row.ref || '',
+          client: row.client || '',
+          date: row.date_entree || '',
+          notes: row.notes || '',
+        };
+      }
+
+      // Met à jour juste la place concernée sans tout re-render
+      updateSpotElement(row.id);
+      updateStats();
+    })
+    .subscribe();
 }
 
-// Fonction de mise à jour: On s'assure que la grille N'A PAS les formes !
 function updateSpotElement(spotId) {
-  const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
+  const el = document.querySelector(`[data-spot-id="${spotId}"]`);
+  if (!el) return;
   const data = getSpotData(spotId);
-  const zone = ZONES.find(z => spotId.startsWith(z.id + '-'));
-  
-  elements.forEach(el => {
-    if(el.classList.contains('spot-map')) {
-      // SI C'EST SUR LA CARTE : On met la couleur ET la forme spéciale
-      el.className = `spot spot-map ${data.status}`;
-      if (zone && zone.shape) el.classList.add('spot-' + zone.shape); 
-    } else {
-      // SI C'EST DANS LA GRILLE : On met UNIQUEMENT la couleur (ça reste un rectangle)
-      el.className = `spot ${data.status}`;
-    }
-  });
+  el.className = `spot ${data.status}`;
 }
-
-function setSyncStatus(type, label) { document.getElementById('syncDot').className = 'dot ' + type; document.getElementById('syncLabel').textContent = label; }
-function getSpotData(spotId) { return parcData[spotId] || { status:'libre', content:'', ref:'', client:'', date:'', notes:'' }; }
 
 // =============================================
-// RENDER (GRILLE ET CARTE)
+// SYNC STATUS
+// =============================================
+function setSyncStatus(type, label) {
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  dot.className = 'dot ' + type;
+  lbl.textContent = label;
+}
+
+// =============================================
+// DATA HELPERS
+// =============================================
+function getSpotData(spotId) {
+  return parcData[spotId] || { status:'libre', content:'', ref:'', client:'', date:'', notes:'' };
+}
+
+// =============================================
+// RENDER
 // =============================================
 function render() {
-  renderGrid();
-  renderMap();
-}
+  const main = document.getElementById('mainContent');
+  main.innerHTML = '';
 
-function renderGrid() {
-  const gridMain = document.getElementById('gridView');
-  gridMain.innerHTML = '';
-  const rows = [ ['tailcone','hstab','vstab'], ['remorque','remorque-vide'], ['fwd','gravel'], ['k','l','m','n'] ];
+  const rows = [
+    ['tailcone','hstab','vstab'],
+    ['remorque','remorque-vide'],
+    ['fwd','gravel'],
+    ['k','l','m','n'],
+  ];
 
   rows.forEach(ids => {
     const row = document.createElement('div');
     row.className = 'group-row';
     ids.forEach(id => {
       const zone = ZONES.find(z => z.id === id);
-      const block = document.createElement('div');
-      block.className = 'zone-block';
-      block.innerHTML = `<div class="zone-header"><div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div><div class="zone-count">${zone.count} places</div></div>`;
-      
-      const body = document.createElement('div');
-      body.className = 'zone-body';
-      for (let i = 1; i <= zone.count; i++) {
-        const spotId = `${zone.id}-${i}`;
-        const data = getSpotData(spotId);
-        
-        // GRILLE = CLASSE SPOT DE BASE UNIQUEMENT
-        const div = document.createElement('div');
-        div.className = `spot ${data.status}`;
-        
-        div.dataset.spotId = spotId;
-        div.innerHTML = `<div class="spot-icon">${zone.icon}</div><div class="spot-id">${i}</div>`;
-        
-        div.addEventListener('mouseenter', (e) => showTooltip(e, spotId, i, zone));
-        div.addEventListener('mousemove', moveTooltip);
-        div.addEventListener('mouseleave', hideTooltip);
-        div.addEventListener('click', () => { hideTooltip(); openModal(spotId, i, zone); });
-        body.appendChild(div);
-      }
-      block.appendChild(body);
-      row.appendChild(block);
+      row.appendChild(buildZone(zone));
     });
-    gridMain.appendChild(row);
+    main.appendChild(row);
   });
+
+  applyFilter();
 }
 
-function renderMap() {
-  const mapContainer = document.getElementById('mapContainer');
-  mapContainer.innerHTML = '';
+function buildZone(zone) {
+  const block = document.createElement('div');
+  block.className = 'zone-block';
 
-  PLACES.forEach(place => {
-    const zone = ZONES.find(z => z.id === place.zoneId);
-    if(!zone) return;
-    const data = getSpotData(place.spotId);
-    
-    // CARTE = CLASSE SPOT-MAP + LA FORME 
-    const div = document.createElement('div');
-    div.className = `spot spot-map ${data.status}`; 
-    if (zone.shape) { div.classList.add('spot-' + zone.shape); }
+  const header = document.createElement('div');
+  header.className = 'zone-header';
+  header.innerHTML = `
+    <div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div>
+    <div class="zone-count">${zone.count} places</div>
+  `;
 
-    div.dataset.spotId = place.spotId;
-    div.style.left = `${place.x}%`;
-    div.style.top = `${place.y}%`;
-    
-    div.addEventListener('mouseenter', (e) => showTooltip(e, place.spotId, place.num, zone));
-    div.addEventListener('mousemove', moveTooltip);
-    div.addEventListener('mouseleave', hideTooltip);
-    div.addEventListener('click', () => { 
-      if(isMapEditMode) return; 
-      hideTooltip(); openModal(place.spotId, place.num, zone); 
-    });
+  const body = document.createElement('div');
+  body.className = 'zone-body';
 
-    mapContainer.appendChild(div);
-  });
+  for (let i = 1; i <= zone.count; i++) {
+    const spotId = `${zone.id}-${i}`;
+    body.appendChild(buildSpot(spotId, i, zone));
+  }
+
+  block.appendChild(header);
+  block.appendChild(body);
+  return block;
+}
+
+function buildSpot(spotId, num, zone) {
+  const data = getSpotData(spotId);
+  const div = document.createElement('div');
+  div.className = `spot ${data.status}`;
+  div.dataset.spotId = spotId;
+  div.innerHTML = `<div class="spot-icon">${zone.icon}</div><div class="spot-id">${num}</div>`;
+
+  div.addEventListener('mouseenter', (e) => showTooltip(e, spotId, num, zone));
+  div.addEventListener('mousemove', moveTooltip);
+  div.addEventListener('mouseleave', hideTooltip);
+  div.addEventListener('click', () => { hideTooltip(); openModal(spotId, num, zone); });
+
+  return div;
 }
 
 // =============================================
-// TOOLTIP & MODAL
+// TOOLTIP
 // =============================================
 const tooltip = document.getElementById('tooltip');
 
 function showTooltip(e, spotId, num, zone) {
-  if (isMapEditMode) return;
   const data = getSpotData(spotId);
   const labels = { libre:'Libre', occupe:'Occupée', reserve:'Réservée', maintenance:'Maintenance' };
   tooltip.innerHTML = `
@@ -584,18 +655,27 @@ function showTooltip(e, spotId, num, zone) {
     ${data.client  ? `<div class="tt-row"><span>Client</span><span>${data.client}</span></div>`  : ''}
     ${data.ref     ? `<div class="tt-row"><span>Réf.</span><span>${data.ref}</span></div>`       : ''}
     ${data.date    ? `<div class="tt-row"><span>Entrée</span><span>${data.date}</span></div>`    : ''}
-    <div style="margin-top:5px;font-size:0.6rem;color:var(--gris)">Appuyer pour modifier</div>
+    <div style="margin-top:5px;font-size:0.6rem;color:#555">Appuyer pour modifier</div>
   `;
   tooltip.style.display = 'block';
   moveTooltip(e);
 }
-function moveTooltip(e) { const x = Math.min(e.clientX + 16, window.innerWidth - 230); tooltip.style.left = x + 'px'; tooltip.style.top = (e.clientY - 10) + 'px'; }
+
+function moveTooltip(e) {
+  const x = Math.min(e.clientX + 16, window.innerWidth - 230);
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = (e.clientY - 10) + 'px';
+}
+
 function hideTooltip() { tooltip.style.display = 'none'; }
 
-let currentSpot = null;
+// =============================================
+// MODAL
+// =============================================
 function openModal(spotId, num, zone) {
   currentSpot = { spotId, num, zone };
   const data = getSpotData(spotId);
+
   document.getElementById('modalTitle').textContent = `${zone.label} — Place #${num}`;
   document.getElementById('modalZone').textContent = zone.desc;
   document.getElementById('modalStatus').value = data.status;
@@ -605,13 +685,19 @@ function openModal(spotId, num, zone) {
   document.getElementById('modalDate').value = data.date;
   document.getElementById('modalNotes').value = data.notes;
   document.getElementById('savingIndicator').textContent = '';
+
   document.getElementById('modalBg').classList.add('open');
 }
-function closeModal() { document.getElementById('modalBg').classList.remove('open'); currentSpot = null; }
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+  currentSpot = null;
+}
 
 async function saveSpot() {
   if (!currentSpot) return;
   const { spotId, num, zone } = currentSpot;
+
   const data = {
     status:  document.getElementById('modalStatus').value,
     content: document.getElementById('modalContent').value,
@@ -620,9 +706,13 @@ async function saveSpot() {
     date:    document.getElementById('modalDate').value,
     notes:   document.getElementById('modalNotes').value,
   };
+
+  // Mise à jour locale immédiate
   parcData[spotId] = data;
   updateSpotElement(spotId);
   updateStats();
+
+  // Sauvegarde Supabase
   const ok = await saveToSupabase(spotId, zone.id, num, data);
   if (ok) setTimeout(closeModal, 800);
 }
@@ -632,7 +722,30 @@ document.getElementById('btnClear').addEventListener('click', () => {
   document.getElementById('modalStatus').value = 'libre';
   document.getElementById('modalDate').value = '';
 });
-document.getElementById('modalBg').addEventListener('click', (e) => { if (e.target === document.getElementById('modalBg')) closeModal(); });
+
+document.getElementById('modalBg').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modalBg')) closeModal();
+});
+
+// =============================================
+// FILTER
+// =============================================
+function filterSpots(status, btn) {
+  currentFilter = status;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter() {
+  document.querySelectorAll('.spot').forEach(spot => {
+    if (currentFilter === 'all') {
+      spot.style.display = '';
+    } else {
+      spot.style.display = spot.classList.contains(currentFilter) ? '' : 'none';
+    }
+  });
+}
 
 // =============================================
 // STATS
@@ -643,7 +756,9 @@ function updateStats() {
     for (let i = 1; i <= zone.count; i++) {
       const d = getSpotData(`${zone.id}-${i}`);
       total++;
-      if (d.status === 'libre') libre++; else if (d.status === 'occupe') occupe++; else if (d.status === 'reserve') reserve++;
+      if (d.status === 'libre') libre++;
+      else if (d.status === 'occupe') occupe++;
+      else if (d.status === 'reserve') reserve++;
     }
   });
   document.getElementById('totalSpots').textContent = total;
@@ -656,14 +771,15 @@ function updateStats() {
 // INIT
 // =============================================
 async function init() {
-  loadMapPositions();
   const ok = await loadFromSupabase();
   document.getElementById('loadingScreen').classList.add('hidden');
   render();
   updateStats();
   if (ok) subscribeRealtime();
 }
+
 init();
 </script>
+
 </body>
 </html>
