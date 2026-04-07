@@ -117,14 +117,17 @@ body {
 .zone-count { font-size: 0.6rem; color: var(--gris); }
 .zone-body { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
 
-/* MAP VIEW STYLES (Agrandie) */
+/* MAP VIEW STYLES (Agrandie & Fixée) */
 #mapView { align-items: center; justify-content: center; }
 #mapContainer {
   position: relative; width: 100%; max-width: 100%; height: 86vh; 
-  background-image: url('plan-cour.png'); /* LA PHOTO DE TA COUR ICI */
-  background-size: contain; background-repeat: no-repeat; background-position: center;
+  /* ⚠️ REMPLACE 16 / 9 PAR LA VRAIE TAILLE DE TON IMAGE EN PIXELS SI ELLE SE DÉFORME (ex: 1920 / 1080) ⚠️ */
+  aspect-ratio: 16 / 9; 
+  background-size: 100% 100%; /* Force l'image à coller aux bords pour éviter les décalages */
+  background-image: url('plan-cour.png'); 
+  background-repeat: no-repeat; background-position: center;
   border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); overflow: hidden;
-  background-color: #fff; /* Fond clair pour les bords vides */
+  background-color: #fff; 
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
@@ -154,26 +157,22 @@ body {
 /* ========================================= */
 .spot-map {
   position: absolute !important;
-  width: 0.8% !important;  /* Rectangle par défaut (Remorques, Gravel, K, L, M, N) */
-  height: 7% !important; 
+  width: 1.2% !important;  /* Rectangle par défaut (Remorques, Gravel, K, L, M, N) */
+  height: 4% !important; 
   display: block !important; /* Enlève le flex */
   transform: translate(-50%, -50%); /* Centrage X,Y */
   border-radius: 2px !important;
   border: 1px solid rgba(0,0,0,0.7) !important;
 }
 
-/* Surcharge tailcone sur la carte (Tailcone, Hstab, Vstab) */
+/* Surcharge Carré sur la carte (Tailcone, Hstab, Vstab) */
 .spot-map.spot-square { 
-  width: 1% !important; height: 0.8% !important;
- display: block !important; /* Enlève le flex */
-  transform: translate(-50%, -50%); /* Centrage X,Y */
-  border-radius: 2px !important;
-  border: 1px solid rgba(0,0,0,0.7) !important;
+  width: 2.3% !important; height: 0 !important; padding-bottom: 2.3% !important; /* Carré parfait responsive */
 }
 
-/* Surcharge FWD sur la carte (FWD) */
+/* Surcharge Caisse sur la carte (FWD) */
 .spot-map.spot-box {
-  width: 1.3% !important; height: 1.5% !important;
+  width: 2% !important; height: 2.8% !important;
   border-radius: 4px !important;
   border-width: 1.5px !important; /* Bord épais visuel sur carte */
   box-shadow: 0 3px 6px rgba(0,0,0,0.5);
@@ -372,7 +371,7 @@ function switchView(viewName, btnElement) {
 }
 
 // =============================================
-// MODE ÉDITION DU PLAN (🔑 DRAG & DROP)
+// MODE ÉDITION DU PLAN (🔑 DRAG & DROP avec Aimant)
 // =============================================
 function toggleMapEdit() {
   isMapEditMode = !isMapEditMode;
@@ -405,10 +404,19 @@ document.addEventListener('mousemove', e => {
   if (!dragData.isDragging || !dragData.el) return;
   const container = document.getElementById('mapContainer');
   const rect = container.getBoundingClientRect();
-  let x = ((e.clientX - rect.left) / rect.width) * 100;
-  let y = ((e.clientY - rect.top) / rect.height) * 100;
+  
+  let rawX = ((e.clientX - rect.left) / rect.width) * 100;
+  let rawY = ((e.clientY - rect.top) / rect.height) * 100;
+  
+  // SYSTÈME DE MAGNÉTISME (Snap to grid) - Modifie le 0.5 si besoin
+  const step = 0.5; 
+  let x = Math.round(rawX / step) * step;
+  let y = Math.round(rawY / step) * step;
+
   x = Math.max(0, Math.min(x, 100)); y = Math.max(0, Math.min(y, 100));
-  dragData.el.style.left = x + '%'; dragData.el.style.top = y + '%';
+  
+  dragData.el.style.left = x + '%'; 
+  dragData.el.style.top = y + '%';
 });
 
 document.addEventListener('mouseup', e => {
@@ -480,7 +488,7 @@ function updateSpotElement(spotId) {
       el.className = `spot spot-map ${data.status}`;
       if (zone && zone.shape) el.classList.add('spot-' + zone.shape); 
     } else {
-      // SI C'EST DANS LA GRILLE : On met UNIQUEMENT la couleur (ça reste un rectangle)
+      // SI C'EST DANS LA GRILLE : On met UNIQUEMENT la couleur (ça reste le rectangle par défaut)
       el.className = `spot ${data.status}`;
     }
   });
