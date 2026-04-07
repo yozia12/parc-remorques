@@ -413,7 +413,7 @@ document.addEventListener('mousemove', e => {
   let rawY = ((e.clientY - rect.top) / rect.height) * 100;
   
   // SYSTÈME DE MAGNÉTISME (Snap to grid) - Modifie le 0.5 si besoin
-  const step = 0.5; 
+  const step = 0.25; 
   let x = Math.round(rawX / step) * step;
   let y = Math.round(rawY / step) * step;
 
