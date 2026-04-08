@@ -176,7 +176,6 @@ body {
 
 /* Couleurs pleines UNIQUEMENT pour la carte */
 .spot-map.libre { background-color: var(--vert) !important; }
-.spot-map.occupe { background-color: var(--orange) !important; }
 .spot-map.maintenance { background-color: var(--gris) !important; }
 
 /* Masquer les places libres sur la carte (sauf en édition) */
@@ -469,12 +468,23 @@ function subscribeRealtime() {
 function updateSpotElement(spotId) {
   const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
   const data = getSpotData(spotId);
+  const zone = ZONES.find(z => spotId.startsWith(z.id + '-'));
   
   elements.forEach(el => {
     if(el.classList.contains('spot-map')) {
-      el.className = `spot spot-map ${data.status}`; // S'assure que seule la carte garde ses classes
+      el.className = `spot spot-map ${data.status}`;
+      
+      // ✨ NOUVEAU : GESTION DE LA COULEUR SUR LA CARTE ✨
+      if (data.status === 'occupe' && zone && zone.color) {
+        el.style.setProperty('background-color', zone.color, 'important');
+        el.style.setProperty('border-color', zone.color, 'important');
+      } else {
+        el.style.removeProperty('background-color');
+        el.style.removeProperty('border-color');
+      }
+
     } else {
-      el.className = `spot ${data.status}`; // S'assure que la grille reste le rectangle par défaut !
+      el.className = `spot ${data.status}`; 
     }
   });
 }
@@ -560,7 +570,15 @@ function renderMap() {
       if(isMapEditMode) return; 
       hideTooltip(); openModal(place.spotId, place.num, zone); 
     });
-
+// APPLICATION DE LA COULEUR SPÉCIFIQUE (Si occupée)
+    if (data.status === 'occupe' && zone.color) {
+      div.style.setProperty('background-color', zone.color, 'important');
+      div.style.setProperty('border-color', zone.color, 'important');
+    } else {
+      // On nettoie le style en ligne si elle n'est plus occupée
+      div.style.removeProperty('background-color');
+      div.style.removeProperty('border-color');
+    }
     mapContainer.appendChild(div);
   });
 }
