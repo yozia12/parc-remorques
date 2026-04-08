@@ -396,7 +396,7 @@ document.addEventListener('mousemove', e => {
   let rawX = ((e.clientX - rect.left) / rect.width) * 100;
   let rawY = ((e.clientY - rect.top) / rect.height) * 100;
   
-  const step = 0.1; 
+  const step = 0.2; 
   let x = Math.round(rawX / step) * step;
   let y = Math.round(rawY / step) * step;
 
