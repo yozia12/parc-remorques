@@ -450,37 +450,46 @@ async function saveToSupabase(spotId, zoneId, num, data) {
   }
 }
 
-// NOUVEAU : Envoie TOUT LE PLAN (X,Y) dans Supabase d'un coup
+// NOUVEAU : Envoie TOUT LE PLAN (X,Y) dans Supabase d'un coup (Version Blindée)
 async function saveLayoutToSupabase() {
   setSyncStatus('loading', 'Sauvegarde du plan…');
   
-  const updates = PLACES.map(p => {
-    const data = getSpotData(p.spotId);
-    return {
-      id: p.spotId,
-      zone_id: p.zoneId,
-      num: p.num,
-      status: data.status,
-      content: data.content,
-      ref: data.ref,
-      date_entree: data.date,
-      notes: data.notes,
-      pos_x: p.x,  // LA NOUVELLE COLONNE
-      pos_y: p.y,  // LA NOUVELLE COLONNE
-      updated_at: new Date().toISOString()
-    };
-  });
+  try {
+    // 1. On prépare les données en forçant "null" pour les cases vides
+    const updates = PLACES.map(p => {
+      const data = getSpotData(p.spotId);
+      return {
+        id: p.spotId,
+        zone_id: p.zoneId,
+        num: p.num,
+        status: data.status || 'libre',
+        content: data.content || null,
+        ref: data.ref || null,
+        client: null, // On force null car la colonne existe encore dans ta base !
+        date_entree: data.date || null, // Supabase préfère "null" aux dates vides
+        notes: data.notes || null,
+        pos_x: p.x,  // On envoie le nouveau X
+        pos_y: p.y,  // On envoie le nouveau Y
+        updated_at: new Date().toISOString()
+      };
+    });
 
-  const { error } = await db.from('spots').upsert(updates);
-  
-  if (error) {
-    alert("❌ Erreur lors de la sauvegarde du plan.");
-    console.error(error);
-    setSyncStatus('error', 'Erreur');
-  } else {
+    // 2. On envoie à Supabase
+    const { error } = await db.from('spots').upsert(updates);
+    
+    // 3. S'il y a une erreur de base de données, on déclenche le "catch"
+    if (error) throw error; 
+    
     alert("✅ Plan sauvegardé avec succès pour tous les utilisateurs !");
     setSyncStatus('ok', 'Synchronisé');
+    
+  } catch (err) {
+    // 4. S'il y a le moindre crash, ça va s'afficher clairement sur ton écran !
+    alert("❌ Erreur Supabase : " + (err.message || JSON.stringify(err)));
+    console.error("Détails de l'erreur:", err);
+    setSyncStatus('error', 'Erreur');
   }
+  
   document.getElementById('btnEditMap').innerHTML = '🔓 Configurer le Plan';
 }
 
