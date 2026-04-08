@@ -212,7 +212,49 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; }
 .btn-cancel { background: rgba(255,255,255,0.07); color: #ccc; }
 .btn-clear { background: rgba(255,50,50,0.15); color: #ff7070; border: 1px solid rgba(255,50,50,0.25); }
 .saving-indicator { text-align: center; font-size: 0.68rem; color: var(--gris); margin-top: 8px; min-height: 16px; }
+/* ========================================= */
+/* BARRE DE RECHERCHE ET EFFETS VISUELS      */
+/* ========================================= */
+.search-bar {
+  padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);
+  background: var(--surface2); color: var(--blanc); font-size: 0.75rem;
+  outline: none; width: 220px; transition: border-color 0.2s;
+}
+.search-bar:focus { border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,212,255,0.3); }
 
+/* Quand on fait une recherche, on assombrit toutes les places qui ne correspondent pas */
+body.searching .spot:not(.search-match) {
+  opacity: 0.1 !important; /* Presque invisible */
+  pointer-events: none; /* Inactivable au clic */
+  filter: grayscale(100%);
+}
+
+/* La place qui correspond à la recherche clignote en BLEU ! */
+body.searching .spot.search-match {
+  z-index: 100 !important;
+  border-color: var(--cyan) !important;
+  background-color: rgba(0,212,255,0.3) !important;
+}
+
+/* Animation spéciale pour la GRILLE */
+body.searching #gridView .spot.search-match {
+  animation: pulseSearchGrid 1.2s infinite;
+}
+@keyframes pulseSearchGrid {
+  0% { transform: scale(1); box-shadow: 0 0 0px transparent; }
+  50% { transform: scale(1.15); box-shadow: 0 0 20px var(--cyan); }
+  100% { transform: scale(1); box-shadow: 0 0 0px transparent; }
+}
+
+/* Animation spéciale pour la CARTE (doit garder la rotation et le centrage) */
+body.searching #mapView .spot-map.search-match {
+  animation: pulseSearchMap 1.2s infinite;
+}
+@keyframes pulseSearchMap {
+  0% { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1); box-shadow: 0 0 0px transparent; }
+  50% { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.4); box-shadow: 0 0 20px var(--cyan); }
+  100% { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1); box-shadow: 0 0 0px transparent; }
+}
 @media (max-width: 480px) { .spot { width: 36px; height: 46px; } .spot-icon { font-size: 0.8rem; } .toolbar { padding: 8px 10px; gap: 8px; } }
 </style>
 </head>
@@ -272,7 +314,13 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; }
     <button class="view-btn active" onclick="switchView('grid', this)">🔲 Vue Grille</button>
     <button class="view-btn" onclick="switchView('map', this)">🗺️ Vue Carte</button>
   </div>
+  
   <div class="sep"></div>
+  
+  <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Rechercher (Réf, Contenu, Notes...)">
+  
+  <div class="sep"></div>
+
   <div class="leg"><div class="leg-dot" style="background:var(--vert)"></div>Libre</div>
   <div class="leg"><div class="leg-dot" style="background:var(--orange)"></div>Occupée</div>
   <div class="leg"><div class="leg-dot" style="background:var(--gris)"></div>Maintenance</div>
@@ -725,7 +773,47 @@ function updateStats() {
   document.getElementById('countLibre').textContent = libre;
   document.getElementById('countOccupe').textContent = occupe;
 }
-
+// =============================================
+// RECHERCHE GLOBALE EN TEMPS RÉEL
+// =============================================
+document.getElementById('searchInput').addEventListener('input', function(e) {
+  const term = e.target.value.toLowerCase().trim(); // Ce que tu as tapé (en minuscules)
+  const body = document.body;
+  
+  // Si la barre est vide, on annule la recherche et tout redevient normal
+  if (term === '') {
+    body.classList.remove('searching');
+    document.querySelectorAll('.spot').forEach(el => el.classList.remove('search-match'));
+    return;
+  }
+  
+  // Sinon, on active le mode recherche
+  body.classList.add('searching');
+  
+  // On fouille dans toutes les places du parc
+  ZONES.forEach(zone => {
+    for(let i = 1; i <= zone.count; i++) {
+      const spotId = `${zone.id}-${i}`;
+      const data = getSpotData(spotId);
+      
+      // On regarde si ton mot se trouve dans la Réf, le Contenu ou les Notes
+      const isMatch = (data.ref && data.ref.toLowerCase().includes(term)) ||
+                      (data.content && data.content.toLowerCase().includes(term)) ||
+                      (data.notes && data.notes.toLowerCase().includes(term));
+                      
+      // On met à jour l'affichage sur la carte et la grille
+      const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
+      elements.forEach(el => {
+        // Si ça correspond et que la place n'est pas "Libre"
+        if (isMatch && data.status !== 'libre') {
+          el.classList.add('search-match');
+        } else {
+          el.classList.remove('search-match');
+        }
+      });
+    }
+  });
+});
 // =============================================
 // INIT
 // =============================================
