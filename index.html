@@ -158,7 +158,6 @@ body {
   transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) !important; 
   border-radius: 2px !important;
   border: 1px solid rgba(0,0,0,0.7) !important;
-  /* On enlève le width/height du CSS, c'est le JS qui gère maintenant ! */
 }
 
 /* Animations au survol sur la carte avec la rotation conservée */
@@ -297,7 +296,7 @@ const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =============================================
-// ZONES CONFIG (Les dimensions s'appliquent SEULEMENT à la carte)
+// ZONES CONFIG
 // =============================================
 const ZONES = [
   { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'🔩', desc:'Tailcone', mapWidth: 1, mapHeight: 1 },
@@ -307,7 +306,7 @@ const ZONES = [
   { id:'remorque-vide',  label:'Zone Remorque Vide',    count:8,  color:'#fb923c', icon:'🚛', desc:'Remorques vides', mapWidth: 0.8, mapHeight: 6.5 },
   { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'📦', desc:'Forward', mapWidth: 1.3, mapHeight: 1.5 },
   { id:'gravel',         label:'Zone Gravel (MID/Aile)', count:20, color:'#fbbf24', icon:'🪨', desc:'MID ou Ailes', mapWidth: 0.8, mapHeight: 7 },
-  { id:'k', label:'Zone K', count:7, color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K', mapWidth: 0.8, mapHeight: 7, mapRotation: 25 },
+  { id:'k',              label:'Zone K',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K', mapWidth: 0.8, mapHeight: 7, mapRotation: 25 },
   { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone L', mapWidth: 0.8, mapHeight: 7,mapRotation: 25 },
   { id:'m',              label:'Zone M',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone M', mapWidth: 0.8, mapHeight: 7,mapRotation: 25 },
   { id:'n',              label:'Zone N',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone N', mapWidth: 0.8, mapHeight: 7,mapRotation: 25 },
@@ -326,23 +325,6 @@ ZONES.forEach((zone, zIndex) => {
     PLACES.push({ spotId: `${zone.id}-${i}`, zoneId: zone.id, num: i, x: 5 + (i * 1.5), y: 10 + (zIndex * 5) });
   }
 });
-
-function loadMapPositions() {
-  const saved = localStorage.getItem('mapLayout');
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    PLACES.forEach(p => {
-      if (parsed[p.spotId]) { p.x = parsed[p.spotId].x; p.y = parsed[p.spotId].y; }
-    });
-  }
-}
-
-function saveMapPositions() {
-  const layout = {};
-  PLACES.forEach(p => { layout[p.spotId] = { x: p.x, y: p.y }; });
-  localStorage.setItem('mapLayout', JSON.stringify(layout));
-  alert("✅ Plan sauvegardé localement sur ce navigateur !");
-}
 
 // =============================================
 // NAVIGATION DE VUE
@@ -373,8 +355,9 @@ function toggleMapEdit() {
   } else {
     body.classList.remove('map-edit-mode');
     btn.classList.remove('editing');
-    btn.innerHTML = '🔓 Configurer le Plan';
-    saveMapPositions();
+    btn.innerHTML = '⏳ Enregistrement...';
+    // NOUVEAU: Enregistrement dans Supabase
+    saveLayoutToSupabase();
   }
 }
 
@@ -427,6 +410,13 @@ async function loadFromSupabase() {
     parcData = {};
     (data || []).forEach(row => { 
       parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', date: row.date_entree || '', notes: row.notes || '' }; 
+      
+      // NOUVEAU: Récupère les positions X et Y depuis la base de données
+      let p = PLACES.find(pl => pl.spotId === row.id);
+      if (p && row.pos_x != null && row.pos_y != null) {
+        p.x = row.pos_x;
+        p.y = row.pos_y;
+      }
     });
     setSyncStatus('ok', 'Synchronisé');
     return true;
@@ -436,11 +426,17 @@ async function loadFromSupabase() {
 async function saveToSupabase(spotId, zoneId, num, data) {
   setSyncStatus('loading', 'Sauvegarde…');
   document.getElementById('savingIndicator').textContent = '⏳ Enregistrement…';
+  
+  // On récupère la position X et Y depuis PLACES pour ne pas les écraser avec null !
+  const p = PLACES.find(pl => pl.spotId === spotId);
+  
   try {
     const { error } = await db.from('spots').upsert({
       id: spotId, zone_id: zoneId, num: num, status: data.status,
       content: data.content, ref: data.ref, 
-      date_entree: data.date, notes: data.notes, updated_at: new Date().toISOString(),
+      date_entree: data.date, notes: data.notes, 
+      pos_x: p ? p.x : null, pos_y: p ? p.y : null, // On garde la position de la base
+      updated_at: new Date().toISOString(),
     });
     if (error) throw error;
     setSyncStatus('ok', 'Synchronisé');
@@ -454,12 +450,62 @@ async function saveToSupabase(spotId, zoneId, num, data) {
   }
 }
 
+// NOUVEAU : Envoie TOUT LE PLAN (X,Y) dans Supabase d'un coup
+async function saveLayoutToSupabase() {
+  setSyncStatus('loading', 'Sauvegarde du plan…');
+  
+  const updates = PLACES.map(p => {
+    const data = getSpotData(p.spotId);
+    return {
+      id: p.spotId,
+      zone_id: p.zoneId,
+      num: p.num,
+      status: data.status,
+      content: data.content,
+      ref: data.ref,
+      date_entree: data.date,
+      notes: data.notes,
+      pos_x: p.x,  // LA NOUVELLE COLONNE
+      pos_y: p.y,  // LA NOUVELLE COLONNE
+      updated_at: new Date().toISOString()
+    };
+  });
+
+  const { error } = await db.from('spots').upsert(updates);
+  
+  if (error) {
+    alert("❌ Erreur lors de la sauvegarde du plan.");
+    console.error(error);
+    setSyncStatus('error', 'Erreur');
+  } else {
+    alert("✅ Plan sauvegardé avec succès pour tous les utilisateurs !");
+    setSyncStatus('ok', 'Synchronisé');
+  }
+  document.getElementById('btnEditMap').innerHTML = '🔓 Configurer le Plan';
+}
+
 function subscribeRealtime() {
   db.channel('spots-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'spots' }, (payload) => {
     const row = payload.new || payload.old;
     if (!row) return;
     if (payload.eventType === 'DELETE') { delete parcData[row.id]; } 
-    else { parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', date: row.date_entree || '', notes: row.notes || '' }; }
+    else { 
+      parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', date: row.date_entree || '', notes: row.notes || '' }; 
+      
+      // On met à jour la position si quelqu'un a modifié le plan
+      let p = PLACES.find(pl => pl.spotId === row.id);
+      if (p && row.pos_x != null && row.pos_y != null) {
+        p.x = row.pos_x;
+        p.y = row.pos_y;
+        
+        // Et on fait bouger l'élément en direct sur l'écran !
+        const el = document.querySelector(`.spot-map[data-spot-id="${row.id}"]`);
+        if(el) {
+            el.style.left = `${row.pos_x}%`;
+            el.style.top = `${row.pos_y}%`;
+        }
+      }
+    }
     updateSpotElement(row.id);
     updateStats();
   }).subscribe();
@@ -474,7 +520,6 @@ function updateSpotElement(spotId) {
     if(el.classList.contains('spot-map')) {
       el.className = `spot spot-map ${data.status}`;
       
-      // ✨ NOUVEAU : GESTION DE LA COULEUR SUR LA CARTE ✨
       if (data.status === 'occupe' && zone && zone.color) {
         el.style.setProperty('background-color', zone.color, 'important');
         el.style.setProperty('border-color', zone.color, 'important');
@@ -520,8 +565,6 @@ function renderGrid() {
         const spotId = `${zone.id}-${i}`;
         const data = getSpotData(spotId);
         
-        // DANS LA GRILLE : On applique uniquement les classes de base et le statut.
-        // C'est ce qui garantit que la taille restera 42x52 px
         const div = document.createElement('div');
         div.className = `spot ${data.status}`;
         div.dataset.spotId = spotId;
@@ -550,18 +593,23 @@ function renderMap() {
     const data = getSpotData(place.spotId);
     
     const div = document.createElement('div');
-    // SUR LA CARTE : On ajoute "spot-map" pour les différencier de la grille
     div.className = `spot spot-map ${data.status}`; 
     
     div.dataset.spotId = place.spotId;
     div.style.left = `${place.x}%`;
     div.style.top = `${place.y}%`;
 
-    // APPLICATION DIRECTE DES DIMENSIONS (Uniquement sur la carte)
-// APPLICATION DIRECTE DES DIMENSIONS PERSONNALISÉES (Avec force priority)
     if (zone.mapWidth) div.style.setProperty('width', `${zone.mapWidth}%`, 'important');
     if (zone.mapHeight) div.style.setProperty('height', `${zone.mapHeight}%`, 'important');
     if (zone.mapRotation) div.style.setProperty('--rot', `${zone.mapRotation}deg`);
+    
+    if (data.status === 'occupe' && zone.color) {
+      div.style.setProperty('background-color', zone.color, 'important');
+      div.style.setProperty('border-color', zone.color, 'important');
+    } else {
+      div.style.removeProperty('background-color');
+      div.style.removeProperty('border-color');
+    }
     
     div.addEventListener('mouseenter', (e) => showTooltip(e, place.spotId, place.num, zone));
     div.addEventListener('mousemove', moveTooltip);
@@ -570,15 +618,7 @@ function renderMap() {
       if(isMapEditMode) return; 
       hideTooltip(); openModal(place.spotId, place.num, zone); 
     });
-// APPLICATION DE LA COULEUR SPÉCIFIQUE (Si occupée)
-    if (data.status === 'occupe' && zone.color) {
-      div.style.setProperty('background-color', zone.color, 'important');
-      div.style.setProperty('border-color', zone.color, 'important');
-    } else {
-      // On nettoie le style en ligne si elle n'est plus occupée
-      div.style.removeProperty('background-color');
-      div.style.removeProperty('border-color');
-    }
+
     mapContainer.appendChild(div);
   });
 }
@@ -681,7 +721,7 @@ function updateStats() {
 // INIT
 // =============================================
 async function init() {
-  loadMapPositions();
+  // Plus de chargement local ici, c'est loadFromSupabase qui s'en charge !
   const ok = await loadFromSupabase();
   document.getElementById('loadingScreen').classList.add('hidden');
   render();
