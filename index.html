@@ -308,7 +308,7 @@ const ZONES = [
   { id:'remorque-vide',  label:'Zone Remorque Vide',    count:8,  color:'#fb923c', icon:'🚛', desc:'Remorques vides', mapWidth: 1.5, mapHeight: 4.0 },
   { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'📦', desc:'Section avant / Forward', mapWidth: 1.3, mapHeight: 1.5 },
   { id:'gravel',         label:'Zone Gravel (MID/Aile)', count:20, color:'#fbbf24', icon:'🪨', desc:'MID ou Ailes', mapWidth: 0.8, mapHeight: 7 },
-  { id:'k', label:'Zone K', count:7, color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K', mapWidth: 0.8, mapHeight: 7, mapRotation: -45 },
+  { id:'k', label:'Zone K', count:7, color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone K', mapWidth: 0.8, mapHeight: 7, mapRotation: 45 },
   { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone L', mapWidth: 0.8, mapHeight: 7 },
   { id:'m',              label:'Zone M',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone M', mapWidth: 0.8, mapHeight: 7 },
   { id:'n',              label:'Zone N',                count:7,  color:'#38bdf8', icon:'🛫', desc:'MID / Ailes — Zone N', mapWidth: 0.8, mapHeight: 7 },
@@ -397,7 +397,7 @@ document.addEventListener('mousemove', e => {
   let rawX = ((e.clientX - rect.left) / rect.width) * 100;
   let rawY = ((e.clientY - rect.top) / rect.height) * 100;
   
-  const step = 0.25; 
+  const step = 0.1; 
   let x = Math.round(rawX / step) * step;
   let y = Math.round(rawY / step) * step;
 
