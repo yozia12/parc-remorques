@@ -614,7 +614,7 @@ function renderGrid() {
       const zone = ZONES.find(z => z.id === id);
       const block = document.createElement('div');
       block.className = 'zone-block';
-      block.innerHTML = `<div class="zone-header"><div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div><div class="zone-count">${zone.count} places</div></div>`;
+     block.innerHTML = `<div class="zone-header"><div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div><div class="zone-count" id="count-${zone.id}"></div></div>`;
       
       const body = document.createElement('div');
       body.className = 'zone-body';
@@ -762,13 +762,29 @@ document.getElementById('modalBg').addEventListener('click', (e) => { if (e.targ
 // =============================================
 function updateStats() {
   let libre = 0, occupe = 0, total = 0;
+  
   ZONES.forEach(zone => {
+    let zoneOccupe = 0; // Compteur spécifique pour cette zone
+    
     for (let i = 1; i <= zone.count; i++) {
       const d = getSpotData(`${zone.id}-${i}`);
       total++;
-      if (d.status === 'libre') libre++; else if (d.status === 'occupe') occupe++; 
+      if (d.status === 'libre') {
+        libre++; 
+      } else if (d.status === 'occupe') { 
+        occupe++; 
+        zoneOccupe++; // On ajoute 1 au compteur de la zone
+      } 
+    }
+    
+    // ✨ NOUVEAU : Mise à jour du texte en haut à droite de chaque zone
+    const zoneCountEl = document.getElementById(`count-${zone.id}`);
+    if (zoneCountEl) {
+      zoneCountEl.textContent = `${zoneOccupe} / ${zone.count} occupées`;
     }
   });
+  
+  // Mise à jour des compteurs globaux (en haut de l'écran)
   document.getElementById('totalSpots').textContent = total;
   document.getElementById('countLibre').textContent = libre;
   document.getElementById('countOccupe').textContent = occupe;
