@@ -3,42 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Parc Remorques — Plan Interactif</title>
+<title>Parc Aéro — Gestion Stockage Extérieur</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
+* { margin: 0; padding: 0; box-sizing: border-box; }
+ 
 :root {
-  /* FOND CLAIR DE LA PAGE POUR LA LISIBILITÉ */
-  --bg: #f0f2f5; 
-  --text-page: #1e293b;
-
-  /* COULEURS SOMBRES ORIGINALES POUR LES SECTIONS */
+  --bg: #0d1117;
   --surface: #16213e;
   --surface2: #0f1929;
-  
-  /* Couleurs de base */
+  --surface3: #1a2744;
   --orange: #ff6b2b;
   --orange2: #ff9a5c;
   --vert: #00e5a0;
   --gris: #8892a4;
   --blanc: #e0e0e0;
+  --cyan: #00d4ff;
+  --rouge: #ff4444;
+  --jaune: #fbbf24;
+  --violet: #a78bfa;
+  --bleu: #38bdf8;
 }
-
+ 
 body {
   background: var(--bg);
   font-family: 'Segoe UI', Arial, sans-serif;
-  color: var(--blanc); 
+  color: var(--blanc);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
-
-/* HEADER */
+ 
+/* ── HEADER ─────────────────────────────────────────── */
 .header {
   background: var(--surface);
   border-bottom: 2px solid var(--orange);
-  padding: 12px 20px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -48,90 +48,94 @@ body {
   top: 0;
   z-index: 100;
 }
-
-.header h1 { font-size: 1rem; font-weight: 800; color: #fff; }
-.header h1 span { color: var(--orange); }
-
-.stats-bar { display: flex; gap: 10px; flex-wrap: wrap; }
-.stat-box { text-align: center; background: var(--surface2); border-radius: 6px; padding: 5px 12px; min-width: 60px; }
-.stat-box .val { font-size: 1.2rem; font-weight: 800; line-height: 1; }
-.stat-box .lbl { font-size: 0.58rem; opacity: 0.6; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blanc); }
+.header-brand h1 { font-size: 1rem; font-weight: 800; color: #fff; }
+.header-brand h1 span { color: var(--orange); }
+.header-brand p { font-size: 0.6rem; color: var(--gris); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
+ 
+.stats-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+.stat-box { text-align: center; background: var(--surface2); border-radius: 6px; padding: 4px 12px; min-width: 56px; border-top: 2px solid transparent; }
+.stat-box.s-vert { border-top-color: var(--vert); }
+.stat-box.s-orange { border-top-color: var(--orange); }
+.stat-box.s-cyan { border-top-color: var(--cyan); }
+.stat-box.s-jaune { border-top-color: var(--jaune); }
+.stat-box .val { font-size: 1.15rem; font-weight: 800; line-height: 1; }
+.stat-box .lbl { font-size: 0.56rem; opacity: 0.6; letter-spacing: 0.1em; text-transform: uppercase; }
 .val.libre { color: var(--vert); }
 .val.occupe { color: var(--orange); }
-
-/* SYNC STATUS */
+.val.cyan { color: var(--cyan); }
+.val.jaune { color: var(--jaune); }
+ 
 .sync-dot { display: flex; align-items: center; gap: 6px; font-size: 0.65rem; color: var(--gris); }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gris); transition: background 0.3s; }
 .dot.ok { background: var(--vert); animation: pulse 2s infinite; }
 .dot.loading { background: var(--orange); animation: pulse 0.5s infinite; }
-.dot.error { background: #ff4444; }
+.dot.error { background: var(--rouge); }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-/* TOOLBAR & VIEWS */
+ 
+/* ── TOOLBAR ─────────────────────────────────────────── */
 .toolbar {
-  display: flex; gap: 12px; padding: 8px 20px; background: #12192e;
-  border-bottom: 1px solid rgba(0,0,0,0.1); flex-wrap: wrap; align-items: center;
+  display: flex; gap: 10px; padding: 8px 20px;
+  background: #12192e; border-bottom: 1px solid rgba(0,0,0,0.2);
+  flex-wrap: wrap; align-items: center;
 }
-
-.view-toggles { display: flex; gap: 8px; }
+.view-toggles { display: flex; gap: 6px; flex-wrap: wrap; }
 .view-btn {
-  padding: 6px 14px; border-radius: 6px; border: none;
+  padding: 5px 13px; border-radius: 6px; border: none;
   background: var(--surface2); color: var(--gris);
-  font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s;
+  font-size: 0.72rem; font-weight: bold; cursor: pointer; transition: 0.2s;
+  white-space: nowrap;
 }
 .view-btn.active { background: var(--orange); color: #fff; }
-
-/* BOUTON ÉDITION DU PLAN */
-#btnEditMap { display: none; margin-left: auto; color: #00d4ff; border: 1px solid #00d4ff; background: rgba(0,212,255,0.1); }
-#btnEditMap.editing { background: #ff4444; border-color: #ff4444; color: #fff; animation: pulseEdit 1.5s infinite; }
+.view-btn:hover:not(.active) { background: var(--surface3); color: var(--blanc); }
+ 
+#btnEditMap { display: none; margin-left: auto; color: var(--cyan); border: 1px solid var(--cyan); background: rgba(0,212,255,0.08); }
+#btnEditMap.editing { background: var(--rouge); border-color: var(--rouge); color: #fff; animation: pulseEdit 1.5s infinite; }
 @keyframes pulseEdit { 0% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); } 70% { box-shadow: 0 0 0 6px rgba(255,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0); } }
-
-.leg { display: flex; align-items: center; gap: 5px; font-size: 0.68rem; color: var(--gris); }
+ 
+.leg { display: flex; align-items: center; gap: 5px; font-size: 0.66rem; color: var(--gris); }
 .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-.sep { width: 1px; height: 20px; background: rgba(255,255,255,0.08); }
-
-.filter-btn {
-  padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-  background: transparent; color: var(--gris); font-size: 0.68rem; cursor: pointer; transition: all 0.2s;
+.sep { width: 1px; height: 20px; background: rgba(255,255,255,0.07); flex-shrink: 0; }
+.search-bar {
+  padding: 5px 12px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: var(--surface2); color: var(--blanc); font-size: 0.73rem;
+  outline: none; width: 200px; transition: border-color 0.2s;
 }
-.filter-btn:hover, .filter-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
-
-/* LOADING SCREEN */
+.search-bar:focus { border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,212,255,0.25); }
+ 
+/* ── LOADING ─────────────────────────────────────────── */
 .loading-screen { position: fixed; inset: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 9999; }
 .loading-screen.hidden { display: none; }
 .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,43,0.2); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* MAIN CONTAINERS */
+ 
+/* ── VIEWS ───────────────────────────────────────────── */
 .main-view { display: none; padding: 16px 20px; flex-direction: column; gap: 14px; flex-grow: 1; }
 .main-view.active { display: flex; }
-
-/* GRID VIEW STYLES */
+#mapView { align-items: center; justify-content: center; }
+#dashboardView, #mouvementsView, #rapportsView { overflow-y: auto; }
+ 
+/* ── GRID & MAP (original) ───────────────────────────── */
 .group-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .group-row .zone-block { flex: 1; min-width: 180px; }
-.zone-block { background: var(--surface); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.zone-block { background: var(--surface); border: 1px solid rgba(0,0,0,0.15); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
 .zone-header { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05); }
-.zone-name { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.zone-name { font-size: 0.73rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
 .zone-count { font-size: 0.6rem; color: var(--gris); }
 .zone-body { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
-
-/* MAP VIEW STYLES */
-#mapView { align-items: center; justify-content: center; }
+ 
 #mapContainer {
-  position: relative; width: 100%; max-width: 100%; height: 86vh; 
-  aspect-ratio: 16 / 9; /* Remplace par les vraies dimensions de ton image (ex: 1920 / 1080) */
-  background-size: 100% 100%; 
-  background-image: url('plan-cour.png'); 
+  position: relative; width: 100%; max-width: 100%; height: 86vh;
+  aspect-ratio: 16 / 9;
+  background-size: 100% 100%;
+  background-image: url('plan-cour.png');
   background-repeat: no-repeat; background-position: center;
-  border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); overflow: hidden;
-  background-color: #fff; 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border-radius: 8px; border: 1px solid rgba(0,0,0,0.15); overflow: hidden;
+  background-color: #1a2e1a;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
-
-/* ========================================= */
-/* STYLE DES PLACES DANS LA GRILLE           */
-/* LA TAILLE RESTE STRICTEMENT 42x52px       */
-/* ========================================= */
+ 
+/* ── SPOTS ───────────────────────────────────────────── */
 .spot {
   width: 42px; height: 52px; border-radius: 5px; display: flex; flex-direction: column;
   align-items: center; justify-content: center; cursor: pointer; font-size: 0.58rem;
@@ -140,68 +144,55 @@ body {
 }
 .spot:hover { transform: scale(1.12); filter: brightness(1.25); z-index: 10; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
 .spot:active { transform: scale(0.96); }
-
-.spot.libre { background: rgba(0,229,160,0.15); border-color: var(--vert); color: var(--vert); }
-.spot.occupe { background: rgba(255,107,43,0.18); border-color: var(--orange); color: var(--orange2); }
-.spot.maintenance { background: rgba(136,146,164,0.12); border-color: var(--gris); color: var(--gris); }
-
+.spot.libre { background: rgba(0,229,160,0.12); border-color: var(--vert); color: var(--vert); }
+.spot.occupe { background: rgba(255,107,43,0.16); border-color: var(--orange); color: var(--orange2); }
+.spot.maintenance { background: rgba(136,146,164,0.1); border-color: var(--gris); color: var(--gris); }
 .spot-icon { font-size: 0.95rem; margin-bottom: 1px; }
 .spot-id { font-size: 0.65rem; font-weight: 800; }
-
-/* ========================================= */
-/* STYLE DES PLACES SUR LA CARTE             */
-/* La taille est gérée dynamiquement par JS  */
-/* ========================================= */
+ 
 .spot-map {
-  position: absolute !important;
-  display: block !important; 
-  transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) !important; 
-  border-radius: 2px !important;
-  border: 1px solid rgba(0,0,0,0.7) !important;
+  position: absolute !important; display: block !important;
+  transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) !important;
+  border-radius: 2px !important; border: 1px solid rgba(0,0,0,0.7) !important;
 }
-
-/* Animations au survol sur la carte avec la rotation conservée */
-.spot-map:hover {
-  transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.3) !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.8);
-  z-index: 50;
-}
-.spot-map:active {
-  transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.95) !important;
-}
-
-/* Cache icônes et textes sur la carte */
+.spot-map:hover { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.3) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.8); z-index: 50; }
+.spot-map:active { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.95) !important; }
 .spot-map .spot-icon, .spot-map .spot-id { display: none; }
-
-/* Couleurs pleines UNIQUEMENT pour la carte */
 .spot-map.libre { background-color: var(--vert) !important; }
 .spot-map.maintenance { background-color: var(--gris) !important; }
-
-/* Masquer les places libres sur la carte (sauf en édition) */
 body:not(.map-edit-mode) #mapView .spot-map.libre { display: none !important; }
-
-/* MODE ÉDITION DU PLAN (🔑 Glisser-Déposer) */
 body.map-edit-mode .spot-map { cursor: grab !important; border: 2px dashed #fff !important; }
 body.map-edit-mode .spot-map:active { cursor: grabbing !important; }
 body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; }
-
-/* TOOLTIP */
-#tooltip { position: fixed; background: #0a1020; border: 1px solid var(--orange); border-radius: 8px; padding: 10px 13px; font-size: 0.72rem; pointer-events: none; z-index: 500; display: none; max-width: 210px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); line-height: 1.5; color: var(--blanc); }
+ 
+/* ── SEARCH ──────────────────────────────────────────── */
+body.searching .spot:not(.search-match) { opacity: 0.08 !important; pointer-events: none; filter: grayscale(100%); }
+body.searching .spot.search-match { z-index: 100 !important; border-color: var(--cyan) !important; background-color: rgba(0,212,255,0.25) !important; }
+body.searching #gridView .spot.search-match { animation: pulseSearchGrid 1.2s infinite; }
+@keyframes pulseSearchGrid { 0% { transform: scale(1); } 50% { transform: scale(1.15); box-shadow: 0 0 20px var(--cyan); } 100% { transform: scale(1); } }
+body.searching #mapView .spot-map.search-match { animation: pulseSearchMap 1.2s infinite; }
+@keyframes pulseSearchMap { 0% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1); } 50% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.4); box-shadow: 0 0 20px var(--cyan); } 100% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1); } }
+ 
+/* ── TOOLTIP ─────────────────────────────────────────── */
+#tooltip { position: fixed; background: #0a1020; border: 1px solid var(--orange); border-radius: 8px; padding: 10px 13px; font-size: 0.72rem; pointer-events: none; z-index: 500; display: none; max-width: 220px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); line-height: 1.5; color: var(--blanc); }
 #tooltip .tt-id { font-weight: 800; font-size: 0.88rem; color: var(--orange2); margin-bottom: 3px; }
 #tooltip .tt-zone { font-size: 0.62rem; color: var(--gris); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
 #tooltip .tt-row { display: flex; justify-content: space-between; gap: 8px; font-size: 0.68rem; margin-top: 2px; }
 #tooltip .tt-row span:first-child { color: var(--gris); }
-#tooltip .tt-status { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 0.62rem; font-weight: 700; margin-top: 5px; }
-
-/* MODAL */
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
+ 
+/* ── MODAL ───────────────────────────────────────────── */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
 .modal-bg.open { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--orange); border-radius: 12px; padding: 22px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; color: var(--blanc); }
+.modal { background: var(--surface); border: 1px solid var(--orange); border-radius: 12px; padding: 22px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 92vh; overflow-y: auto; color: var(--blanc); }
 .modal h2 { font-size: 0.95rem; font-weight: 800; color: var(--orange2); margin-bottom: 2px; }
 .modal .modal-zone { font-size: 0.62rem; color: var(--gris); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
 .modal label { display: block; font-size: 0.68rem; color: #aaa; margin-bottom: 3px; margin-top: 10px; }
-.modal input, .modal select { width: 100%; background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 10px; color: var(--blanc); font-size: 0.78rem; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
-.modal input[type="datetime-local"] { color-scheme: dark; } 
+.modal input, .modal select {
+  width: 100%; background: var(--surface2); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; padding: 8px 10px; color: var(--blanc); font-size: 0.78rem;
+  outline: none; transition: border-color 0.2s; -webkit-appearance: none;
+}
+.modal input[type="datetime-local"] { color-scheme: dark; }
 .modal input:focus, .modal select:focus { border-color: var(--orange); }
 .modal select option { background: var(--surface); }
 .modal-btns { display: flex; gap: 8px; margin-top: 18px; }
@@ -210,63 +201,115 @@ body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; }
 .btn:hover { opacity: 0.85; }
 .btn-save { background: var(--orange); color: #fff; }
 .btn-cancel { background: rgba(255,255,255,0.07); color: #ccc; }
-.btn-clear { background: rgba(255,50,50,0.15); color: #ff7070; border: 1px solid rgba(255,50,50,0.25); }
+.btn-clear { background: rgba(255,50,50,0.12); color: #ff7070; border: 1px solid rgba(255,50,50,0.2); }
 .saving-indicator { text-align: center; font-size: 0.68rem; color: var(--gris); margin-top: 8px; min-height: 16px; }
-/* ========================================= */
-/* BARRE DE RECHERCHE ET EFFETS VISUELS      */
-/* ========================================= */
-.search-bar {
-  padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);
-  background: var(--surface2); color: var(--blanc); font-size: 0.75rem;
-  outline: none; width: 220px; transition: border-color 0.2s;
+ 
+/* ── DASHBOARD STYLES ────────────────────────────────── */
+.dash-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.dash-card {
+  background: var(--surface); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px; padding: 16px 18px; flex: 1; min-width: 140px;
 }
-.search-bar:focus { border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,212,255,0.3); }
-
-/* Quand on fait une recherche, on assombrit toutes les places qui ne correspondent pas */
-body.searching .spot:not(.search-match) {
-  opacity: 0.1 !important; /* Presque invisible */
-  pointer-events: none; /* Inactivable au clic */
-  filter: grayscale(100%);
+.dash-card .card-title { font-size: 0.62rem; color: var(--gris); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+.dash-kpi { font-size: 2rem; font-weight: 900; line-height: 1; }
+.dash-kpi-sub { font-size: 0.7rem; color: var(--gris); margin-top: 5px; }
+ 
+/* Weather widget */
+.weather-widget {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface3) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 10px; padding: 14px 18px;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
 }
-
-/* La place qui correspond à la recherche clignote en BLEU ! */
-body.searching .spot.search-match {
-  z-index: 100 !important;
-  border-color: var(--cyan) !important;
-  background-color: rgba(0,212,255,0.3) !important;
+.weather-icon { font-size: 2.5rem; }
+.weather-info .wt-cond { font-size: 1rem; font-weight: 700; color: var(--blanc); }
+.weather-info .wt-detail { font-size: 0.68rem; color: var(--gris); margin-top: 3px; }
+.weather-alert {
+  background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 7px; padding: 7px 13px; color: var(--jaune); font-size: 0.7rem;
+  margin-left: auto;
 }
-
-/* Animation spéciale pour la GRILLE */
-body.searching #gridView .spot.search-match {
-  animation: pulseSearchGrid 1.2s infinite;
+.weather-ok { margin-left: auto; color: var(--vert); font-size: 0.7rem; font-weight: 700; }
+ 
+/* Zone occupancy bars */
+.zone-occ-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.zone-occ-card { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 13px 16px; }
+.zone-occ-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+.zone-occ-name { font-size: 0.78rem; font-weight: 700; }
+.zone-occ-nums { font-size: 0.68rem; color: var(--gris); font-family: monospace; }
+.zone-occ-area { font-size: 0.6rem; color: var(--gris); margin-bottom: 8px; }
+.bar-track { background: rgba(255,255,255,0.07); border-radius: 4px; height: 8px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+.zone-occ-pct { font-size: 0.68rem; color: var(--gris); margin-top: 4px; }
+ 
+/* Movements table */
+.mvt-filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.filter-chip {
+  padding: 4px 12px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent; color: var(--gris);
+  font-size: 0.68rem; cursor: pointer; transition: all 0.2s;
 }
-@keyframes pulseSearchGrid {
-  0% { transform: scale(1); box-shadow: 0 0 0px transparent; }
-  50% { transform: scale(1.15); box-shadow: 0 0 20px var(--cyan); }
-  100% { transform: scale(1); box-shadow: 0 0 0px transparent; }
+.filter-chip:hover, .filter-chip.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+.mvt-table-wrap { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; }
+.mvt-table { width: 100%; border-collapse: collapse; font-size: 0.73rem; }
+.mvt-table th { padding: 9px 13px; text-align: left; color: var(--gris); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.06); white-space: nowrap; }
+.mvt-table td { padding: 9px 13px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+.mvt-table tr:last-child td { border-bottom: none; }
+.mvt-table tr:hover td { background: rgba(255,255,255,0.02); }
+.mvt-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; white-space: nowrap; }
+.mvt-entree { background: rgba(0,229,160,0.12); color: var(--vert); border: 1px solid rgba(0,229,160,0.25); }
+.mvt-sortie { background: rgba(255,68,68,0.12); color: var(--rouge); border: 1px solid rgba(255,68,68,0.25); }
+.mvt-modif { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.22); }
+.mvt-maint { background: rgba(136,146,164,0.12); color: var(--gris); border: 1px solid rgba(136,146,164,0.25); }
+.mvt-empty { text-align: center; padding: 40px; color: var(--gris); font-size: 0.8rem; }
+.mono { font-family: monospace; }
+ 
+/* Reports */
+.report-section { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 18px 20px; }
+.report-section h3 { font-size: 0.72rem; color: var(--gris); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; }
+.rpt-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.78rem; }
+.rpt-row:last-child { border-bottom: none; }
+.rpt-label { color: var(--gris); }
+.rpt-val { font-weight: 700; font-family: monospace; }
+.capa-table { width: 100%; border-collapse: collapse; font-size: 0.73rem; }
+.capa-table th { padding: 7px 12px; text-align: left; color: var(--gris); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.06); }
+.capa-table td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.reco-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: flex-start; font-size: 0.76rem; }
+.reco-item:last-child { border-bottom: none; }
+.reco-icon { font-size: 1.2rem; flex-shrink: 0; }
+ 
+/* Section title */
+.section-title { font-size: 0.65rem; color: var(--gris); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }
+.page-title { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.04em; margin-bottom: 4px; }
+.page-sub { font-size: 0.68rem; color: var(--gris); margin-bottom: 16px; }
+.export-btn {
+  padding: 7px 16px; border-radius: 6px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  color: var(--gris); font-size: 0.7rem; font-weight: 700; cursor: pointer;
+  transition: all 0.2s;
 }
-
-/* Animation spéciale pour la CARTE (doit garder la rotation et le centrage) */
-body.searching #mapView .spot-map.search-match {
-  animation: pulseSearchMap 1.2s infinite;
+.export-btn:hover { background: rgba(255,107,43,0.12); border-color: var(--orange); color: var(--orange); }
+ 
+@media (max-width: 600px) {
+  .spot { width: 36px; height: 46px; }
+  .spot-icon { font-size: 0.8rem; }
+  .toolbar { padding: 8px 10px; gap: 6px; }
+  .dash-kpi { font-size: 1.6rem; }
 }
-@keyframes pulseSearchMap {
-  0% { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1); box-shadow: 0 0 0px transparent; }
-  50% { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.4); box-shadow: 0 0 20px var(--cyan); }
-  100% { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1); box-shadow: 0 0 0px transparent; }
-}
-@media (max-width: 480px) { .spot { width: 36px; height: 46px; } .spot-icon { font-size: 0.8rem; } .toolbar { padding: 8px 10px; gap: 8px; } }
 </style>
 </head>
 <body>
-
+ 
+<!-- LOADING -->
 <div class="loading-screen" id="loadingScreen">
   <div class="spinner"></div>
-  <p>Connexion à la base de données…</p>
+  <p style="color:var(--gris);font-size:0.8rem">Connexion à la base de données…</p>
 </div>
-
+ 
 <div id="tooltip"></div>
-
+ 
+<!-- MODAL (enrichi avec Opérateur) -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h2 id="modalTitle">Place</h2>
@@ -278,11 +321,22 @@ body.searching #mapView .spot-map.search-match {
       <option value="maintenance">⚪ Maintenance</option>
     </select>
     <label>Contenu (type de pièce)</label>
-    <input type="text" id="modalContent" placeholder="Ex: Tailcone A320, Aile gauche…">
+    <input type="text" id="modalContent" placeholder="Ex: Tailcone A320, Aile gauche, MID…">
     <label>Référence / N° de série</label>
     <input type="text" id="modalRef" placeholder="Ex: MSN-4521-TC">
     <label>Date et Heure d'entrée</label>
     <input type="datetime-local" id="modalDate">
+    <label>Opérateur</label>
+    <select id="modalOperator">
+      <option value="">— Sélectionner —</option>
+      <option>J. Tremblay</option>
+      <option>M. Gagnon</option>
+      <option>S. Roy</option>
+      <option>P. Lavoie</option>
+      <option>A. Côté</option>
+      <option>L. Bergeron</option>
+      <option>R. Mercier</option>
+    </select>
     <label>Notes</label>
     <input type="text" id="modalNotes" placeholder="Notes libres…">
     <div class="modal-btns">
@@ -293,151 +347,240 @@ body.searching #mapView .spot-map.search-match {
     <div class="saving-indicator" id="savingIndicator"></div>
   </div>
 </div>
-
+ 
+<!-- HEADER -->
 <div class="header">
-  <div>
-    <h1>Parc <span>Remorques</span></h1>
-    <div class="sync-dot" id="syncStatus">
+  <div class="header-brand">
+    <h1>Parc <span>Aéro</span></h1>
+    <p>Gestion Stockage Extérieur</p>
+    <div class="sync-dot" id="syncStatus" style="margin-top:4px">
       <div class="dot loading" id="syncDot"></div>
       <span id="syncLabel">Connexion…</span>
     </div>
   </div>
   <div class="stats-bar">
-    <div class="stat-box"><div class="val" id="totalSpots">152</div><div class="lbl">Total</div></div>
-    <div class="stat-box"><div class="val libre" id="countLibre">—</div><div class="lbl">Libres</div></div>
-    <div class="stat-box"><div class="val occupe" id="countOccupe">—</div><div class="lbl">Occupées</div></div>
+    <div class="stat-box s-cyan"><div class="val cyan" id="totalSpots">—</div><div class="lbl">Total</div></div>
+    <div class="stat-box s-vert"><div class="val libre" id="countLibre">—</div><div class="lbl">Libres</div></div>
+    <div class="stat-box s-orange"><div class="val occupe" id="countOccupe">—</div><div class="lbl">Occupées</div></div>
+    <div class="stat-box s-jaune"><div class="val jaune" id="countMvtToday">—</div><div class="lbl">Mvt. auj.</div></div>
   </div>
 </div>
-
+ 
+<!-- TOOLBAR -->
 <div class="toolbar">
   <div class="view-toggles">
-    <button class="view-btn active" onclick="switchView('grid', this)">🔲 Vue Grille</button>
-    <button class="view-btn" onclick="switchView('map', this)">🗺️ Vue Carte</button>
+    <button class="view-btn active" onclick="switchView('grid', this)">🔲 Grille</button>
+    <button class="view-btn" onclick="switchView('map', this)">🗺️ Carte</button>
+    <button class="view-btn" onclick="switchView('dashboard', this)">📊 Dashboard</button>
+    <button class="view-btn" onclick="switchView('mouvements', this)">⇄ Mouvements</button>
+    <button class="view-btn" onclick="switchView('rapports', this)">📈 Rapports</button>
   </div>
-  
   <div class="sep"></div>
-  
-  <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Rechercher (Réf, Contenu, Notes...)">
-  
+  <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Réf, Contenu, Notes…">
   <div class="sep"></div>
-
   <div class="leg"><div class="leg-dot" style="background:var(--vert)"></div>Libre</div>
   <div class="leg"><div class="leg-dot" style="background:var(--orange)"></div>Occupée</div>
   <div class="leg"><div class="leg-dot" style="background:var(--gris)"></div>Maintenance</div>
-  
   <button class="view-btn" id="btnEditMap" onclick="toggleMapEdit()">🔓 Configurer le Plan</button>
 </div>
-
+ 
+<!-- VUE GRILLE -->
 <div class="main-view active" id="gridView"></div>
-
+ 
+<!-- VUE CARTE -->
 <div class="main-view" id="mapView">
   <div id="mapContainer"></div>
 </div>
-
+ 
+<!-- VUE DASHBOARD -->
+<div class="main-view" id="dashboardView">
+  <!-- rempli par renderDashboard() -->
+</div>
+ 
+<!-- VUE MOUVEMENTS -->
+<div class="main-view" id="mouvementsView">
+  <!-- rempli par renderMovements() -->
+</div>
+ 
+<!-- VUE RAPPORTS -->
+<div class="main-view" id="rapportsView">
+  <!-- rempli par renderReports() -->
+</div>
+ 
 <script>
-// =============================================
+// ════════════════════════════════════════════════════════
 // SUPABASE CONFIG
-// =============================================
+// ════════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://ddeucqcjrmkasptupohd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkZXVjcWNqcm1rYXNwdHVwb2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzE2ODAsImV4cCI6MjA5MDY0NzY4MH0.DNcKFACTd9HKj1pBus5Rt0mRASe6PxBNkVv7we0d-9I';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// =============================================
-// ZONES CONFIG
-// =============================================
+ 
+// ════════════════════════════════════════════════════════
+// DONNÉES ZONES — Dimensions réelles (pi²) + Composantes
+// ════════════════════════════════════════════════════════
+const ZONE_AREAS = {
+  'beton_group':  { area: 62581, label: 'Zone Béton (MID / Aile / FWD)', ids: ['béton','fwd'] },
+  'p7_group':     { area: 35288, label: 'Zone P7 (Remorques / VSTAB / TAILCONE / HSTAB)', ids: ['remorque','remorque-vide','vstab','tailcone','hstab'] },
+  'klmn_group':   { area: 12567, label: 'Zones K / L / M / N', ids: ['k','l','m','n'] },
+  'rear_group':   { area: 16244, label: 'Zone REAR', ids: ['rear'] },
+};
+ 
+// Dimensions en pi² par composante (pour calcul capacité théorique)
+const COMPOSANTE_DIMS = {
+  'MID':       1110,
+  'Tailcone':  189,
+  'Rear':      640,
+  'Wings':     1336,
+  'Hstab':     587,
+  'Vstab':     316,
+  'FWD':       406,
+  'Remorque':  750,
+};
+ 
 const ZONES = [
-  { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'✈️', desc:'Tailcone', mapWidth: 1, mapHeight: 1 },
-  { id:'hstab',          label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'HSTAB', mapWidth: 1.5, mapHeight: 1.5 },
-  { id:'vstab',          label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'VSTAB', mapWidth: 1.5, mapHeight: 1 },
-  { id:'remorque',       label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques générales', mapWidth: 4, mapHeight: 1.5 },
-  { id:'remorque-vide',  label:'Zone Remorque Vide',    count:5,  color:'#fb923c', icon:'🚛', desc:'Remorques vides', mapWidth: 0.8, mapHeight: 6.5 },
-  { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'✈️', desc:'Forward', mapWidth: 1.3, mapHeight: 1.5 },
-  { id:'béton',         label:'Zone Béton (MID/Aile)', count:18, color:'#fbbf24', icon:'✈️', desc:'MID ou Ailes', mapWidth: 0.8, mapHeight: 7 },
-  { id:'k',              label:'Zone K',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone K', mapWidth: 0.8, mapHeight: 7, mapRotation: 25 },
-  { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone L', mapWidth: 0.8, mapHeight: 7,mapRotation: 25 },
-  { id:'m',              label:'Zone M',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone M', mapWidth: 0.8, mapHeight: 7,mapRotation: 25 },
-  { id:'n',              label:'Zone N',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone N', mapWidth: 0.8, mapHeight: 7,mapRotation: 25 },
-  { id:'rear',           label:'Stockage REAR',         count:24, color:'#ef4444', icon:'✈️', desc:'REAR', mapWidth: 0.8, mapHeight: 5 },
+  { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'✈️', desc:'Tailcone', mapWidth:1,    mapHeight:1 },
+  { id:'hstab',          label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'HSTAB',   mapWidth:1.5,  mapHeight:1.5 },
+  { id:'vstab',          label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'VSTAB',   mapWidth:1.5,  mapHeight:1 },
+  { id:'remorque',       label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques générales', mapWidth:4, mapHeight:1.5 },
+  { id:'remorque-vide',  label:'Zone Remorque Vide',    count:5,  color:'#fb923c', icon:'🚛', desc:'Remorques vides',     mapWidth:0.8, mapHeight:6.5 },
+  { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'✈️', desc:'Forward', mapWidth:1.3, mapHeight:1.5 },
+  { id:'béton',          label:'Zone Béton (MID/Aile)', count:18, color:'#fbbf24', icon:'✈️', desc:'MID ou Ailes', mapWidth:0.8, mapHeight:7 },
+  { id:'k',              label:'Zone K',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone K', mapWidth:0.8, mapHeight:7, mapRotation:25 },
+  { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone L', mapWidth:0.8, mapHeight:7, mapRotation:25 },
+  { id:'m',              label:'Zone M',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone M', mapWidth:0.8, mapHeight:7, mapRotation:25 },
+  { id:'n',              label:'Zone N',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone N', mapWidth:0.8, mapHeight:7, mapRotation:25 },
+  { id:'rear',           label:'Stockage REAR',         count:24, color:'#ef4444', icon:'✈️', desc:'REAR', mapWidth:0.8, mapHeight:5 },
 ];
-
-// =============================================
-// STATE & PLACES
-// =============================================
+ 
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
 let parcData = {};
 let PLACES = [];
 let isMapEditMode = false;
-
+let currentView = 'grid';
+let mvtFilter = 'Tous';
+ 
+// Mouvements stockés dans localStorage (fallback fiable)
+const MVT_KEY = 'parc_mvt_v2';
+let movements = [];
+try { movements = JSON.parse(localStorage.getItem(MVT_KEY) || '[]'); } catch(e) { movements = []; }
+ 
 ZONES.forEach((zone, zIndex) => {
-  for(let i=1; i<=zone.count; i++) {
-    PLACES.push({ spotId: `${zone.id}-${i}`, zoneId: zone.id, num: i, x: 5 + (i * 1.5), y: 10 + (zIndex * 5) });
+  for (let i = 1; i <= zone.count; i++) {
+    PLACES.push({ spotId:`${zone.id}-${i}`, zoneId:zone.id, num:i, x:5+(i*1.5), y:10+(zIndex*5) });
   }
 });
-
-// =============================================
-// NAVIGATION DE VUE
-// =============================================
-function switchView(viewName, btnElement) {
-  document.querySelectorAll('.view-btn.active').forEach(btn => btn.classList.remove('active'));
-  btnElement.classList.add('active');
-  document.getElementById('gridView').classList.remove('active');
-  document.getElementById('mapView').classList.remove('active');
-  document.getElementById(viewName + 'View').classList.add('active');
-
-  document.getElementById('btnEditMap').style.display = (viewName === 'map') ? 'block' : 'none';
-  if (viewName !== 'map' && isMapEditMode) toggleMapEdit(); 
+ 
+// ════════════════════════════════════════════════════════
+// MOUVEMENTS — Log interne
+// ════════════════════════════════════════════════════════
+function detectMvtType(oldData, newData) {
+  const hadContent = !!(oldData && oldData.content && oldData.content.trim());
+  const hasContent = !!(newData.content && newData.content.trim());
+  const wasOccupe = oldData && oldData.status === 'occupe';
+  const isOccupe = newData.status === 'occupe';
+  const isLibre = newData.status === 'libre';
+  const isMaint = newData.status === 'maintenance';
+ 
+  if (isMaint) return 'Maintenance';
+  if (!wasOccupe && isOccupe) return 'Entrée';
+  if (wasOccupe && isLibre) return 'Sortie';
+  if (hasContent && !hadContent) return 'Entrée';
+  if (!hasContent && hadContent) return 'Sortie';
+  return 'Modification';
 }
-
-// =============================================
-// MODE ÉDITION DU PLAN (🔑 DRAG & DROP avec Aimant)
-// =============================================
+ 
+function logMovement(spotId, zoneId, num, oldData, newData) {
+  const zone = ZONES.find(z => z.id === zoneId);
+  const type = detectMvtType(oldData, newData);
+  const mvt = {
+    id: Date.now() + Math.random(),
+    spotId, zoneId, spotNum: num,
+    zoneLabel: zone ? zone.label : zoneId,
+    type,
+    ancienStatut: oldData ? oldData.status : 'libre',
+    nouveauStatut: newData.status,
+    content: newData.content || '',
+    ref: newData.ref || '',
+    operator: newData.operator || '—',
+    notes: newData.notes || '',
+    date: new Date().toISOString(),
+  };
+  movements.unshift(mvt);
+  if (movements.length > 300) movements = movements.slice(0, 300);
+  try { localStorage.setItem(MVT_KEY, JSON.stringify(movements)); } catch(e) {}
+  // Met à jour le compteur du header
+  document.getElementById('countMvtToday').textContent = getTodayMvtCount();
+  // Si la vue mouvements est active, re-render
+  if (currentView === 'mouvements') renderMovements();
+  if (currentView === 'dashboard') renderDashboard();
+}
+ 
+function getTodayMvtCount() {
+  const today = new Date().toDateString();
+  return movements.filter(m => new Date(m.date).toDateString() === today).length;
+}
+ 
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleString('fr-CA', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+ 
+// ════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════
+function switchView(viewName, btnElement) {
+  currentView = viewName;
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btnElement.classList.add('active');
+  ['grid','map','dashboard','mouvements','rapports'].forEach(v => {
+    document.getElementById(v + 'View').classList.remove('active');
+  });
+  document.getElementById(viewName + 'View').classList.add('active');
+  document.getElementById('btnEditMap').style.display = (viewName === 'map') ? 'block' : 'none';
+  if (viewName !== 'map' && isMapEditMode) toggleMapEdit();
+  if (viewName === 'dashboard') renderDashboard();
+  if (viewName === 'mouvements') renderMovements();
+  if (viewName === 'rapports') renderReports();
+}
+ 
+// ════════════════════════════════════════════════════════
+// MODE ÉDITION CARTE — Drag & Drop avec aimant
+// ════════════════════════════════════════════════════════
 function toggleMapEdit() {
   isMapEditMode = !isMapEditMode;
   const btn = document.getElementById('btnEditMap');
-  const body = document.body;
-
+  document.body.classList.toggle('map-edit-mode', isMapEditMode);
   if (isMapEditMode) {
-    body.classList.add('map-edit-mode');
     btn.classList.add('editing');
     btn.innerHTML = '🔒 Sauvegarder le Plan';
   } else {
-    body.classList.remove('map-edit-mode');
     btn.classList.remove('editing');
-    btn.innerHTML = '⏳ Enregistrement...';
-    // NOUVEAU: Enregistrement dans Supabase
+    btn.innerHTML = '⏳ Enregistrement…';
     saveLayoutToSupabase();
   }
 }
-
+ 
 let dragData = { isDragging: false, el: null };
-
 document.addEventListener('mousedown', e => {
   if (!isMapEditMode) return;
   const spot = e.target.closest('.spot-map');
-  if (spot) {
-    dragData.isDragging = true; dragData.el = spot; spot.style.zIndex = 1000;
-  }
+  if (spot) { dragData.isDragging = true; dragData.el = spot; spot.style.zIndex = 1000; }
 });
-
 document.addEventListener('mousemove', e => {
   if (!dragData.isDragging || !dragData.el) return;
   const container = document.getElementById('mapContainer');
   const rect = container.getBoundingClientRect();
-  
-  let rawX = ((e.clientX - rect.left) / rect.width) * 100;
-  let rawY = ((e.clientY - rect.top) / rect.height) * 100;
-  
-  const step = 0.2; 
-  let x = Math.round(rawX / step) * step;
-  let y = Math.round(rawY / step) * step;
-
+  const step = 0.2;
+  let x = Math.round(((e.clientX - rect.left) / rect.width * 100) / step) * step;
+  let y = Math.round(((e.clientY - rect.top) / rect.height * 100) / step) * step;
   x = Math.max(0, Math.min(x, 100)); y = Math.max(0, Math.min(y, 100));
-  
-  dragData.el.style.left = x + '%'; 
-  dragData.el.style.top = y + '%';
+  dragData.el.style.left = x + '%'; dragData.el.style.top = y + '%';
 });
-
-document.addEventListener('mouseup', e => {
+document.addEventListener('mouseup', () => {
   if (dragData.isDragging && dragData.el) {
     dragData.el.style.zIndex = '';
     const spotId = dragData.el.dataset.spotId;
@@ -446,167 +589,95 @@ document.addEventListener('mouseup', e => {
     dragData.isDragging = false; dragData.el = null;
   }
 });
-
-// =============================================
-// SUPABASE (Chargement et sauvegarde)
-// =============================================
+ 
+// ════════════════════════════════════════════════════════
+// SUPABASE — Chargement & Sauvegarde
+// ════════════════════════════════════════════════════════
 async function loadFromSupabase() {
   setSyncStatus('loading', 'Chargement…');
   try {
     const { data, error } = await db.from('spots').select('*');
     if (error) throw error;
     parcData = {};
-    (data || []).forEach(row => { 
-      parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', date: row.date_entree || '', notes: row.notes || '' }; 
-      
-      // NOUVEAU: Récupère les positions X et Y depuis la base de données
-      let p = PLACES.find(pl => pl.spotId === row.id);
-      if (p && row.pos_x != null && row.pos_y != null) {
-        p.x = row.pos_x;
-        p.y = row.pos_y;
-      }
+    (data || []).forEach(row => {
+      parcData[row.id] = { status:row.status||'libre', content:row.content||'', ref:row.ref||'', date:row.date_entree||'', notes:row.notes||'', operator:row.operator||'' };
+      const p = PLACES.find(pl => pl.spotId === row.id);
+      if (p && row.pos_x != null && row.pos_y != null) { p.x = row.pos_x; p.y = row.pos_y; }
     });
     setSyncStatus('ok', 'Synchronisé');
     return true;
   } catch(e) { setSyncStatus('error', 'Erreur de connexion'); return false; }
 }
-
+ 
 async function saveToSupabase(spotId, zoneId, num, data) {
   setSyncStatus('loading', 'Sauvegarde…');
   document.getElementById('savingIndicator').textContent = '⏳ Enregistrement…';
-  
-  // On récupère la position X et Y depuis PLACES pour ne pas les écraser avec null !
   const p = PLACES.find(pl => pl.spotId === spotId);
-  
   try {
     const { error } = await db.from('spots').upsert({
-      id: spotId, zone_id: zoneId, num: num, status: data.status,
-      content: data.content, ref: data.ref, 
-      date_entree: data.date, notes: data.notes, 
-      pos_x: p ? p.x : null, pos_y: p ? p.y : null, // On garde la position de la base
-      updated_at: new Date().toISOString(),
+      id:spotId, zone_id:zoneId, num:num, status:data.status,
+      content:data.content, ref:data.ref, date_entree:data.date,
+      notes:data.notes, operator:data.operator,
+      pos_x:p?p.x:null, pos_y:p?p.y:null,
+      updated_at:new Date().toISOString(),
     });
     if (error) throw error;
     setSyncStatus('ok', 'Synchronisé');
     document.getElementById('savingIndicator').textContent = '✅ Enregistré !';
     setTimeout(() => document.getElementById('savingIndicator').textContent = '', 2000);
     return true;
-  } catch(e) {
-    setSyncStatus('error', 'Erreur sauvegarde');
-    document.getElementById('savingIndicator').textContent = '❌ Erreur';
-    return false;
-  }
+  } catch(e) { setSyncStatus('error', 'Erreur sauvegarde'); document.getElementById('savingIndicator').textContent = '❌ Erreur'; return false; }
 }
-
-// NOUVEAU : Envoie TOUT LE PLAN (X,Y) dans Supabase d'un coup (Version Blindée)
+ 
 async function saveLayoutToSupabase() {
   setSyncStatus('loading', 'Sauvegarde du plan…');
-  
   try {
-    // 1. On prépare les données en forçant "null" pour les cases vides
     const updates = PLACES.map(p => {
       const data = getSpotData(p.spotId);
-      return {
-        id: p.spotId,
-        zone_id: p.zoneId,
-        num: p.num,
-        status: data.status || 'libre',
-        content: data.content || null,
-        ref: data.ref || null,
-        client: null, // On force null car la colonne existe encore dans ta base !
-        date_entree: data.date || null, // Supabase préfère "null" aux dates vides
-        notes: data.notes || null,
-        pos_x: p.x,  // On envoie le nouveau X
-        pos_y: p.y,  // On envoie le nouveau Y
-        updated_at: new Date().toISOString()
-      };
+      return { id:p.spotId, zone_id:p.zoneId, num:p.num, status:data.status||'libre', content:data.content||null, ref:data.ref||null, client:null, date_entree:data.date||null, notes:data.notes||null, operator:data.operator||null, pos_x:p.x, pos_y:p.y, updated_at:new Date().toISOString() };
     });
-
-    // 2. On envoie à Supabase
     const { error } = await db.from('spots').upsert(updates);
-    
-    // 3. S'il y a une erreur de base de données, on déclenche le "catch"
-    if (error) throw error; 
-    
-    alert("✅ Plan sauvegardé avec succès pour tous les utilisateurs !");
+    if (error) throw error;
+    alert('✅ Plan sauvegardé avec succès !');
     setSyncStatus('ok', 'Synchronisé');
-    
-  } catch (err) {
-    // 4. S'il y a le moindre crash, ça va s'afficher clairement sur ton écran !
-    alert("❌ Erreur Supabase : " + (err.message || JSON.stringify(err)));
-    console.error("Détails de l'erreur:", err);
+  } catch(err) {
+    alert('❌ Erreur Supabase : ' + (err.message || JSON.stringify(err)));
     setSyncStatus('error', 'Erreur');
   }
-  
   document.getElementById('btnEditMap').innerHTML = '🔓 Configurer le Plan';
 }
-
+ 
 function subscribeRealtime() {
-  db.channel('spots-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'spots' }, (payload) => {
+  db.channel('spots-changes').on('postgres_changes', { event:'*', schema:'public', table:'spots' }, (payload) => {
     const row = payload.new || payload.old;
     if (!row) return;
-    if (payload.eventType === 'DELETE') { delete parcData[row.id]; } 
-    else { 
-      parcData[row.id] = { status: row.status || 'libre', content: row.content || '', ref: row.ref || '', date: row.date_entree || '', notes: row.notes || '' }; 
-      
-      // On met à jour la position si quelqu'un a modifié le plan
-      let p = PLACES.find(pl => pl.spotId === row.id);
+    if (payload.eventType === 'DELETE') { delete parcData[row.id]; }
+    else {
+      parcData[row.id] = { status:row.status||'libre', content:row.content||'', ref:row.ref||'', date:row.date_entree||'', notes:row.notes||'', operator:row.operator||'' };
+      const p = PLACES.find(pl => pl.spotId === row.id);
       if (p && row.pos_x != null && row.pos_y != null) {
-        p.x = row.pos_x;
-        p.y = row.pos_y;
-        
-        // Et on fait bouger l'élément en direct sur l'écran !
+        p.x = row.pos_x; p.y = row.pos_y;
         const el = document.querySelector(`.spot-map[data-spot-id="${row.id}"]`);
-        if(el) {
-            el.style.left = `${row.pos_x}%`;
-            el.style.top = `${row.pos_y}%`;
-        }
+        if (el) { el.style.left = `${row.pos_x}%`; el.style.top = `${row.pos_y}%`; }
       }
     }
     updateSpotElement(row.id);
     updateStats();
   }).subscribe();
 }
-
-function updateSpotElement(spotId) {
-  const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
-  const data = getSpotData(spotId);
-  const zone = ZONES.find(z => spotId.startsWith(z.id + '-'));
-  
-  elements.forEach(el => {
-    if(el.classList.contains('spot-map')) {
-      el.className = `spot spot-map ${data.status}`;
-      
-      if (data.status === 'occupe' && zone && zone.color) {
-        el.style.setProperty('background-color', zone.color, 'important');
-        el.style.setProperty('border-color', zone.color, 'important');
-      } else {
-        el.style.removeProperty('background-color');
-        el.style.removeProperty('border-color');
-      }
-
-    } else {
-      el.className = `spot ${data.status}`; 
-    }
-  });
-}
-
+ 
 function setSyncStatus(type, label) { document.getElementById('syncDot').className = 'dot ' + type; document.getElementById('syncLabel').textContent = label; }
-function getSpotData(spotId) { return parcData[spotId] || { status:'libre', content:'', ref:'', date:'', notes:'' }; }
-
-// =============================================
-// RENDER (GRILLE ET CARTE)
-// =============================================
-function render() {
-  renderGrid();
-  renderMap();
-}
-
+function getSpotData(spotId) { return parcData[spotId] || { status:'libre', content:'', ref:'', date:'', notes:'', operator:'' }; }
+ 
+// ════════════════════════════════════════════════════════
+// RENDER — Grille & Carte (original)
+// ════════════════════════════════════════════════════════
+function render() { renderGrid(); renderMap(); }
+ 
 function renderGrid() {
   const gridMain = document.getElementById('gridView');
   gridMain.innerHTML = '';
-  const rows = [ ['tailcone','hstab','vstab'], ['remorque','remorque-vide'], ['fwd','béton'], ['k','l','m','n'], ['rear'] ];
-
+  const rows = [['tailcone','hstab','vstab'],['remorque','remorque-vide'],['fwd','béton'],['k','l','m','n'],['rear']];
   rows.forEach(ids => {
     const row = document.createElement('div');
     row.className = 'group-row';
@@ -614,20 +685,17 @@ function renderGrid() {
       const zone = ZONES.find(z => z.id === id);
       const block = document.createElement('div');
       block.className = 'zone-block';
-     block.innerHTML = `<div class="zone-header"><div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div><div class="zone-count" id="count-${zone.id}"></div></div>`;
-      
+      block.innerHTML = `<div class="zone-header"><div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div><div class="zone-count" id="count-${zone.id}"></div></div>`;
       const body = document.createElement('div');
       body.className = 'zone-body';
       for (let i = 1; i <= zone.count; i++) {
         const spotId = `${zone.id}-${i}`;
         const data = getSpotData(spotId);
-        
         const div = document.createElement('div');
         div.className = `spot ${data.status}`;
         div.dataset.spotId = spotId;
         div.innerHTML = `<div class="spot-icon">${zone.icon}</div><div class="spot-id">${i}</div>`;
-        
-        div.addEventListener('mouseenter', (e) => showTooltip(e, spotId, i, zone));
+        div.addEventListener('mouseenter', e => showTooltip(e, spotId, i, zone));
         div.addEventListener('mousemove', moveTooltip);
         div.addEventListener('mouseleave', hideTooltip);
         div.addEventListener('click', () => { hideTooltip(); openModal(spotId, i, zone); });
@@ -639,78 +707,447 @@ function renderGrid() {
     gridMain.appendChild(row);
   });
 }
-
+ 
 function renderMap() {
   const mapContainer = document.getElementById('mapContainer');
   mapContainer.innerHTML = '';
-
   PLACES.forEach(place => {
     const zone = ZONES.find(z => z.id === place.zoneId);
-    if(!zone) return;
+    if (!zone) return;
     const data = getSpotData(place.spotId);
-    
     const div = document.createElement('div');
-    div.className = `spot spot-map ${data.status}`; 
-    
+    div.className = `spot spot-map ${data.status}`;
     div.dataset.spotId = place.spotId;
-    div.style.left = `${place.x}%`;
-    div.style.top = `${place.y}%`;
-
+    div.style.left = `${place.x}%`; div.style.top = `${place.y}%`;
     if (zone.mapWidth) div.style.setProperty('width', `${zone.mapWidth}%`, 'important');
     if (zone.mapHeight) div.style.setProperty('height', `${zone.mapHeight}%`, 'important');
     if (zone.mapRotation) div.style.setProperty('--rot', `${zone.mapRotation}deg`);
-    
     if (data.status === 'occupe' && zone.color) {
       div.style.setProperty('background-color', zone.color, 'important');
       div.style.setProperty('border-color', zone.color, 'important');
-    } else {
-      div.style.removeProperty('background-color');
-      div.style.removeProperty('border-color');
     }
-    
-    div.addEventListener('mouseenter', (e) => showTooltip(e, place.spotId, place.num, zone));
+    div.addEventListener('mouseenter', e => showTooltip(e, place.spotId, place.num, zone));
     div.addEventListener('mousemove', moveTooltip);
     div.addEventListener('mouseleave', hideTooltip);
-    div.addEventListener('click', () => { 
-      if(isMapEditMode) return; 
-      hideTooltip(); openModal(place.spotId, place.num, zone); 
-    });
-
+    div.addEventListener('click', () => { if (isMapEditMode) return; hideTooltip(); openModal(place.spotId, place.num, zone); });
     mapContainer.appendChild(div);
   });
 }
-
-// =============================================
+ 
+function updateSpotElement(spotId) {
+  const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
+  const data = getSpotData(spotId);
+  const zone = ZONES.find(z => spotId.startsWith(z.id + '-'));
+  elements.forEach(el => {
+    if (el.classList.contains('spot-map')) {
+      el.className = `spot spot-map ${data.status}`;
+      if (data.status === 'occupe' && zone && zone.color) { el.style.setProperty('background-color', zone.color, 'important'); el.style.setProperty('border-color', zone.color, 'important'); }
+      else { el.style.removeProperty('background-color'); el.style.removeProperty('border-color'); }
+    } else { el.className = `spot ${data.status}`; }
+  });
+}
+ 
+// ════════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════════
+function renderDashboard() {
+  const el = document.getElementById('dashboardView');
+ 
+  // Calcul stats globales
+  let total = 0, libre = 0, occupe = 0, maint = 0;
+  ZONES.forEach(zone => { for (let i = 1; i <= zone.count; i++) { const d = getSpotData(`${zone.id}-${i}`); total++; if (d.status==='libre') libre++; else if (d.status==='occupe') occupe++; else maint++; } });
+  const pctOcc = total > 0 ? Math.round((occupe/total)*100) : 0;
+  const todayMvt = getTodayMvtCount();
+ 
+  // Calcul volume estimé (pi²) en se basant sur les noms de pièces dans content
+  let piEstime = 0;
+  Object.values(parcData).forEach(d => {
+    if (d.status !== 'occupe' || !d.content) return;
+    const content = d.content.toLowerCase();
+    if (content.includes('mid')) piEstime += COMPOSANTE_DIMS.MID;
+    else if (content.includes('tailcone') || content.includes('tc')) piEstime += COMPOSANTE_DIMS.Tailcone;
+    else if (content.includes('rear')) piEstime += COMPOSANTE_DIMS.Rear;
+    else if (content.includes('wing') || content.includes('aile')) piEstime += COMPOSANTE_DIMS.Wings;
+    else if (content.includes('hstab')) piEstime += COMPOSANTE_DIMS.Hstab;
+    else if (content.includes('vstab')) piEstime += COMPOSANTE_DIMS.Vstab;
+    else if (content.includes('fwd') || content.includes('forward')) piEstime += COMPOSANTE_DIMS.FWD;
+    else if (content.includes('remorque') || content.includes('trailer')) piEstime += COMPOSANTE_DIMS.Remorque;
+  });
+ 
+  // KPIs couleurs
+  const kpiOccColor = pctOcc >= 85 ? 'var(--rouge)' : pctOcc >= 70 ? 'var(--jaune)' : 'var(--vert)';
+  const recentMvt = movements.slice(0, 6);
+ 
+  el.innerHTML = `
+    <div class="page-title">TABLEAU DE BORD</div>
+    <div class="page-sub">${new Date().toLocaleDateString('fr-CA', {weekday:'long',day:'numeric',month:'long',year:'numeric'})} — Vue temps réel</div>
+ 
+    <!-- Météo Montréal simulée -->
+    <div class="weather-widget">
+      <div class="weather-icon">🌤</div>
+      <div class="weather-info">
+        <div class="wt-cond">9°C · Partiellement nuageux — Montréal, QC</div>
+        <div class="wt-detail">💨 Vent : 18 km/h ONO &nbsp;|&nbsp; 💧 Humidité : 62% &nbsp;|&nbsp; ☀️ UV : Faible (2) &nbsp;|&nbsp; 🌡 Ressenti : 6°C</div>
+      </div>
+      <div class="weather-ok">✓ Conditions normales<br><span style="color:var(--gris);font-size:0.62rem">Pas d'alerte intempérie</span></div>
+    </div>
+ 
+    <!-- KPIs -->
+    <div class="dash-row">
+      <div class="dash-card" style="border-top:3px solid ${kpiOccColor}">
+        <div class="card-title">◈ Taux d'occupation</div>
+        <div class="dash-kpi" style="color:${kpiOccColor}">${pctOcc}%</div>
+        <div class="dash-kpi-sub">${occupe} occupées / ${total} total</div>
+      </div>
+      <div class="dash-card" style="border-top:3px solid var(--vert)">
+        <div class="card-title">✓ Places libres</div>
+        <div class="dash-kpi" style="color:var(--vert)">${libre}</div>
+        <div class="dash-kpi-sub">${maint} en maintenance</div>
+      </div>
+      <div class="dash-card" style="border-top:3px solid var(--cyan)">
+        <div class="card-title">⇄ Mouvements aujourd'hui</div>
+        <div class="dash-kpi" style="color:var(--cyan)">${todayMvt}</div>
+        <div class="dash-kpi-sub">${movements.length} total historique</div>
+      </div>
+      <div class="dash-card" style="border-top:3px solid var(--jaune)">
+        <div class="card-title">📐 Surface estimée utilisée</div>
+        <div class="dash-kpi" style="color:var(--jaune)">${piEstime.toLocaleString()}</div>
+        <div class="dash-kpi-sub">pi² estimés occupés</div>
+      </div>
+    </div>
+ 
+    <!-- Occupation par groupe de zones -->
+    <div>
+      <div class="section-title">OCCUPATION PAR ZONE</div>
+      <div class="zone-occ-grid" id="zoneOccGrid"></div>
+    </div>
+ 
+    <!-- Derniers mouvements -->
+    <div>
+      <div class="section-title">DERNIERS MOUVEMENTS</div>
+      ${recentMvt.length === 0 ? `<div style="color:var(--gris);font-size:0.78rem;padding:16px 0">Aucun mouvement enregistré. Modifiez une place pour commencer.</div>` : `
+      <div class="mvt-table-wrap">
+        <table class="mvt-table">
+          <thead><tr><th>Date</th><th>Type</th><th>Place</th><th>Zone</th><th>Contenu</th><th>Réf.</th><th>Opérateur</th></tr></thead>
+          <tbody>
+            ${recentMvt.map(m => `
+              <tr>
+                <td class="mono" style="color:var(--gris);font-size:0.68rem">${fmtDate(m.date)}</td>
+                <td><span class="mvt-badge ${mvtClass(m.type)}">${m.type}</span></td>
+                <td class="mono" style="color:var(--orange2)">${m.spotId}</td>
+                <td style="color:var(--gris);font-size:0.7rem">${m.zoneLabel}</td>
+                <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.content||'—'}</td>
+                <td class="mono" style="color:var(--cyan);font-size:0.68rem">${m.ref||'—'}</td>
+                <td style="color:var(--gris)">${m.operator||'—'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`}
+    </div>
+  `;
+ 
+  // Render zone occupation bars
+  renderZoneOccBars();
+}
+ 
+function renderZoneOccBars() {
+  const grid = document.getElementById('zoneOccGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+ 
+  Object.entries(ZONE_AREAS).forEach(([key, group]) => {
+    const zones = ZONES.filter(z => group.ids.includes(z.id));
+    let total = 0, occ = 0;
+    zones.forEach(zone => {
+      for (let i = 1; i <= zone.count; i++) {
+        total++;
+        const d = getSpotData(`${zone.id}-${i}`);
+        if (d.status === 'occupe') occ++;
+      }
+    });
+    const pct = total > 0 ? Math.round((occ/total)*100) : 0;
+    const col = pct >= 90 ? 'var(--rouge)' : pct >= 70 ? 'var(--jaune)' : 'var(--vert)';
+ 
+    const card = document.createElement('div');
+    card.className = 'zone-occ-card';
+    card.innerHTML = `
+      <div class="zone-occ-header">
+        <div class="zone-occ-name">${group.label}</div>
+        <div class="zone-occ-nums" style="color:${col}">${occ}/${total}</div>
+      </div>
+      <div class="zone-occ-area">📐 ${group.area.toLocaleString()} pi² totaux</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="zone-occ-pct" style="color:${col}">${pct}% occupé</div>
+    `;
+    grid.appendChild(card);
+  });
+ 
+  // Aussi les zones individuelles
+  ZONES.forEach(zone => {
+    let total = zone.count, occ = 0;
+    for (let i = 1; i <= zone.count; i++) {
+      const d = getSpotData(`${zone.id}-${i}`);
+      if (d.status === 'occupe') occ++;
+    }
+    const pct = Math.round((occ/total)*100);
+    const col = pct >= 90 ? 'var(--rouge)' : pct >= 70 ? 'var(--jaune)' : zone.color;
+ 
+    const card = document.createElement('div');
+    card.className = 'zone-occ-card';
+    card.innerHTML = `
+      <div class="zone-occ-header">
+        <div class="zone-occ-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div>
+        <div class="zone-occ-nums" style="color:${col}">${occ}/${total}</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="zone-occ-pct" style="color:${col}">${pct}%</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+ 
+// ════════════════════════════════════════════════════════
+// VUE MOUVEMENTS
+// ════════════════════════════════════════════════════════
+function mvtClass(type) {
+  if (type==='Entrée') return 'mvt-entree';
+  if (type==='Sortie') return 'mvt-sortie';
+  if (type==='Maintenance') return 'mvt-maint';
+  return 'mvt-modif';
+}
+ 
+function renderMovements() {
+  const el = document.getElementById('mouvementsView');
+  const filtered = mvtFilter === 'Tous' ? movements : movements.filter(m => m.type === mvtFilter);
+ 
+  el.innerHTML = `
+    <div class="page-title">JOURNAL DES MOUVEMENTS</div>
+    <div class="page-sub">${movements.length} entrées enregistrées (stockage local)</div>
+    <div class="mvt-filters">
+      ${['Tous','Entrée','Sortie','Modification','Maintenance'].map(f => `
+        <button class="filter-chip ${mvtFilter===f?'active':''}" onclick="setMvtFilter('${f}')">${f}</button>`).join('')}
+      <div style="margin-left:auto;color:var(--gris);font-size:0.68rem">${filtered.length} résultat(s)</div>
+      <button class="export-btn" onclick="exportMvtCSV()">⬇ Export CSV</button>
+      <button class="export-btn" onclick="clearMovements()" style="border-color:rgba(255,68,68,0.3);color:var(--rouge)">🗑 Vider</button>
+    </div>
+    <div class="mvt-table-wrap">
+      <table class="mvt-table">
+        <thead><tr><th>Date / Heure</th><th>Type</th><th>Place</th><th>Zone</th><th>Statut</th><th>Contenu</th><th>Référence</th><th>Opérateur</th><th>Notes</th></tr></thead>
+        <tbody>
+          ${filtered.length === 0 ? `<tr><td colspan="9" class="mvt-empty">Aucun mouvement enregistré.<br><span style="font-size:0.7rem;color:var(--gris)">Les mouvements apparaissent dès qu'une place est modifiée.</span></td></tr>` :
+          filtered.map(m => `
+            <tr>
+              <td class="mono" style="color:var(--gris);font-size:0.68rem;white-space:nowrap">${fmtDate(m.date)}</td>
+              <td><span class="mvt-badge ${mvtClass(m.type)}">${m.type}</span></td>
+              <td class="mono" style="color:var(--orange2)">${m.spotId}</td>
+              <td style="font-size:0.7rem;color:var(--gris)">${m.zoneLabel}</td>
+              <td>
+                <span style="color:var(--gris);font-size:0.66rem">${m.ancienStatut}</span>
+                <span style="color:var(--gris)"> → </span>
+                <span style="color:${m.nouveauStatut==='occupe'?'var(--orange)':m.nouveauStatut==='libre'?'var(--vert)':'var(--gris)'};font-size:0.66rem;font-weight:700">${m.nouveauStatut}</span>
+              </td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.72rem">${m.content||'—'}</td>
+              <td class="mono" style="color:var(--cyan);font-size:0.68rem">${m.ref||'—'}</td>
+              <td style="font-size:0.72rem">${m.operator||'—'}</td>
+              <td style="font-size:0.68rem;color:var(--gris);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes||'—'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+ 
+function setMvtFilter(f) { mvtFilter = f; renderMovements(); }
+ 
+function exportMvtCSV() {
+  const headers = ['Date','Type','Place','Zone','Ancien statut','Nouveau statut','Contenu','Référence','Opérateur','Notes'];
+  const rows = movements.map(m => [fmtDate(m.date),m.type,m.spotId,m.zoneLabel,m.ancienStatut,m.nouveauStatut,m.content,m.ref,m.operator,m.notes].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = `mouvements_parc_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+ 
+function clearMovements() {
+  if (!confirm('Vider tout l\'historique des mouvements ? Cette action est irréversible.')) return;
+  movements = [];
+  localStorage.removeItem(MVT_KEY);
+  renderMovements();
+  document.getElementById('countMvtToday').textContent = '0';
+}
+ 
+// ════════════════════════════════════════════════════════
+// VUE RAPPORTS
+// ════════════════════════════════════════════════════════
+function renderReports() {
+  const el = document.getElementById('rapportsView');
+ 
+  // Stats globales
+  let total = 0, occ = 0;
+  ZONES.forEach(zone => { for (let i=1; i<=zone.count; i++) { total++; if (getSpotData(`${zone.id}-${i}`).status==='occupe') occ++; } });
+  const totalAreaSite = Object.values(ZONE_AREAS).reduce((a,z)=>a+z.area,0);
+ 
+  // Occupants par type (analyse des contenus)
+  const contentStats = {};
+  Object.values(parcData).forEach(d => {
+    if (d.status !== 'occupe' || !d.content) return;
+    const key = d.content.trim() || 'Non défini';
+    contentStats[key] = (contentStats[key]||0) + 1;
+  });
+ 
+  // Durée moyenne de stockage
+  let totalDays = 0, countWithDate = 0;
+  Object.values(parcData).forEach(d => {
+    if (d.status === 'occupe' && d.date) {
+      const days = Math.round((Date.now() - new Date(d.date))/86400000);
+      if (!isNaN(days) && days >= 0) { totalDays += days; countWithDate++; }
+    }
+  });
+  const avgDays = countWithDate > 0 ? Math.round(totalDays/countWithDate) : 0;
+ 
+  // Mouvements par type
+  const mvtStats = { 'Entrée':0, 'Sortie':0, 'Modification':0, 'Maintenance':0 };
+  movements.forEach(m => { if (mvtStats[m.type]!==undefined) mvtStats[m.type]++; });
+ 
+  el.innerHTML = `
+    <div class="page-title">RAPPORTS & ANALYSE</div>
+    <div class="page-sub" style="display:flex;gap:10px;flex-wrap:wrap">
+      <span>Données en temps réel</span>
+      <button class="export-btn" onclick="exportMvtCSV()">⬇ Export CSV Mouvements</button>
+    </div>
+ 
+    <!-- Résumé des zones -->
+    <div class="dash-row">
+      <div class="report-section" style="flex:1">
+        <h3>📐 SURFACES — ZONES DU SITE</h3>
+        ${Object.values(ZONE_AREAS).map(g => {
+          const zones = ZONES.filter(z => g.ids.includes(z.id));
+          let t=0, o=0;
+          zones.forEach(zone=>{ for(let i=1;i<=zone.count;i++){t++;if(getSpotData(`${zone.id}-${i}`).status==='occupe')o++;} });
+          const pct = t>0?Math.round((o/t)*100):0;
+          return `<div class="rpt-row">
+            <span class="rpt-label">${g.label}</span>
+            <span>
+              <span class="rpt-val">${g.area.toLocaleString()} pi²</span>
+              <span style="color:var(--gris);font-size:0.68rem;margin-left:8px">${pct}% occ.</span>
+            </span>
+          </div>`;
+        }).join('')}
+        <div class="rpt-row" style="border-top:1px solid rgba(255,255,255,0.1);margin-top:4px;padding-top:10px">
+          <span style="font-weight:700">TOTAL SITE</span>
+          <span class="rpt-val" style="color:var(--cyan)">${totalAreaSite.toLocaleString()} pi²</span>
+        </div>
+      </div>
+ 
+      <div class="report-section" style="flex:1">
+        <h3>📊 STATISTIQUES OPÉRATIONNELLES</h3>
+        <div class="rpt-row"><span class="rpt-label">Places occupées</span><span class="rpt-val" style="color:var(--orange)">${occ} / ${total}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Taux d'occupation global</span><span class="rpt-val" style="color:${Math.round(occ/total*100)>=80?'var(--rouge)':'var(--vert)'}">${Math.round(occ/total*100)}%</span></div>
+        <div class="rpt-row"><span class="rpt-label">Durée moyenne de stockage</span><span class="rpt-val">${avgDays} jours</span></div>
+        <div class="rpt-row"><span class="rpt-label">Entrées enregistrées</span><span class="rpt-val" style="color:var(--vert)">${mvtStats['Entrée']}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Sorties enregistrées</span><span class="rpt-val" style="color:var(--rouge)">${mvtStats['Sortie']}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Modifications</span><span class="rpt-val" style="color:var(--cyan)">${mvtStats['Modification']}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Maintenances</span><span class="rpt-val" style="color:var(--gris)">${mvtStats['Maintenance']}</span></div>
+      </div>
+    </div>
+ 
+    <!-- Capacité théorique par composante -->
+    <div class="report-section">
+      <h3>🧮 CAPACITÉ THÉORIQUE PAR COMPOSANTE (pi²)</h3>
+      <table class="capa-table">
+        <thead><tr><th>Composante</th><th>Surface/unité (pi²)</th><th>Zone Béton (62 581 pi²)</th><th>Zone P7 (35 288 pi²)</th><th>Zones K-N (12 567 pi²)</th><th>Zone REAR (16 244 pi²)</th></tr></thead>
+        <tbody>
+          ${Object.entries(COMPOSANTE_DIMS).map(([name, dim]) => `
+            <tr>
+              <td style="font-weight:700">${name}</td>
+              <td class="mono" style="color:var(--orange2)">${dim.toLocaleString()}</td>
+              <td class="mono" style="color:var(--jaune)">${Math.floor(62581/dim)}</td>
+              <td class="mono" style="color:var(--violet)">${Math.floor(35288/dim)}</td>
+              <td class="mono" style="color:var(--bleu)">${Math.floor(12567/dim)}</td>
+              <td class="mono" style="color:var(--rouge)">${Math.floor(16244/dim)}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+      <div style="font-size:0.64rem;color:var(--gris);margin-top:10px">* Capacité théorique basée sur placement au sol sans allées de circulation. Appliquer un facteur d'utilisation de 0.7-0.8 pour l'usage réel.</div>
+    </div>
+ 
+    <!-- Contenus actuellement stockés -->
+    ${Object.keys(contentStats).length > 0 ? `
+    <div class="report-section">
+      <h3>📦 CONTENUS ACTUELLEMENT STOCKÉS</h3>
+      ${Object.entries(contentStats).sort((a,b)=>b[1]-a[1]).map(([content, cnt]) => `
+        <div class="rpt-row">
+          <span class="rpt-label">${content}</span>
+          <span style="display:flex;align-items:center;gap:10px">
+            <div style="width:100px;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden">
+              <div style="width:${Math.min(100,cnt/occ*100*3)}%;height:100%;background:var(--orange);border-radius:3px"></div>
+            </div>
+            <span class="rpt-val">${cnt}</span>
+          </span>
+        </div>`).join('')}
+    </div>` : ''}
+ 
+    <!-- Recommandations -->
+    <div class="report-section">
+      <h3>🧠 RECOMMANDATIONS SYSTÈME</h3>
+      ${generateRecommendations(occ, total, avgDays).map(r => `
+        <div class="reco-item">
+          <div class="reco-icon">${r.icon}</div>
+          <div>${r.text}</div>
+        </div>`).join('')}
+    </div>
+  `;
+}
+ 
+function generateRecommendations(occ, total, avgDays) {
+  const pct = Math.round(occ/total*100);
+  const recs = [];
+  if (pct >= 85) recs.push({ icon:'🔴', text:`Taux d'occupation critique à ${pct}%. Planifier des sorties prioritaires ou augmenter la capacité de stockage.` });
+  else if (pct >= 70) recs.push({ icon:'🟡', text:`Occupation à ${pct}% — surveiller les entrées à venir pour éviter la saturation.` });
+  else recs.push({ icon:'🟢', text:`Taux d'occupation nominal à ${pct}%. Capacité disponible suffisante.` });
+ 
+  if (avgDays > 60) recs.push({ icon:'⏱', text:`Durée moyenne de stockage élevée (${avgDays} jours). Identifier les pièces en attente prolongée et déclencher une revue logistique.` });
+  if (movements.length === 0) recs.push({ icon:'📋', text:`Aucun mouvement enregistré. Commencez à remplir les places pour activer le suivi.` });
+ 
+  const kGroups = Object.values(ZONE_AREAS);
+  kGroups.forEach(g => {
+    const zones = ZONES.filter(z => g.ids.includes(z.id));
+    let t=0, o=0;
+    zones.forEach(z=>{ for(let i=1;i<=z.count;i++){t++;if(getSpotData(`${z.id}-${i}`).status==='occupe')o++;} });
+    if (t>0 && Math.round(o/t*100) >= 90) recs.push({ icon:'⚡', text:`${g.label} saturée à ${Math.round(o/t*100)}%. Redistribuer vers une zone moins chargée.` });
+  });
+ 
+  if (recs.length === 0) recs.push({ icon:'✅', text:'Toutes les zones opèrent dans les paramètres normaux.' });
+  return recs;
+}
+ 
+// ════════════════════════════════════════════════════════
 // TOOLTIP & MODAL
-// =============================================
+// ════════════════════════════════════════════════════════
 const tooltip = document.getElementById('tooltip');
-
 function showTooltip(e, spotId, num, zone) {
   if (isMapEditMode) return;
   const data = getSpotData(spotId);
   const labels = { libre:'Libre', occupe:'Occupée', maintenance:'Maintenance' };
-  
   let displayDate = '';
-  if (data.date) {
-    const d = new Date(data.date);
-    displayDate = d.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  }
-
+  if (data.date) { const d = new Date(data.date); displayDate = d.toLocaleString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
   tooltip.innerHTML = `
     <div class="tt-id">${zone.label} — #${num}</div>
     <div class="tt-zone">${zone.desc}</div>
-    <span class="tt-status tt-${data.status}">${labels[data.status]}</span>
+    <span style="display:inline-block;padding:2px 7px;border-radius:3px;font-size:0.62rem;font-weight:700;background:${data.status==='occupe'?'rgba(255,107,43,0.2)':data.status==='libre'?'rgba(0,229,160,0.15)':'rgba(136,146,164,0.15)'};color:${data.status==='occupe'?'var(--orange2)':data.status==='libre'?'var(--vert)':'var(--gris)'}">${labels[data.status]}</span>
     ${data.content ? `<div class="tt-row"><span>Contenu</span><span>${data.content}</span></div>` : ''}
-    ${data.ref     ? `<div class="tt-row"><span>Réf.</span><span>${data.ref}</span></div>`       : ''}
-    ${displayDate  ? `<div class="tt-row"><span>Entrée</span><span>${displayDate}</span></div>`   : ''}
-    <div style="margin-top:5px;font-size:0.6rem;color:var(--gris)">Appuyer pour modifier</div>
+    ${data.ref     ? `<div class="tt-row"><span>Réf.</span><span>${data.ref}</span></div>` : ''}
+    ${displayDate  ? `<div class="tt-row"><span>Entrée</span><span>${displayDate}</span></div>` : ''}
+    ${data.operator? `<div class="tt-row"><span>Opérateur</span><span>${data.operator}</span></div>` : ''}
+    <div style="margin-top:5px;font-size:0.6rem;color:var(--gris)">Cliquer pour modifier</div>
   `;
   tooltip.style.display = 'block';
   moveTooltip(e);
 }
-function moveTooltip(e) { const x = Math.min(e.clientX + 16, window.innerWidth - 230); tooltip.style.left = x + 'px'; tooltip.style.top = (e.clientY - 10) + 'px'; }
+function moveTooltip(e) { const x = Math.min(e.clientX + 16, window.innerWidth - 240); tooltip.style.left = x + 'px'; tooltip.style.top = (e.clientY - 10) + 'px'; }
 function hideTooltip() { tooltip.style.display = 'none'; }
-
+ 
 let currentSpot = null;
 function openModal(spotId, num, zone) {
   currentSpot = { spotId, num, zone };
@@ -720,121 +1157,90 @@ function openModal(spotId, num, zone) {
   document.getElementById('modalStatus').value = data.status;
   document.getElementById('modalContent').value = data.content;
   document.getElementById('modalRef').value = data.ref;
-  
-  let dateVal = '';
-  if (data.date) {
-      dateVal = data.date.substring(0, 16); 
-  }
-  document.getElementById('modalDate').value = dateVal;
-  
+  document.getElementById('modalDate').value = data.date ? data.date.substring(0, 16) : '';
+  document.getElementById('modalOperator').value = data.operator || '';
   document.getElementById('modalNotes').value = data.notes;
   document.getElementById('savingIndicator').textContent = '';
   document.getElementById('modalBg').classList.add('open');
 }
 function closeModal() { document.getElementById('modalBg').classList.remove('open'); currentSpot = null; }
-
+ 
 async function saveSpot() {
   if (!currentSpot) return;
   const { spotId, num, zone } = currentSpot;
-  const data = {
-    status:  document.getElementById('modalStatus').value,
-    content: document.getElementById('modalContent').value,
-    ref:     document.getElementById('modalRef').value,
-    date:    document.getElementById('modalDate').value,
-    notes:   document.getElementById('modalNotes').value,
+  const oldData = { ...getSpotData(spotId) };
+  const newData = {
+    status:   document.getElementById('modalStatus').value,
+    content:  document.getElementById('modalContent').value,
+    ref:      document.getElementById('modalRef').value,
+    date:     document.getElementById('modalDate').value,
+    operator: document.getElementById('modalOperator').value,
+    notes:    document.getElementById('modalNotes').value,
   };
-  parcData[spotId] = data;
+  // Log le mouvement AVANT de sauvegarder
+  logMovement(spotId, zone.id, num, oldData, newData);
+  parcData[spotId] = newData;
   updateSpotElement(spotId);
   updateStats();
-  const ok = await saveToSupabase(spotId, zone.id, num, data);
+  const ok = await saveToSupabase(spotId, zone.id, num, newData);
   if (ok) setTimeout(closeModal, 800);
 }
-
+ 
 document.getElementById('btnClear').addEventListener('click', () => {
   ['modalContent','modalRef','modalNotes'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('modalStatus').value = 'libre';
   document.getElementById('modalDate').value = '';
+  document.getElementById('modalOperator').value = '';
 });
-document.getElementById('modalBg').addEventListener('click', (e) => { if (e.target === document.getElementById('modalBg')) closeModal(); });
-
-// =============================================
-// STATS
-// =============================================
+document.getElementById('modalBg').addEventListener('click', e => { if (e.target === document.getElementById('modalBg')) closeModal(); });
+ 
+// ════════════════════════════════════════════════════════
+// STATS GLOBALES
+// ════════════════════════════════════════════════════════
 function updateStats() {
   let libre = 0, occupe = 0, total = 0;
-  
   ZONES.forEach(zone => {
-    let zoneOccupe = 0; // Compteur spécifique pour cette zone
-    
+    let zoneOccupe = 0;
     for (let i = 1; i <= zone.count; i++) {
       const d = getSpotData(`${zone.id}-${i}`);
       total++;
-      if (d.status === 'libre') {
-        libre++; 
-      } else if (d.status === 'occupe') { 
-        occupe++; 
-        zoneOccupe++; // On ajoute 1 au compteur de la zone
-      } 
+      if (d.status === 'libre') libre++;
+      else if (d.status === 'occupe') { occupe++; zoneOccupe++; }
     }
-    
-    // ✨ NOUVEAU : Mise à jour du texte en haut à droite de chaque zone
-    const zoneCountEl = document.getElementById(`count-${zone.id}`);
-    if (zoneCountEl) {
-      zoneCountEl.textContent = `${zoneOccupe} / ${zone.count} occupées`;
-    }
+    const el = document.getElementById(`count-${zone.id}`);
+    if (el) el.textContent = `${zoneOccupe} / ${zone.count} occupées`;
   });
-  
-  // Mise à jour des compteurs globaux (en haut de l'écran)
   document.getElementById('totalSpots').textContent = total;
   document.getElementById('countLibre').textContent = libre;
   document.getElementById('countOccupe').textContent = occupe;
+  document.getElementById('countMvtToday').textContent = getTodayMvtCount();
 }
-// =============================================
-// RECHERCHE GLOBALE EN TEMPS RÉEL
-// =============================================
+ 
+// ════════════════════════════════════════════════════════
+// RECHERCHE TEMPS RÉEL
+// ════════════════════════════════════════════════════════
 document.getElementById('searchInput').addEventListener('input', function(e) {
-  const term = e.target.value.toLowerCase().trim(); // Ce que tu as tapé (en minuscules)
+  const term = e.target.value.toLowerCase().trim();
   const body = document.body;
-  
-  // Si la barre est vide, on annule la recherche et tout redevient normal
-  if (term === '') {
-    body.classList.remove('searching');
-    document.querySelectorAll('.spot').forEach(el => el.classList.remove('search-match'));
-    return;
-  }
-  
-  // Sinon, on active le mode recherche
+  if (term === '') { body.classList.remove('searching'); document.querySelectorAll('.spot').forEach(el => el.classList.remove('search-match')); return; }
   body.classList.add('searching');
-  
-  // On fouille dans toutes les places du parc
   ZONES.forEach(zone => {
-    for(let i = 1; i <= zone.count; i++) {
+    for (let i = 1; i <= zone.count; i++) {
       const spotId = `${zone.id}-${i}`;
       const data = getSpotData(spotId);
-      
-      // On regarde si ton mot se trouve dans la Réf, le Contenu ou les Notes
-      const isMatch = (data.ref && data.ref.toLowerCase().includes(term)) ||
+      const isMatch = (data.ref     && data.ref.toLowerCase().includes(term)) ||
                       (data.content && data.content.toLowerCase().includes(term)) ||
-                      (data.notes && data.notes.toLowerCase().includes(term));
-                      
-      // On met à jour l'affichage sur la carte et la grille
+                      (data.notes   && data.notes.toLowerCase().includes(term));
       const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
-      elements.forEach(el => {
-        // Si ça correspond et que la place n'est pas "Libre"
-        if (isMatch && data.status !== 'libre') {
-          el.classList.add('search-match');
-        } else {
-          el.classList.remove('search-match');
-        }
-      });
+      elements.forEach(el => { if (isMatch && data.status !== 'libre') el.classList.add('search-match'); else el.classList.remove('search-match'); });
     }
   });
 });
-// =============================================
+ 
+// ════════════════════════════════════════════════════════
 // INIT
-// =============================================
+// ════════════════════════════════════════════════════════
 async function init() {
-  // Plus de chargement local ici, c'est loadFromSupabase qui s'en charge !
   const ok = await loadFromSupabase();
   document.getElementById('loadingScreen').classList.add('hidden');
   render();
