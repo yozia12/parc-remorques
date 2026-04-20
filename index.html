@@ -6,354 +6,233 @@
 <title>Parc Aéro — Gestion Stockage Extérieur</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
- 
+* { margin:0; padding:0; box-sizing:border-box; }
 :root {
-  --bg: #0d1117;
-  --surface: #16213e;
-  --surface2: #0f1929;
-  --surface3: #1a2744;
-  --orange: #ff6b2b;
-  --orange2: #ff9a5c;
-  --vert: #00e5a0;
-  --gris: #8892a4;
-  --blanc: #e0e0e0;
-  --cyan: #00d4ff;
-  --rouge: #ff4444;
-  --jaune: #fbbf24;
-  --violet: #a78bfa;
-  --bleu: #38bdf8;
+  --bg:#0d1117; --surface:#16213e; --surface2:#0f1929; --surface3:#1a2744;
+  --orange:#ff6b2b; --orange2:#ff9a5c; --vert:#00e5a0; --gris:#8892a4;
+  --blanc:#e0e0e0; --cyan:#00d4ff; --rouge:#ff4444; --jaune:#fbbf24;
+  --violet:#a78bfa; --bleu:#38bdf8; --rose:#f472b6; --lime:#84cc16;
 }
- 
-body {
-  background: var(--bg);
-  font-family: 'Segoe UI', Arial, sans-serif;
-  color: var(--blanc);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
- 
-/* ── HEADER ─────────────────────────────────────────── */
-.header {
-  background: var(--surface);
-  border-bottom: 2px solid var(--orange);
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.header-brand h1 { font-size: 1rem; font-weight: 800; color: #fff; }
-.header-brand h1 span { color: var(--orange); }
-.header-brand p { font-size: 0.6rem; color: var(--gris); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1px; }
- 
-.stats-bar { display: flex; gap: 8px; flex-wrap: wrap; }
-.stat-box { text-align: center; background: var(--surface2); border-radius: 6px; padding: 4px 12px; min-width: 56px; border-top: 2px solid transparent; }
-.stat-box.s-vert { border-top-color: var(--vert); }
-.stat-box.s-orange { border-top-color: var(--orange); }
-.stat-box.s-cyan { border-top-color: var(--cyan); }
-.stat-box.s-jaune { border-top-color: var(--jaune); }
-.stat-box .val { font-size: 1.15rem; font-weight: 800; line-height: 1; }
-.stat-box .lbl { font-size: 0.56rem; opacity: 0.6; letter-spacing: 0.1em; text-transform: uppercase; }
-.val.libre { color: var(--vert); }
-.val.occupe { color: var(--orange); }
-.val.cyan { color: var(--cyan); }
-.val.jaune { color: var(--jaune); }
- 
-.sync-dot { display: flex; align-items: center; gap: 6px; font-size: 0.65rem; color: var(--gris); }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gris); transition: background 0.3s; }
-.dot.ok { background: var(--vert); animation: pulse 2s infinite; }
-.dot.loading { background: var(--orange); animation: pulse 0.5s infinite; }
-.dot.error { background: var(--rouge); }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
- 
-/* ── TOOLBAR ─────────────────────────────────────────── */
-.toolbar {
-  display: flex; gap: 10px; padding: 8px 20px;
-  background: #12192e; border-bottom: 1px solid rgba(0,0,0,0.2);
-  flex-wrap: wrap; align-items: center;
-}
-.view-toggles { display: flex; gap: 6px; flex-wrap: wrap; }
-.view-btn {
-  padding: 5px 13px; border-radius: 6px; border: none;
-  background: var(--surface2); color: var(--gris);
-  font-size: 0.72rem; font-weight: bold; cursor: pointer; transition: 0.2s;
-  white-space: nowrap;
-}
-.view-btn.active { background: var(--orange); color: #fff; }
-.view-btn:hover:not(.active) { background: var(--surface3); color: var(--blanc); }
- 
-#btnEditMap { display: none; margin-left: auto; color: var(--cyan); border: 1px solid var(--cyan); background: rgba(0,212,255,0.08); }
-#btnEditMap.editing { background: var(--rouge); border-color: var(--rouge); color: #fff; animation: pulseEdit 1.5s infinite; }
-@keyframes pulseEdit { 0% { box-shadow: 0 0 0 0 rgba(255,68,68,0.4); } 70% { box-shadow: 0 0 0 6px rgba(255,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(255,68,68,0); } }
- 
-.leg { display: flex; align-items: center; gap: 5px; font-size: 0.66rem; color: var(--gris); }
-.leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-.sep { width: 1px; height: 20px; background: rgba(255,255,255,0.07); flex-shrink: 0; }
-.search-bar {
-  padding: 5px 12px; border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: var(--surface2); color: var(--blanc); font-size: 0.73rem;
-  outline: none; width: 200px; transition: border-color 0.2s;
-}
-.search-bar:focus { border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,212,255,0.25); }
- 
-/* ── LOADING ─────────────────────────────────────────── */
-.loading-screen { position: fixed; inset: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 9999; }
-.loading-screen.hidden { display: none; }
-.spinner { width: 40px; height: 40px; border: 3px solid rgba(255,107,43,0.2); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
- 
-/* ── VIEWS ───────────────────────────────────────────── */
-.main-view { display: none; padding: 16px 20px; flex-direction: column; gap: 14px; flex-grow: 1; }
-.main-view.active { display: flex; }
-#mapView { align-items: center; justify-content: center; }
-#dashboardView, #mouvementsView, #rapportsView { overflow-y: auto; }
- 
-/* ── GRID & MAP (original) ───────────────────────────── */
-.group-row { display: flex; gap: 14px; flex-wrap: wrap; }
-.group-row .zone-block { flex: 1; min-width: 180px; }
-.zone-block { background: var(--surface); border: 1px solid rgba(0,0,0,0.15); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-.zone-header { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05); }
-.zone-name { font-size: 0.73rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-.zone-count { font-size: 0.6rem; color: var(--gris); }
-.zone-body { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 5px; }
- 
-#mapContainer {
-  position: relative; width: 100%; max-width: 100%; height: 86vh;
-  aspect-ratio: 16 / 9;
-  background-size: 100% 100%;
-  background-image: url('plan-cour.png');
-  background-repeat: no-repeat; background-position: center;
-  border-radius: 8px; border: 1px solid rgba(0,0,0,0.15); overflow: hidden;
-  background-color: #1a2e1a;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
- 
-/* ── SPOTS ───────────────────────────────────────────── */
-.spot {
-  width: 42px; height: 52px; border-radius: 5px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; cursor: pointer; font-size: 0.58rem;
-  font-weight: 700; transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
-  position: relative; user-select: none; border: 2px solid transparent;
-}
-.spot:hover { transform: scale(1.12); filter: brightness(1.25); z-index: 10; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
-.spot:active { transform: scale(0.96); }
-.spot.libre { background: rgba(0,229,160,0.12); border-color: var(--vert); color: var(--vert); }
-.spot.occupe { background: rgba(255,107,43,0.16); border-color: var(--orange); color: var(--orange2); }
-.spot.maintenance { background: rgba(136,146,164,0.1); border-color: var(--gris); color: var(--gris); }
-.spot-icon { font-size: 0.95rem; margin-bottom: 1px; }
-.spot-id { font-size: 0.65rem; font-weight: 800; }
- 
-.spot-map {
-  position: absolute !important; display: block !important;
-  transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) !important;
-  border-radius: 2px !important; border: 1px solid rgba(0,0,0,0.7) !important;
-}
-.spot-map:hover { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.3) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.8); z-index: 50; }
-.spot-map:active { transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.95) !important; }
-.spot-map .spot-icon, .spot-map .spot-id { display: none; }
-.spot-map.libre { background-color: var(--vert) !important; }
-.spot-map.maintenance { background-color: var(--gris) !important; }
-body:not(.map-edit-mode) #mapView .spot-map.libre { display: none !important; }
-body.map-edit-mode .spot-map { cursor: grab !important; border: 2px dashed #fff !important; }
-body.map-edit-mode .spot-map:active { cursor: grabbing !important; }
-body.map-edit-mode .spot-map.libre { display: block !important; opacity: 0.6; }
- 
-/* ── SEARCH ──────────────────────────────────────────── */
-body.searching .spot:not(.search-match) { opacity: 0.08 !important; pointer-events: none; filter: grayscale(100%); }
-body.searching .spot.search-match { z-index: 100 !important; border-color: var(--cyan) !important; background-color: rgba(0,212,255,0.25) !important; }
-body.searching #gridView .spot.search-match { animation: pulseSearchGrid 1.2s infinite; }
-@keyframes pulseSearchGrid { 0% { transform: scale(1); } 50% { transform: scale(1.15); box-shadow: 0 0 20px var(--cyan); } 100% { transform: scale(1); } }
-body.searching #mapView .spot-map.search-match { animation: pulseSearchMap 1.2s infinite; }
-@keyframes pulseSearchMap { 0% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1); } 50% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.4); box-shadow: 0 0 20px var(--cyan); } 100% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1); } }
- 
-/* ── TOOLTIP ─────────────────────────────────────────── */
-#tooltip { position: fixed; background: #0a1020; border: 1px solid var(--orange); border-radius: 8px; padding: 10px 13px; font-size: 0.72rem; pointer-events: none; z-index: 500; display: none; max-width: 220px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); line-height: 1.5; color: var(--blanc); }
-#tooltip .tt-id { font-weight: 800; font-size: 0.88rem; color: var(--orange2); margin-bottom: 3px; }
-#tooltip .tt-zone { font-size: 0.62rem; color: var(--gris); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.08em; }
-#tooltip .tt-row { display: flex; justify-content: space-between; gap: 8px; font-size: 0.68rem; margin-top: 2px; }
-#tooltip .tt-row span:first-child { color: var(--gris); }
- 
-/* ── MODAL ───────────────────────────────────────────── */
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 2000; align-items: center; justify-content: center; padding: 16px; }
-.modal-bg.open { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--orange); border-radius: 12px; padding: 22px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 92vh; overflow-y: auto; color: var(--blanc); }
-.modal h2 { font-size: 0.95rem; font-weight: 800; color: var(--orange2); margin-bottom: 2px; }
-.modal .modal-zone { font-size: 0.62rem; color: var(--gris); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
-.modal label { display: block; font-size: 0.68rem; color: #aaa; margin-bottom: 3px; margin-top: 10px; }
-.modal input, .modal select {
-  width: 100%; background: var(--surface2); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 6px; padding: 8px 10px; color: var(--blanc); font-size: 0.78rem;
-  outline: none; transition: border-color 0.2s; -webkit-appearance: none;
-}
-.modal input[type="datetime-local"] { color-scheme: dark; }
-.modal input:focus, .modal select:focus { border-color: var(--orange); }
-.modal select option { background: var(--surface); }
-.modal-btns { display: flex; gap: 8px; margin-top: 18px; }
-.btn { flex: 1; padding: 9px; border-radius: 6px; border: none; font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
-.btn:active { transform: scale(0.97); }
-.btn:hover { opacity: 0.85; }
-.btn-save { background: var(--orange); color: #fff; }
-.btn-cancel { background: rgba(255,255,255,0.07); color: #ccc; }
-.btn-clear { background: rgba(255,50,50,0.12); color: #ff7070; border: 1px solid rgba(255,50,50,0.2); }
-.saving-indicator { text-align: center; font-size: 0.68rem; color: var(--gris); margin-top: 8px; min-height: 16px; }
- 
-/* ── DASHBOARD STYLES ────────────────────────────────── */
-.dash-row { display: flex; gap: 12px; flex-wrap: wrap; }
-.dash-card {
-  background: var(--surface); border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 10px; padding: 16px 18px; flex: 1; min-width: 140px;
-}
-.dash-card .card-title { font-size: 0.62rem; color: var(--gris); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
-.dash-kpi { font-size: 2rem; font-weight: 900; line-height: 1; }
-.dash-kpi-sub { font-size: 0.7rem; color: var(--gris); margin-top: 5px; }
- 
-/* Weather widget */
-.weather-widget {
-  background: linear-gradient(135deg, var(--surface) 0%, var(--surface3) 100%);
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 10px; padding: 14px 18px;
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-}
-.weather-icon { font-size: 2.5rem; }
-.weather-info .wt-cond { font-size: 1rem; font-weight: 700; color: var(--blanc); }
-.weather-info .wt-detail { font-size: 0.68rem; color: var(--gris); margin-top: 3px; }
-.weather-alert {
-  background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3);
-  border-radius: 7px; padding: 7px 13px; color: var(--jaune); font-size: 0.7rem;
-  margin-left: auto;
-}
-.weather-ok { margin-left: auto; color: var(--vert); font-size: 0.7rem; font-weight: 700; }
- 
-/* Zone occupancy bars */
-.zone-occ-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
-.zone-occ-card { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 13px 16px; }
-.zone-occ-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-.zone-occ-name { font-size: 0.78rem; font-weight: 700; }
-.zone-occ-nums { font-size: 0.68rem; color: var(--gris); font-family: monospace; }
-.zone-occ-area { font-size: 0.6rem; color: var(--gris); margin-bottom: 8px; }
-.bar-track { background: rgba(255,255,255,0.07); border-radius: 4px; height: 8px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
-.zone-occ-pct { font-size: 0.68rem; color: var(--gris); margin-top: 4px; }
- 
-/* Movements table */
-.mvt-filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
-.filter-chip {
-  padding: 4px 12px; border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: transparent; color: var(--gris);
-  font-size: 0.68rem; cursor: pointer; transition: all 0.2s;
-}
-.filter-chip:hover, .filter-chip.active { background: var(--orange); border-color: var(--orange); color: #fff; }
-.mvt-table-wrap { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; }
-.mvt-table { width: 100%; border-collapse: collapse; font-size: 0.73rem; }
-.mvt-table th { padding: 9px 13px; text-align: left; color: var(--gris); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.06); white-space: nowrap; }
-.mvt-table td { padding: 9px 13px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
-.mvt-table tr:last-child td { border-bottom: none; }
-.mvt-table tr:hover td { background: rgba(255,255,255,0.02); }
-.mvt-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; white-space: nowrap; }
-.mvt-entree { background: rgba(0,229,160,0.12); color: var(--vert); border: 1px solid rgba(0,229,160,0.25); }
-.mvt-sortie { background: rgba(255,68,68,0.12); color: var(--rouge); border: 1px solid rgba(255,68,68,0.25); }
-.mvt-modif { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.22); }
-.mvt-maint { background: rgba(136,146,164,0.12); color: var(--gris); border: 1px solid rgba(136,146,164,0.25); }
-.mvt-empty { text-align: center; padding: 40px; color: var(--gris); font-size: 0.8rem; }
-.mono { font-family: monospace; }
- 
-/* Reports */
-.report-section { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 18px 20px; }
-.report-section h3 { font-size: 0.72rem; color: var(--gris); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; }
-.rpt-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.78rem; }
-.rpt-row:last-child { border-bottom: none; }
-.rpt-label { color: var(--gris); }
-.rpt-val { font-weight: 700; font-family: monospace; }
-.capa-table { width: 100%; border-collapse: collapse; font-size: 0.73rem; }
-.capa-table th { padding: 7px 12px; text-align: left; color: var(--gris); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.06); }
-.capa-table td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-.reco-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: flex-start; font-size: 0.76rem; }
-.reco-item:last-child { border-bottom: none; }
-.reco-icon { font-size: 1.2rem; flex-shrink: 0; }
- 
-/* Section title */
-.section-title { font-size: 0.65rem; color: var(--gris); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }
-.page-title { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.04em; margin-bottom: 4px; }
-.page-sub { font-size: 0.68rem; color: var(--gris); margin-bottom: 16px; }
-.export-btn {
-  padding: 7px 16px; border-radius: 6px;
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-  color: var(--gris); font-size: 0.7rem; font-weight: 700; cursor: pointer;
-  transition: all 0.2s;
-}
-.export-btn:hover { background: rgba(255,107,43,0.12); border-color: var(--orange); color: var(--orange); }
- 
-@media (max-width: 600px) {
-  .spot { width: 36px; height: 46px; }
-  .spot-icon { font-size: 0.8rem; }
-  .toolbar { padding: 8px 10px; gap: 6px; }
-  .dash-kpi { font-size: 1.6rem; }
-}
+body { background:var(--bg); font-family:'Segoe UI',Arial,sans-serif; color:var(--blanc); min-height:100vh; display:flex; flex-direction:column; }
+
+/* ═══ HEADER ═══════════════════════════════════════════ */
+.header { background:var(--surface); border-bottom:2px solid var(--orange); padding:10px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; position:sticky; top:0; z-index:100; }
+.header-brand h1 { font-size:1rem; font-weight:800; color:#fff; }
+.header-brand h1 span { color:var(--orange); }
+.header-brand p { font-size:0.58rem; color:var(--gris); letter-spacing:0.12em; text-transform:uppercase; margin-top:1px; }
+.sync-dot { display:flex; align-items:center; gap:6px; font-size:0.65rem; color:var(--gris); margin-top:4px; }
+.dot { width:8px; height:8px; border-radius:50%; background:var(--gris); }
+.dot.ok { background:var(--vert); animation:pulse 2s infinite; }
+.dot.loading { background:var(--orange); animation:pulse 0.5s infinite; }
+.dot.error { background:var(--rouge); }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+.stats-bar { display:flex; gap:8px; flex-wrap:wrap; }
+.stat-box { text-align:center; background:var(--surface2); border-radius:6px; padding:4px 12px; min-width:56px; border-top:2px solid transparent; }
+.stat-box.s-vert { border-top-color:var(--vert); } .stat-box.s-orange { border-top-color:var(--orange); }
+.stat-box.s-cyan { border-top-color:var(--cyan); } .stat-box.s-jaune { border-top-color:var(--jaune); }
+.stat-box .val { font-size:1.15rem; font-weight:800; line-height:1; }
+.stat-box .lbl { font-size:0.55rem; opacity:.6; letter-spacing:.1em; text-transform:uppercase; }
+.val.libre{color:var(--vert)} .val.occupe{color:var(--orange)} .val.cyan{color:var(--cyan)} .val.jaune{color:var(--jaune)}
+
+/* ═══ TOOLBAR ═══════════════════════════════════════════ */
+.toolbar { display:flex; gap:8px; padding:8px 20px; background:#12192e; border-bottom:1px solid rgba(0,0,0,.2); flex-wrap:wrap; align-items:center; }
+.view-toggles { display:flex; gap:5px; flex-wrap:wrap; }
+.view-btn { padding:5px 12px; border-radius:6px; border:none; background:var(--surface2); color:var(--gris); font-size:0.72rem; font-weight:700; cursor:pointer; transition:.2s; white-space:nowrap; }
+.view-btn.active { background:var(--orange); color:#fff; }
+.view-btn:hover:not(.active) { background:var(--surface3); color:var(--blanc); }
+#btnEditMap { display:none; margin-left:auto; color:var(--cyan); border:1px solid var(--cyan); background:rgba(0,212,255,.08); }
+#btnEditMap.editing { background:var(--rouge); border-color:var(--rouge); color:#fff; animation:pulseEdit 1.5s infinite; }
+@keyframes pulseEdit{0%{box-shadow:0 0 0 0 rgba(255,68,68,.4)}70%{box-shadow:0 0 0 6px rgba(255,68,68,0)}100%{box-shadow:0 0 0 0 rgba(255,68,68,0)}}
+.sep { width:1px; height:20px; background:rgba(255,255,255,.07); flex-shrink:0; }
+.leg { display:flex; align-items:center; gap:5px; font-size:0.66rem; color:var(--gris); }
+.leg-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+.search-bar { padding:5px 12px; border-radius:6px; border:1px solid rgba(255,255,255,.15); background:var(--surface2); color:var(--blanc); font-size:0.73rem; outline:none; width:200px; transition:border-color .2s; }
+.search-bar:focus { border-color:var(--cyan); box-shadow:0 0 8px rgba(0,212,255,.25); }
+
+/* ═══ LOADING ═════════════════════════════════════════ */
+.loading-screen { position:fixed; inset:0; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:9999; }
+.loading-screen.hidden { display:none; }
+.spinner { width:40px; height:40px; border:3px solid rgba(255,107,43,.2); border-top-color:var(--orange); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══ VIEWS ═══════════════════════════════════════════ */
+.main-view { display:none; padding:16px 20px; flex-direction:column; gap:14px; flex-grow:1; }
+.main-view.active { display:flex; }
+#mapView { align-items:center; padding:10px 16px; gap:10px; }
+#dashboardView,#mouvementsView,#rapportsView { overflow-y:auto; }
+
+/* ═══ MAP SELECTOR ════════════════════════════════════ */
+.map-selector { display:flex; gap:8px; align-self:flex-start; width:100%; align-items:center; flex-wrap:wrap; }
+.map-sel-btn { padding:7px 18px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:var(--surface2); color:var(--gris); font-size:0.76rem; font-weight:700; cursor:pointer; transition:.2s; }
+.map-sel-btn.active { background:var(--surface3); border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 12px rgba(0,212,255,.15); }
+.map-sel-btn:hover:not(.active) { background:var(--surface3); color:var(--blanc); }
+.map-label { font-size:0.65rem; color:var(--gris); letter-spacing:.1em; text-transform:uppercase; }
+#mapContainer { position:relative; width:100%; height:82vh; background-size:100% 100%; background-repeat:no-repeat; background-position:center; border-radius:10px; border:1px solid rgba(255,255,255,.07); overflow:hidden; background-color:#0d2010; box-shadow:0 10px 30px rgba(0,0,0,.3); }
+
+/* ═══ GRID ════════════════════════════════════════════ */
+.group-row { display:flex; gap:12px; flex-wrap:wrap; }
+.group-row .zone-block { flex:1; min-width:180px; }
+.zone-block { background:var(--surface); border:1px solid rgba(255,255,255,.06); border-radius:8px; overflow:hidden; }
+.zone-header { display:flex; align-items:center; justify-content:space-between; padding:7px 12px; background:rgba(0,0,0,.25); border-bottom:1px solid rgba(255,255,255,.05); }
+.zone-name { font-size:0.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+.zone-count { font-size:0.58rem; color:var(--gris); }
+.zone-body { padding:10px 12px; display:flex; flex-wrap:wrap; gap:5px; }
+.zone-section-title { font-size:0.62rem; color:var(--gris); letter-spacing:.14em; text-transform:uppercase; padding:4px 2px 2px; width:100%; border-top:1px solid rgba(255,255,255,.05); margin-top:4px; }
+
+/* ═══ SPOTS ═══════════════════════════════════════════ */
+.spot { width:42px; height:52px; border-radius:5px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; font-size:.58rem; font-weight:700; transition:transform .15s,filter .15s,box-shadow .15s; position:relative; user-select:none; border:2px solid transparent; }
+.spot:hover { transform:scale(1.12); filter:brightness(1.25); z-index:10; box-shadow:0 4px 16px rgba(0,0,0,.5); }
+.spot:active { transform:scale(.96); }
+.spot.libre { background:rgba(0,229,160,.12); border-color:var(--vert); color:var(--vert); }
+.spot.occupe { background:rgba(255,107,43,.16); border-color:var(--orange); color:var(--orange2); }
+.spot.maintenance { background:rgba(136,146,164,.1); border-color:var(--gris); color:var(--gris); }
+.spot-icon { font-size:.95rem; margin-bottom:1px; }
+.spot-id { font-size:.65rem; font-weight:800; }
+
+.spot-map { position:absolute!important; display:block!important; transform:translate(-50%,-50%) rotate(var(--rot,0deg))!important; border-radius:2px!important; border:1px solid rgba(0,0,0,.7)!important; }
+.spot-map:hover { transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.3)!important; box-shadow:0 4px 12px rgba(0,0,0,.8); z-index:50; }
+.spot-map:active { transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(.95)!important; }
+.spot-map .spot-icon,.spot-map .spot-id { display:none; }
+.spot-map.libre { background-color:var(--vert)!important; }
+.spot-map.maintenance { background-color:var(--gris)!important; }
+body:not(.map-edit-mode) #mapView .spot-map.libre { display:none!important; }
+body.map-edit-mode .spot-map { cursor:grab!important; border:2px dashed #fff!important; }
+body.map-edit-mode .spot-map:active { cursor:grabbing!important; }
+body.map-edit-mode .spot-map.libre { display:block!important; opacity:.6; }
+
+/* ═══ SEARCH ══════════════════════════════════════════ */
+body.searching .spot:not(.search-match) { opacity:.07!important; pointer-events:none; filter:grayscale(100%); }
+body.searching .spot.search-match { z-index:100!important; border-color:var(--cyan)!important; background-color:rgba(0,212,255,.25)!important; }
+body.searching #gridView .spot.search-match { animation:pSG 1.2s infinite; }
+@keyframes pSG{0%{transform:scale(1)}50%{transform:scale(1.15);box-shadow:0 0 20px var(--cyan)}100%{transform:scale(1)}}
+body.searching #mapView .spot-map.search-match { animation:pSM 1.2s infinite; }
+@keyframes pSM{0%{transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1)}50%{transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.4);box-shadow:0 0 20px var(--cyan)}100%{transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1)}}
+
+/* ═══ TOOLTIP ═════════════════════════════════════════ */
+#tooltip { position:fixed; background:#0a1020; border:1px solid var(--orange); border-radius:10px; padding:11px 14px; font-size:.72rem; pointer-events:none; z-index:500; display:none; max-width:230px; box-shadow:0 8px 24px rgba(0,0,0,.8); line-height:1.6; }
+.tt-id { font-weight:800; font-size:.88rem; color:var(--orange2); margin-bottom:2px; }
+.tt-zone { font-size:.6rem; color:var(--gris); margin-bottom:6px; text-transform:uppercase; letter-spacing:.08em; }
+.tt-row { display:flex; justify-content:space-between; gap:8px; font-size:.68rem; margin-top:2px; }
+.tt-row span:first-child { color:var(--gris); }
+
+/* ═══ MODAL ═══════════════════════════════════════════ */
+.modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.82); z-index:2000; align-items:center; justify-content:center; padding:16px; }
+.modal-bg.open { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--orange); border-radius:14px; padding:22px; width:100%; max-width:400px; box-shadow:0 20px 60px rgba(0,0,0,.85); max-height:92vh; overflow-y:auto; }
+.modal h2 { font-size:1rem; font-weight:800; color:var(--orange2); margin-bottom:2px; }
+.modal .modal-sub { font-size:.6rem; color:var(--gris); letter-spacing:.1em; text-transform:uppercase; background:rgba(255,255,255,.05); border-radius:4px; padding:2px 7px; display:inline-block; margin-bottom:14px; }
+.modal label { display:block; font-size:.68rem; color:#aaa; margin-bottom:3px; margin-top:10px; }
+.f-base { width:100%; background:var(--surface2); border:1px solid rgba(255,255,255,.12); border-radius:7px; padding:9px 11px; color:var(--blanc); font-size:.8rem; outline:none; transition:border-color .2s; -webkit-appearance:none; }
+.f-base:focus { border-color:var(--orange); box-shadow:0 0 0 2px rgba(255,107,43,.12); }
+.f-base option { background:var(--surface); }
+input[type="datetime-local"].f-base { color-scheme:dark; }
+.content-locked { display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid rgba(255,255,255,.08); border-radius:7px; padding:9px 11px; font-size:.8rem; }
+.modal-btns { display:flex; gap:8px; margin-top:18px; }
+.btn { flex:1; padding:10px; border-radius:7px; border:none; font-size:.78rem; font-weight:700; cursor:pointer; transition:opacity .2s,transform .1s; }
+.btn:active { transform:scale(.97); } .btn:hover { opacity:.85; }
+.btn-save { background:var(--orange); color:#fff; }
+.btn-cancel { background:rgba(255,255,255,.07); color:#ccc; }
+.btn-clear { background:rgba(255,50,50,.1); color:#ff7070; border:1px solid rgba(255,50,50,.18); }
+.saving-indicator { text-align:center; font-size:.7rem; color:var(--gris); margin-top:8px; min-height:18px; }
+
+/* ═══ SHARED COMPONENTS ══════════════════════════════ */
+.dash-row { display:flex; gap:12px; flex-wrap:wrap; }
+.dash-card { background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:15px 18px; flex:1; min-width:130px; }
+.card-title { font-size:.6rem; color:var(--gris); letter-spacing:.12em; text-transform:uppercase; margin-bottom:9px; }
+.dash-kpi { font-size:2rem; font-weight:900; line-height:1; }
+.dash-kpi-sub { font-size:.68rem; color:var(--gris); margin-top:5px; }
+.weather-widget { background:linear-gradient(135deg,var(--surface),var(--surface3)); border:1px solid rgba(56,189,248,.2); border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.wt-cond { font-size:1rem; font-weight:700; }
+.wt-detail { font-size:.68rem; color:var(--gris); margin-top:3px; }
+.weather-ok { margin-left:auto; color:var(--vert); font-size:.7rem; font-weight:700; }
+.zone-occ-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
+.zone-occ-card { background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:8px; padding:12px 14px; }
+.zone-occ-header { display:flex; justify-content:space-between; margin-bottom:4px; }
+.zone-occ-name { font-size:.74rem; font-weight:700; }
+.bar-track { background:rgba(255,255,255,.06); border-radius:4px; height:7px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width 1s ease; }
+.zone-occ-pct { font-size:.64rem; margin-top:3px; }
+.mvt-table-wrap { background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; overflow:hidden; overflow-x:auto; }
+.mvt-table { width:100%; border-collapse:collapse; font-size:.72rem; min-width:680px; }
+.mvt-table th { padding:9px 13px; text-align:left; color:var(--gris); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; background:rgba(0,0,0,.2); border-bottom:1px solid rgba(255,255,255,.06); white-space:nowrap; }
+.mvt-table td { padding:9px 13px; border-bottom:1px solid rgba(255,255,255,.04); vertical-align:middle; }
+.mvt-table tr:last-child td { border-bottom:none; }
+.mvt-table tr:hover td { background:rgba(255,255,255,.02); }
+.mvt-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.62rem; font-weight:700; white-space:nowrap; }
+.mvt-entree { background:rgba(0,229,160,.12); color:var(--vert); border:1px solid rgba(0,229,160,.25); }
+.mvt-sortie { background:rgba(255,68,68,.12); color:var(--rouge); border:1px solid rgba(255,68,68,.25); }
+.mvt-modif  { background:rgba(0,212,255,.1); color:var(--cyan); border:1px solid rgba(0,212,255,.2); }
+.mvt-maint  { background:rgba(136,146,164,.1); color:var(--gris); border:1px solid rgba(136,146,164,.22); }
+.mvt-empty  { text-align:center; padding:40px; color:var(--gris); }
+.filter-chip { padding:4px 12px; border-radius:20px; border:1px solid rgba(255,255,255,.1); background:transparent; color:var(--gris); font-size:.68rem; cursor:pointer; transition:.2s; }
+.filter-chip:hover,.filter-chip.active { background:var(--orange); border-color:var(--orange); color:#fff; }
+.report-section { background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:18px 20px; }
+.report-section h3 { font-size:.62rem; color:var(--gris); letter-spacing:.12em; text-transform:uppercase; margin-bottom:14px; }
+.rpt-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.04); font-size:.76rem; }
+.rpt-row:last-child { border-bottom:none; }
+.rpt-label { color:var(--gris); }
+.rpt-val { font-weight:700; font-family:monospace; }
+.reco-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.04); align-items:flex-start; font-size:.76rem; }
+.reco-item:last-child { border-bottom:none; }
+.export-btn { padding:6px 14px; border-radius:6px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); color:var(--gris); font-size:.7rem; font-weight:700; cursor:pointer; transition:.2s; }
+.export-btn:hover { background:rgba(255,107,43,.1); border-color:var(--orange); color:var(--orange); }
+.page-title { font-size:1.05rem; font-weight:800; letter-spacing:.04em; }
+.page-sub { font-size:.68rem; color:var(--gris); margin-top:3px; }
+.section-title { font-size:.62rem; color:var(--gris); letter-spacing:.14em; text-transform:uppercase; margin-bottom:10px; }
+.mono { font-family:monospace; }
+@media(max-width:600px){.spot{width:36px;height:46px}.toolbar{padding:8px 10px;gap:6px}.dash-kpi{font-size:1.5rem}}
 </style>
 </head>
 <body>
- 
-<!-- LOADING -->
+
 <div class="loading-screen" id="loadingScreen">
   <div class="spinner"></div>
-  <p style="color:var(--gris);font-size:0.8rem">Connexion à la base de données…</p>
+  <p style="color:var(--gris);font-size:.8rem">Connexion à la base de données…</p>
 </div>
- 
+
 <div id="tooltip"></div>
- 
-<!-- MODAL (enrichi avec Opérateur) -->
+
+<!-- ═══ MODAL ════════════════════════════════════════════ -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h2 id="modalTitle">Place</h2>
-    <div class="modal-zone" id="modalZone"></div>
+    <div class="modal-sub" id="modalZone"></div>
     <label>Statut</label>
-    <select id="modalStatus">
+    <select id="modalStatus" class="f-base" onchange="onStatusChange()">
       <option value="libre">🟢 Libre</option>
       <option value="occupe">🟠 Occupée</option>
       <option value="maintenance">⚪ Maintenance</option>
     </select>
     <label>Contenu (type de pièce)</label>
-    <input type="text" id="modalContent" placeholder="Ex: Tailcone A320, Aile gauche, MID…">
+    <div id="modalContentWrap"></div>
     <label>Référence / N° de série</label>
-    <input type="text" id="modalRef" placeholder="Ex: MSN-4521-TC">
+    <input type="text" id="modalRef" class="f-base" placeholder="Ex: MSN-4521-TC">
     <label>Date et Heure d'entrée</label>
-    <input type="datetime-local" id="modalDate">
+    <input type="datetime-local" id="modalDate" class="f-base">
     <label>Opérateur</label>
-    <select id="modalOperator">
+    <select id="modalOp" class="f-base">
       <option value="">— Sélectionner —</option>
-      <option>J. Tremblay</option>
-      <option>M. Gagnon</option>
-      <option>S. Roy</option>
-      <option>P. Lavoie</option>
-      <option>A. Côté</option>
-      <option>L. Bergeron</option>
+      <option>J. Tremblay</option><option>M. Gagnon</option><option>S. Roy</option>
+      <option>P. Lavoie</option><option>A. Côté</option><option>L. Bergeron</option>
       <option>R. Mercier</option>
     </select>
     <label>Notes</label>
-    <input type="text" id="modalNotes" placeholder="Notes libres…">
+    <input type="text" id="modalNotes" class="f-base" placeholder="Notes libres…">
     <div class="modal-btns">
-      <button class="btn btn-clear" id="btnClear">Vider</button>
+      <button class="btn btn-clear" onclick="clearModal()">Vider</button>
       <button class="btn btn-cancel" onclick="closeModal()">Annuler</button>
       <button class="btn btn-save" onclick="saveSpot()">💾 Enregistrer</button>
     </div>
-    <div class="saving-indicator" id="savingIndicator"></div>
+    <div class="saving-indicator" id="savingInd"></div>
   </div>
 </div>
- 
-<!-- HEADER -->
+
+<!-- ═══ HEADER ════════════════════════════════════════════ -->
 <div class="header">
   <div class="header-brand">
     <h1>Parc <span>Aéro</span></h1>
     <p>Gestion Stockage Extérieur</p>
-    <div class="sync-dot" id="syncStatus" style="margin-top:4px">
+    <div class="sync-dot" id="syncStatus">
       <div class="dot loading" id="syncDot"></div>
       <span id="syncLabel">Connexion…</span>
     </div>
@@ -362,890 +241,559 @@ body.searching #mapView .spot-map.search-match { animation: pulseSearchMap 1.2s 
     <div class="stat-box s-cyan"><div class="val cyan" id="totalSpots">—</div><div class="lbl">Total</div></div>
     <div class="stat-box s-vert"><div class="val libre" id="countLibre">—</div><div class="lbl">Libres</div></div>
     <div class="stat-box s-orange"><div class="val occupe" id="countOccupe">—</div><div class="lbl">Occupées</div></div>
-    <div class="stat-box s-jaune"><div class="val jaune" id="countMvtToday">—</div><div class="lbl">Mvt. auj.</div></div>
+    <div class="stat-box s-jaune"><div class="val jaune" id="countMvtToday">0</div><div class="lbl">Mvt. auj.</div></div>
   </div>
 </div>
- 
-<!-- TOOLBAR -->
+
+<!-- ═══ TOOLBAR ═══════════════════════════════════════════ -->
 <div class="toolbar">
   <div class="view-toggles">
-    <button class="view-btn active" onclick="switchView('grid', this)">🔲 Grille</button>
-    <button class="view-btn" onclick="switchView('map', this)">🗺️ Carte</button>
-    <button class="view-btn" onclick="switchView('dashboard', this)">📊 Dashboard</button>
-    <button class="view-btn" onclick="switchView('mouvements', this)">⇄ Mouvements</button>
-    <button class="view-btn" onclick="switchView('rapports', this)">📈 Rapports</button>
+    <button class="view-btn active" onclick="switchView('grid',this)">🔲 Grille</button>
+    <button class="view-btn" onclick="switchView('map',this)">🗺️ Carte</button>
+    <button class="view-btn" onclick="switchView('dashboard',this)">📊 Dashboard</button>
+    <button class="view-btn" onclick="switchView('mouvements',this)">⇄ Mouvements</button>
+    <button class="view-btn" onclick="switchView('rapports',this)">📈 Rapports</button>
   </div>
   <div class="sep"></div>
   <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Réf, Contenu, Notes…">
   <div class="sep"></div>
   <div class="leg"><div class="leg-dot" style="background:var(--vert)"></div>Libre</div>
   <div class="leg"><div class="leg-dot" style="background:var(--orange)"></div>Occupée</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--gris)"></div>Maintenance</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--gris)"></div>Maint.</div>
   <button class="view-btn" id="btnEditMap" onclick="toggleMapEdit()">🔓 Configurer le Plan</button>
 </div>
- 
-<!-- VUE GRILLE -->
+
 <div class="main-view active" id="gridView"></div>
- 
-<!-- VUE CARTE -->
+
 <div class="main-view" id="mapView">
+  <div class="map-selector">
+    <span class="map-label">Site :</span>
+    <button class="map-sel-btn active" id="mapBtnCour" onclick="switchMap('cour')">🏭 Plan Cour principale</button>
+    <button class="map-sel-btn" id="mapBtnMirlog" onclick="switchMap('mirlog')">🏗 Site Mirlog</button>
+  </div>
   <div id="mapContainer"></div>
 </div>
- 
-<!-- VUE DASHBOARD -->
-<div class="main-view" id="dashboardView">
-  <!-- rempli par renderDashboard() -->
-</div>
- 
-<!-- VUE MOUVEMENTS -->
-<div class="main-view" id="mouvementsView">
-  <!-- rempli par renderMovements() -->
-</div>
- 
-<!-- VUE RAPPORTS -->
-<div class="main-view" id="rapportsView">
-  <!-- rempli par renderReports() -->
-</div>
- 
+
+<div class="main-view" id="dashboardView"></div>
+<div class="main-view" id="mouvementsView"></div>
+<div class="main-view" id="rapportsView"></div>
+
 <script>
-// ════════════════════════════════════════════════════════
-// SUPABASE CONFIG
-// ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// SUPABASE
+// ══════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://ddeucqcjrmkasptupohd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkZXVjcWNqcm1rYXNwdHVwb2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzE2ODAsImV4cCI6MjA5MDY0NzY4MH0.DNcKFACTd9HKj1pBus5Rt0mRASe6PxBNkVv7we0d-9I';
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
- 
-// ════════════════════════════════════════════════════════
-// DONNÉES ZONES — Dimensions réelles (pi²) + Composantes
-// ════════════════════════════════════════════════════════
-const ZONE_AREAS = {
-  'beton_group':  { area: 62581, label: 'Zone Béton (MID / Aile / FWD)', ids: ['béton','fwd'] },
-  'p7_group':     { area: 35288, label: 'Zone P7 (Remorques / VSTAB / TAILCONE / HSTAB)', ids: ['remorque','remorque-vide','vstab','tailcone','hstab'] },
-  'klmn_group':   { area: 12567, label: 'Zones K / L / M / N', ids: ['k','l','m','n'] },
-  'rear_group':   { area: 16244, label: 'Zone REAR', ids: ['rear'] },
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ══════════════════════════════════════════════════════
+// CONTENU PAR ZONE
+// ══════════════════════════════════════════════════════
+const ZONE_CONTENT = {
+  'hstab':         ['HSTAB'],
+  'vstab':         ['VSTAB'],
+  'tailcone':      ['Tailcone'],
+  'remorque':      ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque'],
+  'remorque-vide': ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque'],
+  'béton':         ['MID','Aile','Remorque'],
+  'fwd':           ['FWD'],
+  'rear':          ['REAR'],
+  'k':             ['MID','Aile','Remorque'],
+  'l':             ['MID','Aile','Remorque'],
+  'm':             ['MID','Aile','Remorque'],
+  'n':             ['MID','Aile','Remorque'],
+  'mirlog1':       ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque'],
+  'mirlog2':       ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque'],
 };
- 
-// Dimensions en pi² par composante (pour calcul capacité théorique)
-const COMPOSANTE_DIMS = {
-  'MID':       1110,
-  'Tailcone':  189,
-  'Rear':      640,
-  'Wings':     1336,
-  'Hstab':     587,
-  'Vstab':     316,
-  'FWD':       406,
-  'Remorque':  750,
-};
- 
+
+// ══════════════════════════════════════════════════════
+// ZONES
+// ══════════════════════════════════════════════════════
 const ZONES = [
-  { id:'tailcone',       label:'Zone Tailcone',         count:16, color:'#e84393', icon:'✈️', desc:'Tailcone', mapWidth:1,    mapHeight:1 },
-  { id:'hstab',          label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'HSTAB',   mapWidth:1.5,  mapHeight:1.5 },
-  { id:'vstab',          label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'VSTAB',   mapWidth:1.5,  mapHeight:1 },
-  { id:'remorque',       label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques générales', mapWidth:4, mapHeight:1.5 },
-  { id:'remorque-vide',  label:'Zone Remorque Vide',    count:5,  color:'#fb923c', icon:'🚛', desc:'Remorques vides',     mapWidth:0.8, mapHeight:6.5 },
-  { id:'fwd',            label:'Zone FWD',              count:20, color:'#34d399', icon:'✈️', desc:'Forward', mapWidth:1.3, mapHeight:1.5 },
-  { id:'béton',          label:'Zone Béton (MID/Aile)', count:18, color:'#fbbf24', icon:'✈️', desc:'MID ou Ailes', mapWidth:0.8, mapHeight:7 },
-  { id:'k',              label:'Zone K',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone K', mapWidth:0.8, mapHeight:7, mapRotation:25 },
-  { id:'l',              label:'Zone L',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone L', mapWidth:0.8, mapHeight:7, mapRotation:25 },
-  { id:'m',              label:'Zone M',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone M', mapWidth:0.8, mapHeight:7, mapRotation:25 },
-  { id:'n',              label:'Zone N',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone N', mapWidth:0.8, mapHeight:7, mapRotation:25 },
-  { id:'rear',           label:'Stockage REAR',         count:24, color:'#ef4444', icon:'✈️', desc:'REAR', mapWidth:0.8, mapHeight:5 },
+  { id:'tailcone',      label:'Zone Tailcone',         count:16, color:'#e84393', icon:'✈️', desc:'Tailcone',              mapZone:'cour',   mapWidth:1,   mapHeight:1 },
+  { id:'hstab',         label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'HSTAB',                mapZone:'cour',   mapWidth:1.5, mapHeight:1.5 },
+  { id:'vstab',         label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'VSTAB',                mapZone:'cour',   mapWidth:1.5, mapHeight:1 },
+  { id:'remorque',      label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques',            mapZone:'cour',   mapWidth:4,   mapHeight:1.5 },
+  { id:'remorque-vide', label:'Zone Remorque Vide',    count:5,  color:'#fb923c', icon:'🚛', desc:'Remorques vides',      mapZone:'cour',   mapWidth:0.8, mapHeight:6.5 },
+  { id:'fwd',           label:'Zone FWD',              count:20, color:'#34d399', icon:'✈️', desc:'Forward',              mapZone:'cour',   mapWidth:1.3, mapHeight:1.5 },
+  { id:'béton',         label:'Zone Béton',            count:18, color:'#fbbf24', icon:'✈️', desc:'MID / Ailes / Remo.',  mapZone:'cour',   mapWidth:0.8, mapHeight:7 },
+  { id:'k',             label:'Zone K',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone K', mapZone:'cour',   mapWidth:0.8, mapHeight:7, mapRotation:25 },
+  { id:'l',             label:'Zone L',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone L', mapZone:'cour',   mapWidth:0.8, mapHeight:7, mapRotation:25 },
+  { id:'m',             label:'Zone M',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone M', mapZone:'cour',   mapWidth:0.8, mapHeight:7, mapRotation:25 },
+  { id:'n',             label:'Zone N',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone N', mapZone:'cour',   mapWidth:0.8, mapHeight:7, mapRotation:25 },
+  { id:'rear',          label:'Stockage REAR',         count:24, color:'#ef4444', icon:'✈️', desc:'REAR',                 mapZone:'cour',   mapWidth:0.8, mapHeight:5 },
+  { id:'mirlog1',       label:'Mirlog 1',              count:10, color:'#c084fc', icon:'🚛', desc:'Remorques — Mirlog 1', mapZone:'mirlog', mapWidth:1.5, mapHeight:5 },
+  { id:'mirlog2',       label:'Mirlog 2',              count:10, color:'#f472b6', icon:'🚛', desc:'Remorques — Mirlog 2', mapZone:'mirlog', mapWidth:1.5, mapHeight:5 },
 ];
- 
-// ════════════════════════════════════════════════════════
+
+const ZONE_AREAS = {
+  beton:  { area:62581, label:'Zone Béton (MID/Aile/FWD)',               ids:['béton','fwd'] },
+  p7:     { area:35288, label:'Zone P7 (Remo./VSTAB/TAILCONE/HSTAB)',    ids:['remorque','remorque-vide','vstab','tailcone','hstab'] },
+  klmn:   { area:12567, label:'Zones K / L / M / N',                    ids:['k','l','m','n'] },
+  rear:   { area:16244, label:'Zone REAR',                               ids:['rear'] },
+  mirlog: { area:0,     label:'Site Mirlog',                             ids:['mirlog1','mirlog2'] },
+};
+const DIMS = { MID:1110,Tailcone:189,Rear:640,Wings:1336,Hstab:587,Vstab:316,FWD:406,Remorque:750 };
+
+// ══════════════════════════════════════════════════════
 // STATE
-// ════════════════════════════════════════════════════════
-let parcData = {};
-let PLACES = [];
-let isMapEditMode = false;
-let currentView = 'grid';
-let mvtFilter = 'Tous';
- 
-// Mouvements stockés dans localStorage (fallback fiable)
-const MVT_KEY = 'parc_mvt_v2';
+// ══════════════════════════════════════════════════════
+let parcData = {}, PLACES = [], isMapEditMode = false, currentView = 'grid', currentMap = 'cour', mvtFilter = 'Tous';
+const MVT_KEY = 'parc_mvt_v4';
 let movements = [];
-try { movements = JSON.parse(localStorage.getItem(MVT_KEY) || '[]'); } catch(e) { movements = []; }
- 
-ZONES.forEach((zone, zIndex) => {
-  for (let i = 1; i <= zone.count; i++) {
-    PLACES.push({ spotId:`${zone.id}-${i}`, zoneId:zone.id, num:i, x:5+(i*1.5), y:10+(zIndex*5) });
-  }
-});
- 
-// ════════════════════════════════════════════════════════
-// MOUVEMENTS — Log interne
-// ════════════════════════════════════════════════════════
-function detectMvtType(oldData, newData) {
-  const hadContent = !!(oldData && oldData.content && oldData.content.trim());
-  const hasContent = !!(newData.content && newData.content.trim());
-  const wasOccupe = oldData && oldData.status === 'occupe';
-  const isOccupe = newData.status === 'occupe';
-  const isLibre = newData.status === 'libre';
-  const isMaint = newData.status === 'maintenance';
- 
-  if (isMaint) return 'Maintenance';
-  if (!wasOccupe && isOccupe) return 'Entrée';
-  if (wasOccupe && isLibre) return 'Sortie';
-  if (hasContent && !hadContent) return 'Entrée';
-  if (!hasContent && hadContent) return 'Sortie';
+try { movements = JSON.parse(localStorage.getItem(MVT_KEY)||'[]'); } catch(e) { movements=[]; }
+
+ZONES.forEach((z,zi) => { for(let i=1;i<=z.count;i++) PLACES.push({spotId:`${z.id}-${i}`,zoneId:z.id,num:i,x:5+(i*1.5),y:10+(zi*5)}); });
+
+// ══════════════════════════════════════════════════════
+// MOVEMENTS
+// ══════════════════════════════════════════════════════
+function detectType(o,n) {
+  if(n.status==='maintenance') return 'Maintenance';
+  if((!o||o.status!=='occupe')&&n.status==='occupe') return 'Entrée';
+  if(o&&o.status==='occupe'&&n.status==='libre') return 'Sortie';
+  if(n.content&&(!o||!o.content)) return 'Entrée';
+  if(!n.content&&o&&o.content) return 'Sortie';
   return 'Modification';
 }
- 
-function logMovement(spotId, zoneId, num, oldData, newData) {
-  const zone = ZONES.find(z => z.id === zoneId);
-  const type = detectMvtType(oldData, newData);
-  const mvt = {
-    id: Date.now() + Math.random(),
-    spotId, zoneId, spotNum: num,
-    zoneLabel: zone ? zone.label : zoneId,
-    type,
-    ancienStatut: oldData ? oldData.status : 'libre',
-    nouveauStatut: newData.status,
-    content: newData.content || '',
-    ref: newData.ref || '',
-    operator: newData.operator || '—',
-    notes: newData.notes || '',
-    date: new Date().toISOString(),
-  };
-  movements.unshift(mvt);
-  if (movements.length > 300) movements = movements.slice(0, 300);
-  try { localStorage.setItem(MVT_KEY, JSON.stringify(movements)); } catch(e) {}
-  // Met à jour le compteur du header
-  document.getElementById('countMvtToday').textContent = getTodayMvtCount();
-  // Si la vue mouvements est active, re-render
-  if (currentView === 'mouvements') renderMovements();
-  if (currentView === 'dashboard') renderDashboard();
+function logMvt(spotId,zoneId,num,old,nw) {
+  const z=ZONES.find(z=>z.id===zoneId);
+  movements.unshift({id:Date.now()+Math.random(),spotId,zoneId,spotNum:num,zoneLabel:z?z.label:zoneId,type:detectType(old,nw),ancienStatut:old?old.status:'libre',nouveauStatut:nw.status,content:nw.content||'',ref:nw.ref||'',operator:nw.operator||'—',notes:nw.notes||'',date:new Date().toISOString()});
+  if(movements.length>300) movements=movements.slice(0,300);
+  try{localStorage.setItem(MVT_KEY,JSON.stringify(movements));}catch(e){}
+  document.getElementById('countMvtToday').textContent=todayCount();
 }
- 
-function getTodayMvtCount() {
-  const today = new Date().toDateString();
-  return movements.filter(m => new Date(m.date).toDateString() === today).length;
-}
- 
-function fmtDate(iso) {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleString('fr-CA', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-}
- 
-// ════════════════════════════════════════════════════════
+function todayCount(){const t=new Date().toDateString();return movements.filter(m=>new Date(m.date).toDateString()===t).length;}
+function fmtDate(iso){if(!iso)return'—';return new Date(iso).toLocaleString('fr-CA',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+
+// ══════════════════════════════════════════════════════
 // NAVIGATION
-// ════════════════════════════════════════════════════════
-function switchView(viewName, btnElement) {
-  currentView = viewName;
-  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-  btnElement.classList.add('active');
-  ['grid','map','dashboard','mouvements','rapports'].forEach(v => {
-    document.getElementById(v + 'View').classList.remove('active');
-  });
-  document.getElementById(viewName + 'View').classList.add('active');
-  document.getElementById('btnEditMap').style.display = (viewName === 'map') ? 'block' : 'none';
-  if (viewName !== 'map' && isMapEditMode) toggleMapEdit();
-  if (viewName === 'dashboard') renderDashboard();
-  if (viewName === 'mouvements') renderMovements();
-  if (viewName === 'rapports') renderReports();
+// ══════════════════════════════════════════════════════
+function switchView(v,btn) {
+  currentView=v;
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['grid','map','dashboard','mouvements','rapports'].forEach(n=>document.getElementById(n+'View').classList.remove('active'));
+  document.getElementById(v+'View').classList.add('active');
+  document.getElementById('btnEditMap').style.display=v==='map'?'block':'none';
+  if(v!=='map'&&isMapEditMode) toggleMapEdit();
+  if(v==='dashboard') renderDash();
+  if(v==='mouvements') renderMvt();
+  if(v==='rapports') renderRpts();
 }
- 
-// ════════════════════════════════════════════════════════
-// MODE ÉDITION CARTE — Drag & Drop avec aimant
-// ════════════════════════════════════════════════════════
+function switchMap(map) {
+  currentMap=map;
+  document.getElementById('mapBtnCour').classList.toggle('active',map==='cour');
+  document.getElementById('mapBtnMirlog').classList.toggle('active',map==='mirlog');
+  document.getElementById('mapContainer').style.backgroundImage=map==='mirlog'?"url('Mirlog.png')":"url('plan-cour.png')";
+  renderMap();
+}
+
+// ══════════════════════════════════════════════════════
+// DRAG & DROP
+// ══════════════════════════════════════════════════════
 function toggleMapEdit() {
-  isMapEditMode = !isMapEditMode;
-  const btn = document.getElementById('btnEditMap');
-  document.body.classList.toggle('map-edit-mode', isMapEditMode);
-  if (isMapEditMode) {
-    btn.classList.add('editing');
-    btn.innerHTML = '🔒 Sauvegarder le Plan';
-  } else {
-    btn.classList.remove('editing');
-    btn.innerHTML = '⏳ Enregistrement…';
-    saveLayoutToSupabase();
-  }
+  isMapEditMode=!isMapEditMode;
+  const btn=document.getElementById('btnEditMap');
+  document.body.classList.toggle('map-edit-mode',isMapEditMode);
+  if(isMapEditMode){btn.classList.add('editing');btn.innerHTML='🔒 Sauvegarder le Plan';}
+  else{btn.classList.remove('editing');btn.innerHTML='⏳ Enregistrement…';saveLayout();}
 }
- 
-let dragData = { isDragging: false, el: null };
-document.addEventListener('mousedown', e => {
-  if (!isMapEditMode) return;
-  const spot = e.target.closest('.spot-map');
-  if (spot) { dragData.isDragging = true; dragData.el = spot; spot.style.zIndex = 1000; }
+let drag={on:false,el:null};
+document.addEventListener('mousedown',e=>{if(!isMapEditMode)return;const s=e.target.closest('.spot-map');if(s){drag.on=true;drag.el=s;s.style.zIndex=1000;}});
+document.addEventListener('mousemove',e=>{
+  if(!drag.on||!drag.el)return;
+  const r=document.getElementById('mapContainer').getBoundingClientRect(),step=0.2;
+  let x=Math.round(((e.clientX-r.left)/r.width*100)/step)*step;
+  let y=Math.round(((e.clientY-r.top)/r.height*100)/step)*step;
+  drag.el.style.left=Math.max(0,Math.min(x,100))+'%';
+  drag.el.style.top=Math.max(0,Math.min(y,100))+'%';
 });
-document.addEventListener('mousemove', e => {
-  if (!dragData.isDragging || !dragData.el) return;
-  const container = document.getElementById('mapContainer');
-  const rect = container.getBoundingClientRect();
-  const step = 0.2;
-  let x = Math.round(((e.clientX - rect.left) / rect.width * 100) / step) * step;
-  let y = Math.round(((e.clientY - rect.top) / rect.height * 100) / step) * step;
-  x = Math.max(0, Math.min(x, 100)); y = Math.max(0, Math.min(y, 100));
-  dragData.el.style.left = x + '%'; dragData.el.style.top = y + '%';
+document.addEventListener('mouseup',()=>{
+  if(drag.on&&drag.el){drag.el.style.zIndex='';const p=PLACES.find(pl=>pl.spotId===drag.el.dataset.spotId);if(p){p.x=parseFloat(drag.el.style.left);p.y=parseFloat(drag.el.style.top);}drag.on=false;drag.el=null;}
 });
-document.addEventListener('mouseup', () => {
-  if (dragData.isDragging && dragData.el) {
-    dragData.el.style.zIndex = '';
-    const spotId = dragData.el.dataset.spotId;
-    const p = PLACES.find(pl => pl.spotId === spotId);
-    if (p) { p.x = parseFloat(dragData.el.style.left); p.y = parseFloat(dragData.el.style.top); }
-    dragData.isDragging = false; dragData.el = null;
-  }
-});
- 
-// ════════════════════════════════════════════════════════
-// SUPABASE — Chargement & Sauvegarde
-// ════════════════════════════════════════════════════════
-async function loadFromSupabase() {
-  setSyncStatus('loading', 'Chargement…');
+
+// ══════════════════════════════════════════════════════
+// SUPABASE — CORRIGÉ : 'operator' retiré (colonne inexistante)
+// ══════════════════════════════════════════════════════
+async function loadDB() {
+  setSS('loading','Chargement…');
   try {
-    const { data, error } = await db.from('spots').select('*');
-    if (error) throw error;
-    parcData = {};
-    (data || []).forEach(row => {
-      parcData[row.id] = { status:row.status||'libre', content:row.content||'', ref:row.ref||'', date:row.date_entree||'', notes:row.notes||'', operator:row.operator||'' };
-      const p = PLACES.find(pl => pl.spotId === row.id);
-      if (p && row.pos_x != null && row.pos_y != null) { p.x = row.pos_x; p.y = row.pos_y; }
+    const {data,error}=await db.from('spots').select('*');
+    if(error)throw error;
+    parcData={};
+    (data||[]).forEach(row=>{
+      parcData[row.id]={status:row.status||'libre',content:row.content||'',ref:row.ref||'',date:row.date_entree||'',notes:row.notes||'',operator:''};
+      const p=PLACES.find(pl=>pl.spotId===row.id);
+      if(p&&row.pos_x!=null){p.x=row.pos_x;p.y=row.pos_y;}
     });
-    setSyncStatus('ok', 'Synchronisé');
-    return true;
-  } catch(e) { setSyncStatus('error', 'Erreur de connexion'); return false; }
+    setSS('ok','Synchronisé');return true;
+  }catch(e){setSS('error','Erreur connexion');return false;}
 }
- 
-async function saveToSupabase(spotId, zoneId, num, data) {
-  setSyncStatus('loading', 'Sauvegarde…');
-  document.getElementById('savingIndicator').textContent = '⏳ Enregistrement…';
-  const p = PLACES.find(pl => pl.spotId === spotId);
+
+async function saveToDB(spotId,zoneId,num,data) {
+  setSS('loading','Sauvegarde…');
+  document.getElementById('savingInd').textContent='⏳ Enregistrement…';
+  const p=PLACES.find(pl=>pl.spotId===spotId);
   try {
-    const { error } = await db.from('spots').upsert({
-      id:spotId, zone_id:zoneId, num:num, status:data.status,
-      content:data.content, ref:data.ref, date_entree:data.date,
-      notes:data.notes, operator:data.operator,
-      pos_x:p?p.x:null, pos_y:p?p.y:null,
+    // ✅ FIX : 'operator' retiré car colonne absente de la table
+    // Pour l'ajouter plus tard : ALTER TABLE spots ADD COLUMN operator text;
+    const {error}=await db.from('spots').upsert({
+      id:spotId,zone_id:zoneId,num:num,status:data.status,
+      content:data.content||null,ref:data.ref||null,
+      client:null,
+      date_entree:data.date||null,notes:data.notes||null,
+      pos_x:p?p.x:null,pos_y:p?p.y:null,
       updated_at:new Date().toISOString(),
     });
-    if (error) throw error;
-    setSyncStatus('ok', 'Synchronisé');
-    document.getElementById('savingIndicator').textContent = '✅ Enregistré !';
-    setTimeout(() => document.getElementById('savingIndicator').textContent = '', 2000);
+    if(error)throw error;
+    setSS('ok','Synchronisé');
+    document.getElementById('savingInd').textContent='✅ Enregistré !';
+    setTimeout(()=>document.getElementById('savingInd').textContent='',2000);
     return true;
-  } catch(e) { setSyncStatus('error', 'Erreur sauvegarde'); document.getElementById('savingIndicator').textContent = '❌ Erreur'; return false; }
-}
- 
-async function saveLayoutToSupabase() {
-  setSyncStatus('loading', 'Sauvegarde du plan…');
-  try {
-    const updates = PLACES.map(p => {
-      const data = getSpotData(p.spotId);
-      return { id:p.spotId, zone_id:p.zoneId, num:p.num, status:data.status||'libre', content:data.content||null, ref:data.ref||null, client:null, date_entree:data.date||null, notes:data.notes||null, operator:data.operator||null, pos_x:p.x, pos_y:p.y, updated_at:new Date().toISOString() };
-    });
-    const { error } = await db.from('spots').upsert(updates);
-    if (error) throw error;
-    alert('✅ Plan sauvegardé avec succès !');
-    setSyncStatus('ok', 'Synchronisé');
-  } catch(err) {
-    alert('❌ Erreur Supabase : ' + (err.message || JSON.stringify(err)));
-    setSyncStatus('error', 'Erreur');
+  }catch(e){
+    setSS('error','Erreur sauvegarde');
+    document.getElementById('savingInd').textContent='❌ '+( e.message||'Erreur');
+    console.error(e);return false;
   }
-  document.getElementById('btnEditMap').innerHTML = '🔓 Configurer le Plan';
 }
- 
-function subscribeRealtime() {
-  db.channel('spots-changes').on('postgres_changes', { event:'*', schema:'public', table:'spots' }, (payload) => {
-    const row = payload.new || payload.old;
-    if (!row) return;
-    if (payload.eventType === 'DELETE') { delete parcData[row.id]; }
-    else {
-      parcData[row.id] = { status:row.status||'libre', content:row.content||'', ref:row.ref||'', date:row.date_entree||'', notes:row.notes||'', operator:row.operator||'' };
-      const p = PLACES.find(pl => pl.spotId === row.id);
-      if (p && row.pos_x != null && row.pos_y != null) {
-        p.x = row.pos_x; p.y = row.pos_y;
-        const el = document.querySelector(`.spot-map[data-spot-id="${row.id}"]`);
-        if (el) { el.style.left = `${row.pos_x}%`; el.style.top = `${row.pos_y}%`; }
-      }
+
+async function saveLayout() {
+  setSS('loading','Sauvegarde du plan…');
+  try {
+    const updates=PLACES.map(p=>{const d=getData(p.spotId);return{id:p.spotId,zone_id:p.zoneId,num:p.num,status:d.status||'libre',content:d.content||null,ref:d.ref||null,client:null,date_entree:d.date||null,notes:d.notes||null,pos_x:p.x,pos_y:p.y,updated_at:new Date().toISOString()};});
+    const {error}=await db.from('spots').upsert(updates);
+    if(error)throw error;
+    alert('✅ Plan sauvegardé !');setSS('ok','Synchronisé');
+  }catch(err){alert('❌ Erreur : '+(err.message||JSON.stringify(err)));setSS('error','Erreur');}
+  document.getElementById('btnEditMap').innerHTML='🔓 Configurer le Plan';
+}
+
+function subscribeRT() {
+  db.channel('spots-rt').on('postgres_changes',{event:'*',schema:'public',table:'spots'},(p)=>{
+    const row=p.new||p.old;if(!row)return;
+    if(p.eventType==='DELETE')delete parcData[row.id];
+    else{
+      parcData[row.id]={status:row.status||'libre',content:row.content||'',ref:row.ref||'',date:row.date_entree||'',notes:row.notes||'',operator:''};
+      const pl=PLACES.find(pl=>pl.spotId===row.id);
+      if(pl&&row.pos_x!=null){pl.x=row.pos_x;pl.y=row.pos_y;const el=document.querySelector(`.spot-map[data-spot-id="${row.id}"]`);if(el){el.style.left=`${row.pos_x}%`;el.style.top=`${row.pos_y}%`;}}
     }
-    updateSpotElement(row.id);
-    updateStats();
+    updateEl(row.id);updateStats();
   }).subscribe();
 }
- 
-function setSyncStatus(type, label) { document.getElementById('syncDot').className = 'dot ' + type; document.getElementById('syncLabel').textContent = label; }
-function getSpotData(spotId) { return parcData[spotId] || { status:'libre', content:'', ref:'', date:'', notes:'', operator:'' }; }
- 
-// ════════════════════════════════════════════════════════
-// RENDER — Grille & Carte (original)
-// ════════════════════════════════════════════════════════
-function render() { renderGrid(); renderMap(); }
- 
-function renderGrid() {
-  const gridMain = document.getElementById('gridView');
-  gridMain.innerHTML = '';
-  const rows = [['tailcone','hstab','vstab'],['remorque','remorque-vide'],['fwd','béton'],['k','l','m','n'],['rear']];
-  rows.forEach(ids => {
-    const row = document.createElement('div');
-    row.className = 'group-row';
-    ids.forEach(id => {
-      const zone = ZONES.find(z => z.id === id);
-      const block = document.createElement('div');
-      block.className = 'zone-block';
-      block.innerHTML = `<div class="zone-header"><div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div><div class="zone-count" id="count-${zone.id}"></div></div>`;
-      const body = document.createElement('div');
-      body.className = 'zone-body';
-      for (let i = 1; i <= zone.count; i++) {
-        const spotId = `${zone.id}-${i}`;
-        const data = getSpotData(spotId);
-        const div = document.createElement('div');
-        div.className = `spot ${data.status}`;
-        div.dataset.spotId = spotId;
-        div.innerHTML = `<div class="spot-icon">${zone.icon}</div><div class="spot-id">${i}</div>`;
-        div.addEventListener('mouseenter', e => showTooltip(e, spotId, i, zone));
-        div.addEventListener('mousemove', moveTooltip);
-        div.addEventListener('mouseleave', hideTooltip);
-        div.addEventListener('click', () => { hideTooltip(); openModal(spotId, i, zone); });
+function setSS(t,l){document.getElementById('syncDot').className='dot '+t;document.getElementById('syncLabel').textContent=l;}
+function getData(id){return parcData[id]||{status:'libre',content:'',ref:'',date:'',notes:'',operator:''};}
+
+// ══════════════════════════════════════════════════════
+// RENDER GRILLE
+// ══════════════════════════════════════════════════════
+function render(){renderGrid();renderMap();}
+function renderGrid(){
+  const el=document.getElementById('gridView');el.innerHTML='';
+  const rows=[['tailcone','hstab','vstab'],['remorque','remorque-vide'],['fwd','béton'],['k','l','m','n'],['rear'],['mirlog1','mirlog2']];
+  const titles={
+    'tailcone,hstab,vstab':'✈️  QUEUE & STABILISATEURS','remorque,remorque-vide':'🚛  REMORQUES — Parc principal',
+    'fwd,béton':'✈️  FUSELAGE AVANT & BÉTON','k,l,m,n':'✈️  ZONES K / L / M / N','rear':'✈️  STOCKAGE REAR','mirlog1,mirlog2':'🏗  SITE MIRLOG',
+  };
+  rows.forEach(ids=>{
+    const st=document.createElement('div');st.className='zone-section-title';st.textContent=titles[ids.join(',')]||'';el.appendChild(st);
+    const row=document.createElement('div');row.className='group-row';
+    ids.forEach(id=>{
+      const zone=ZONES.find(z=>z.id===id);
+      const block=document.createElement('div');block.className='zone-block';
+      block.innerHTML=`<div class="zone-header"><div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div><div class="zone-count" id="count-${zone.id}"></div></div>`;
+      const body=document.createElement('div');body.className='zone-body';
+      for(let i=1;i<=zone.count;i++){
+        const sId=`${zone.id}-${i}`,data=getData(sId);
+        const div=document.createElement('div');div.className=`spot ${data.status}`;div.dataset.spotId=sId;
+        div.innerHTML=`<div class="spot-icon">${zone.icon}</div><div class="spot-id">${i}</div>`;
+        div.addEventListener('mouseenter',e=>showTT(e,sId,i,zone));
+        div.addEventListener('mousemove',moveTT);div.addEventListener('mouseleave',hideTT);
+        div.addEventListener('click',()=>{hideTT();openModal(sId,i,zone);});
         body.appendChild(div);
       }
-      block.appendChild(body);
-      row.appendChild(block);
+      block.appendChild(body);row.appendChild(block);
     });
-    gridMain.appendChild(row);
+    el.appendChild(row);
   });
 }
- 
-function renderMap() {
-  const mapContainer = document.getElementById('mapContainer');
-  mapContainer.innerHTML = '';
-  PLACES.forEach(place => {
-    const zone = ZONES.find(z => z.id === place.zoneId);
-    if (!zone) return;
-    const data = getSpotData(place.spotId);
-    const div = document.createElement('div');
-    div.className = `spot spot-map ${data.status}`;
-    div.dataset.spotId = place.spotId;
-    div.style.left = `${place.x}%`; div.style.top = `${place.y}%`;
-    if (zone.mapWidth) div.style.setProperty('width', `${zone.mapWidth}%`, 'important');
-    if (zone.mapHeight) div.style.setProperty('height', `${zone.mapHeight}%`, 'important');
-    if (zone.mapRotation) div.style.setProperty('--rot', `${zone.mapRotation}deg`);
-    if (data.status === 'occupe' && zone.color) {
-      div.style.setProperty('background-color', zone.color, 'important');
-      div.style.setProperty('border-color', zone.color, 'important');
-    }
-    div.addEventListener('mouseenter', e => showTooltip(e, place.spotId, place.num, zone));
-    div.addEventListener('mousemove', moveTooltip);
-    div.addEventListener('mouseleave', hideTooltip);
-    div.addEventListener('click', () => { if (isMapEditMode) return; hideTooltip(); openModal(place.spotId, place.num, zone); });
-    mapContainer.appendChild(div);
+
+// ══════════════════════════════════════════════════════
+// RENDER CARTE
+// ══════════════════════════════════════════════════════
+function renderMap(){
+  const c=document.getElementById('mapContainer');c.innerHTML='';
+  c.style.backgroundImage=currentMap==='mirlog'?"url('Mirlog.png')":`url('plan-cour.png')`;
+  PLACES.filter(p=>{const z=ZONES.find(z=>z.id===p.zoneId);return z&&z.mapZone===currentMap;}).forEach(place=>{
+    const zone=ZONES.find(z=>z.id===place.zoneId);if(!zone)return;
+    const data=getData(place.spotId);
+    const div=document.createElement('div');div.className=`spot spot-map ${data.status}`;div.dataset.spotId=place.spotId;
+    div.style.left=`${place.x}%`;div.style.top=`${place.y}%`;
+    if(zone.mapWidth) div.style.setProperty('width',`${zone.mapWidth}%`,'important');
+    if(zone.mapHeight) div.style.setProperty('height',`${zone.mapHeight}%`,'important');
+    if(zone.mapRotation) div.style.setProperty('--rot',`${zone.mapRotation}deg`);
+    if(data.status==='occupe'&&zone.color){div.style.setProperty('background-color',zone.color,'important');div.style.setProperty('border-color',zone.color,'important');}
+    div.addEventListener('mouseenter',e=>showTT(e,place.spotId,place.num,zone));
+    div.addEventListener('mousemove',moveTT);div.addEventListener('mouseleave',hideTT);
+    div.addEventListener('click',()=>{if(isMapEditMode)return;hideTT();openModal(place.spotId,place.num,zone);});
+    c.appendChild(div);
   });
 }
- 
-function updateSpotElement(spotId) {
-  const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
-  const data = getSpotData(spotId);
-  const zone = ZONES.find(z => spotId.startsWith(z.id + '-'));
-  elements.forEach(el => {
-    if (el.classList.contains('spot-map')) {
-      el.className = `spot spot-map ${data.status}`;
-      if (data.status === 'occupe' && zone && zone.color) { el.style.setProperty('background-color', zone.color, 'important'); el.style.setProperty('border-color', zone.color, 'important'); }
-      else { el.style.removeProperty('background-color'); el.style.removeProperty('border-color'); }
-    } else { el.className = `spot ${data.status}`; }
+
+function updateEl(id){
+  const data=getData(id),zone=ZONES.find(z=>id.startsWith(z.id+'-'));
+  document.querySelectorAll(`[data-spot-id="${id}"]`).forEach(el=>{
+    if(el.classList.contains('spot-map')){
+      el.className=`spot spot-map ${data.status}`;
+      if(data.status==='occupe'&&zone?.color){el.style.setProperty('background-color',zone.color,'important');el.style.setProperty('border-color',zone.color,'important');}
+      else{el.style.removeProperty('background-color');el.style.removeProperty('border-color');}
+    }else{el.className=`spot ${data.status}`;}
   });
 }
- 
-// ════════════════════════════════════════════════════════
-// DASHBOARD
-// ════════════════════════════════════════════════════════
-function renderDashboard() {
-  const el = document.getElementById('dashboardView');
- 
-  // Calcul stats globales
-  let total = 0, libre = 0, occupe = 0, maint = 0;
-  ZONES.forEach(zone => { for (let i = 1; i <= zone.count; i++) { const d = getSpotData(`${zone.id}-${i}`); total++; if (d.status==='libre') libre++; else if (d.status==='occupe') occupe++; else maint++; } });
-  const pctOcc = total > 0 ? Math.round((occupe/total)*100) : 0;
-  const todayMvt = getTodayMvtCount();
- 
-  // Calcul volume estimé (pi²) en se basant sur les noms de pièces dans content
-  let piEstime = 0;
-  Object.values(parcData).forEach(d => {
-    if (d.status !== 'occupe' || !d.content) return;
-    const content = d.content.toLowerCase();
-    if (content.includes('mid')) piEstime += COMPOSANTE_DIMS.MID;
-    else if (content.includes('tailcone') || content.includes('tc')) piEstime += COMPOSANTE_DIMS.Tailcone;
-    else if (content.includes('rear')) piEstime += COMPOSANTE_DIMS.Rear;
-    else if (content.includes('wing') || content.includes('aile')) piEstime += COMPOSANTE_DIMS.Wings;
-    else if (content.includes('hstab')) piEstime += COMPOSANTE_DIMS.Hstab;
-    else if (content.includes('vstab')) piEstime += COMPOSANTE_DIMS.Vstab;
-    else if (content.includes('fwd') || content.includes('forward')) piEstime += COMPOSANTE_DIMS.FWD;
-    else if (content.includes('remorque') || content.includes('trailer')) piEstime += COMPOSANTE_DIMS.Remorque;
-  });
- 
-  // KPIs couleurs
-  const kpiOccColor = pctOcc >= 85 ? 'var(--rouge)' : pctOcc >= 70 ? 'var(--jaune)' : 'var(--vert)';
-  const recentMvt = movements.slice(0, 6);
- 
-  el.innerHTML = `
-    <div class="page-title">TABLEAU DE BORD</div>
-    <div class="page-sub">${new Date().toLocaleDateString('fr-CA', {weekday:'long',day:'numeric',month:'long',year:'numeric'})} — Vue temps réel</div>
- 
-    <!-- Météo Montréal simulée -->
-    <div class="weather-widget">
-      <div class="weather-icon">🌤</div>
-      <div class="weather-info">
-        <div class="wt-cond">9°C · Partiellement nuageux — Montréal, QC</div>
-        <div class="wt-detail">💨 Vent : 18 km/h ONO &nbsp;|&nbsp; 💧 Humidité : 62% &nbsp;|&nbsp; ☀️ UV : Faible (2) &nbsp;|&nbsp; 🌡 Ressenti : 6°C</div>
-      </div>
-      <div class="weather-ok">✓ Conditions normales<br><span style="color:var(--gris);font-size:0.62rem">Pas d'alerte intempérie</span></div>
-    </div>
- 
-    <!-- KPIs -->
-    <div class="dash-row">
-      <div class="dash-card" style="border-top:3px solid ${kpiOccColor}">
-        <div class="card-title">◈ Taux d'occupation</div>
-        <div class="dash-kpi" style="color:${kpiOccColor}">${pctOcc}%</div>
-        <div class="dash-kpi-sub">${occupe} occupées / ${total} total</div>
-      </div>
-      <div class="dash-card" style="border-top:3px solid var(--vert)">
-        <div class="card-title">✓ Places libres</div>
-        <div class="dash-kpi" style="color:var(--vert)">${libre}</div>
-        <div class="dash-kpi-sub">${maint} en maintenance</div>
-      </div>
-      <div class="dash-card" style="border-top:3px solid var(--cyan)">
-        <div class="card-title">⇄ Mouvements aujourd'hui</div>
-        <div class="dash-kpi" style="color:var(--cyan)">${todayMvt}</div>
-        <div class="dash-kpi-sub">${movements.length} total historique</div>
-      </div>
-      <div class="dash-card" style="border-top:3px solid var(--jaune)">
-        <div class="card-title">📐 Surface estimée utilisée</div>
-        <div class="dash-kpi" style="color:var(--jaune)">${piEstime.toLocaleString()}</div>
-        <div class="dash-kpi-sub">pi² estimés occupés</div>
-      </div>
-    </div>
- 
-    <!-- Occupation par groupe de zones -->
-    <div>
-      <div class="section-title">OCCUPATION PAR ZONE</div>
-      <div class="zone-occ-grid" id="zoneOccGrid"></div>
-    </div>
- 
-    <!-- Derniers mouvements -->
-    <div>
-      <div class="section-title">DERNIERS MOUVEMENTS</div>
-      ${recentMvt.length === 0 ? `<div style="color:var(--gris);font-size:0.78rem;padding:16px 0">Aucun mouvement enregistré. Modifiez une place pour commencer.</div>` : `
-      <div class="mvt-table-wrap">
-        <table class="mvt-table">
-          <thead><tr><th>Date</th><th>Type</th><th>Place</th><th>Zone</th><th>Contenu</th><th>Réf.</th><th>Opérateur</th></tr></thead>
-          <tbody>
-            ${recentMvt.map(m => `
-              <tr>
-                <td class="mono" style="color:var(--gris);font-size:0.68rem">${fmtDate(m.date)}</td>
-                <td><span class="mvt-badge ${mvtClass(m.type)}">${m.type}</span></td>
-                <td class="mono" style="color:var(--orange2)">${m.spotId}</td>
-                <td style="color:var(--gris);font-size:0.7rem">${m.zoneLabel}</td>
-                <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.content||'—'}</td>
-                <td class="mono" style="color:var(--cyan);font-size:0.68rem">${m.ref||'—'}</td>
-                <td style="color:var(--gris)">${m.operator||'—'}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>`}
-    </div>
-  `;
- 
-  // Render zone occupation bars
-  renderZoneOccBars();
+
+// ══════════════════════════════════════════════════════
+// TOOLTIP
+// ══════════════════════════════════════════════════════
+const TT=document.getElementById('tooltip');
+function showTT(e,id,num,zone){
+  if(isMapEditMode)return;
+  const d=getData(id),lb={libre:'🟢 Libre',occupe:'🟠 Occupée',maintenance:'⚪ Maintenance'};
+  let dd='';if(d.date){const dt=new Date(d.date);dd=dt.toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+  TT.innerHTML=`<div class="tt-id">${zone.label} — #${num}</div><div class="tt-zone">${zone.desc}</div>
+    <div style="font-size:.68rem;font-weight:700;margin-bottom:4px">${lb[d.status]||d.status}</div>
+    ${d.content?`<div class="tt-row"><span>Contenu</span><span style="font-weight:700">${d.content}</span></div>`:''}
+    ${d.ref?`<div class="tt-row"><span>Réf.</span><span style="color:var(--cyan)">${d.ref}</span></div>`:''}
+    ${dd?`<div class="tt-row"><span>Entrée</span><span>${dd}</span></div>`:''}
+    <div style="margin-top:5px;font-size:.6rem;color:var(--gris)">Cliquer pour modifier</div>`;
+  TT.style.display='block';moveTT(e);
 }
- 
-function renderZoneOccBars() {
-  const grid = document.getElementById('zoneOccGrid');
-  if (!grid) return;
-  grid.innerHTML = '';
- 
-  Object.entries(ZONE_AREAS).forEach(([key, group]) => {
-    const zones = ZONES.filter(z => group.ids.includes(z.id));
-    let total = 0, occ = 0;
-    zones.forEach(zone => {
-      for (let i = 1; i <= zone.count; i++) {
-        total++;
-        const d = getSpotData(`${zone.id}-${i}`);
-        if (d.status === 'occupe') occ++;
-      }
-    });
-    const pct = total > 0 ? Math.round((occ/total)*100) : 0;
-    const col = pct >= 90 ? 'var(--rouge)' : pct >= 70 ? 'var(--jaune)' : 'var(--vert)';
- 
-    const card = document.createElement('div');
-    card.className = 'zone-occ-card';
-    card.innerHTML = `
-      <div class="zone-occ-header">
-        <div class="zone-occ-name">${group.label}</div>
-        <div class="zone-occ-nums" style="color:${col}">${occ}/${total}</div>
-      </div>
-      <div class="zone-occ-area">📐 ${group.area.toLocaleString()} pi² totaux</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
-      <div class="zone-occ-pct" style="color:${col}">${pct}% occupé</div>
-    `;
-    grid.appendChild(card);
-  });
- 
-  // Aussi les zones individuelles
-  ZONES.forEach(zone => {
-    let total = zone.count, occ = 0;
-    for (let i = 1; i <= zone.count; i++) {
-      const d = getSpotData(`${zone.id}-${i}`);
-      if (d.status === 'occupe') occ++;
-    }
-    const pct = Math.round((occ/total)*100);
-    const col = pct >= 90 ? 'var(--rouge)' : pct >= 70 ? 'var(--jaune)' : zone.color;
- 
-    const card = document.createElement('div');
-    card.className = 'zone-occ-card';
-    card.innerHTML = `
-      <div class="zone-occ-header">
-        <div class="zone-occ-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div>
-        <div class="zone-occ-nums" style="color:${col}">${occ}/${total}</div>
-      </div>
-      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
-      <div class="zone-occ-pct" style="color:${col}">${pct}%</div>
-    `;
-    grid.appendChild(card);
-  });
+function moveTT(e){const x=Math.min(e.clientX+16,window.innerWidth-245);TT.style.left=x+'px';TT.style.top=(e.clientY-10)+'px';}
+function hideTT(){TT.style.display='none';}
+
+// ══════════════════════════════════════════════════════
+// MODAL — Liste déroulante par zone
+// ══════════════════════════════════════════════════════
+let curSpot=null;
+
+function buildContent(zoneId,val,status){
+  const wrap=document.getElementById('modalContentWrap');
+  const opts=ZONE_CONTENT[zoneId]||[];
+  if(status==='libre'){
+    wrap.innerHTML=`<div class="content-locked" style="color:var(--gris)"><span>🔒</span><span>— Place libre</span></div>`;return;
+  }
+  if(opts.length===1){
+    const icon=ZONES.find(z=>z.id===zoneId)?.icon||'✈️';
+    wrap.innerHTML=`<div class="content-locked" style="color:var(--orange2);border-color:rgba(255,107,43,.2)">${icon} <strong>${opts[0]}</strong></div><input type="hidden" id="modalContent" value="${opts[0]}">`;
+  }else{
+    wrap.innerHTML=`<select id="modalContent" class="f-base"><option value="">— Sélectionner le contenu —</option>${opts.map(o=>`<option value="${o}"${val===o?' selected':''}>${o}</option>`).join('')}</select>`;
+  }
 }
- 
-// ════════════════════════════════════════════════════════
-// VUE MOUVEMENTS
-// ════════════════════════════════════════════════════════
-function mvtClass(type) {
-  if (type==='Entrée') return 'mvt-entree';
-  if (type==='Sortie') return 'mvt-sortie';
-  if (type==='Maintenance') return 'mvt-maint';
-  return 'mvt-modif';
+
+function onStatusChange(){
+  if(!curSpot)return;
+  const s=document.getElementById('modalStatus').value;
+  const v=document.getElementById('modalContent')?.value||'';
+  buildContent(curSpot.zone.id,v,s);
+  if(s==='libre'){document.getElementById('modalRef').value='';document.getElementById('modalDate').value='';}
+  else if(s==='occupe'&&!document.getElementById('modalDate').value){document.getElementById('modalDate').value=new Date().toISOString().slice(0,16);}
 }
- 
-function renderMovements() {
-  const el = document.getElementById('mouvementsView');
-  const filtered = mvtFilter === 'Tous' ? movements : movements.filter(m => m.type === mvtFilter);
- 
-  el.innerHTML = `
-    <div class="page-title">JOURNAL DES MOUVEMENTS</div>
-    <div class="page-sub">${movements.length} entrées enregistrées (stockage local)</div>
-    <div class="mvt-filters">
-      ${['Tous','Entrée','Sortie','Modification','Maintenance'].map(f => `
-        <button class="filter-chip ${mvtFilter===f?'active':''}" onclick="setMvtFilter('${f}')">${f}</button>`).join('')}
-      <div style="margin-left:auto;color:var(--gris);font-size:0.68rem">${filtered.length} résultat(s)</div>
-      <button class="export-btn" onclick="exportMvtCSV()">⬇ Export CSV</button>
-      <button class="export-btn" onclick="clearMovements()" style="border-color:rgba(255,68,68,0.3);color:var(--rouge)">🗑 Vider</button>
-    </div>
-    <div class="mvt-table-wrap">
-      <table class="mvt-table">
-        <thead><tr><th>Date / Heure</th><th>Type</th><th>Place</th><th>Zone</th><th>Statut</th><th>Contenu</th><th>Référence</th><th>Opérateur</th><th>Notes</th></tr></thead>
-        <tbody>
-          ${filtered.length === 0 ? `<tr><td colspan="9" class="mvt-empty">Aucun mouvement enregistré.<br><span style="font-size:0.7rem;color:var(--gris)">Les mouvements apparaissent dès qu'une place est modifiée.</span></td></tr>` :
-          filtered.map(m => `
-            <tr>
-              <td class="mono" style="color:var(--gris);font-size:0.68rem;white-space:nowrap">${fmtDate(m.date)}</td>
-              <td><span class="mvt-badge ${mvtClass(m.type)}">${m.type}</span></td>
-              <td class="mono" style="color:var(--orange2)">${m.spotId}</td>
-              <td style="font-size:0.7rem;color:var(--gris)">${m.zoneLabel}</td>
-              <td>
-                <span style="color:var(--gris);font-size:0.66rem">${m.ancienStatut}</span>
-                <span style="color:var(--gris)"> → </span>
-                <span style="color:${m.nouveauStatut==='occupe'?'var(--orange)':m.nouveauStatut==='libre'?'var(--vert)':'var(--gris)'};font-size:0.66rem;font-weight:700">${m.nouveauStatut}</span>
-              </td>
-              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.72rem">${m.content||'—'}</td>
-              <td class="mono" style="color:var(--cyan);font-size:0.68rem">${m.ref||'—'}</td>
-              <td style="font-size:0.72rem">${m.operator||'—'}</td>
-              <td style="font-size:0.68rem;color:var(--gris);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes||'—'}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
- 
-function setMvtFilter(f) { mvtFilter = f; renderMovements(); }
- 
-function exportMvtCSV() {
-  const headers = ['Date','Type','Place','Zone','Ancien statut','Nouveau statut','Contenu','Référence','Opérateur','Notes'];
-  const rows = movements.map(m => [fmtDate(m.date),m.type,m.spotId,m.zoneLabel,m.ancienStatut,m.nouveauStatut,m.content,m.ref,m.operator,m.notes].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
-  const csv = [headers.join(','), ...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
-  a.download = `mouvements_parc_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-}
- 
-function clearMovements() {
-  if (!confirm('Vider tout l\'historique des mouvements ? Cette action est irréversible.')) return;
-  movements = [];
-  localStorage.removeItem(MVT_KEY);
-  renderMovements();
-  document.getElementById('countMvtToday').textContent = '0';
-}
- 
-// ════════════════════════════════════════════════════════
-// VUE RAPPORTS
-// ════════════════════════════════════════════════════════
-function renderReports() {
-  const el = document.getElementById('rapportsView');
- 
-  // Stats globales
-  let total = 0, occ = 0;
-  ZONES.forEach(zone => { for (let i=1; i<=zone.count; i++) { total++; if (getSpotData(`${zone.id}-${i}`).status==='occupe') occ++; } });
-  const totalAreaSite = Object.values(ZONE_AREAS).reduce((a,z)=>a+z.area,0);
- 
-  // Occupants par type (analyse des contenus)
-  const contentStats = {};
-  Object.values(parcData).forEach(d => {
-    if (d.status !== 'occupe' || !d.content) return;
-    const key = d.content.trim() || 'Non défini';
-    contentStats[key] = (contentStats[key]||0) + 1;
-  });
- 
-  // Durée moyenne de stockage
-  let totalDays = 0, countWithDate = 0;
-  Object.values(parcData).forEach(d => {
-    if (d.status === 'occupe' && d.date) {
-      const days = Math.round((Date.now() - new Date(d.date))/86400000);
-      if (!isNaN(days) && days >= 0) { totalDays += days; countWithDate++; }
-    }
-  });
-  const avgDays = countWithDate > 0 ? Math.round(totalDays/countWithDate) : 0;
- 
-  // Mouvements par type
-  const mvtStats = { 'Entrée':0, 'Sortie':0, 'Modification':0, 'Maintenance':0 };
-  movements.forEach(m => { if (mvtStats[m.type]!==undefined) mvtStats[m.type]++; });
- 
-  el.innerHTML = `
-    <div class="page-title">RAPPORTS & ANALYSE</div>
-    <div class="page-sub" style="display:flex;gap:10px;flex-wrap:wrap">
-      <span>Données en temps réel</span>
-      <button class="export-btn" onclick="exportMvtCSV()">⬇ Export CSV Mouvements</button>
-    </div>
- 
-    <!-- Résumé des zones -->
-    <div class="dash-row">
-      <div class="report-section" style="flex:1">
-        <h3>📐 SURFACES — ZONES DU SITE</h3>
-        ${Object.values(ZONE_AREAS).map(g => {
-          const zones = ZONES.filter(z => g.ids.includes(z.id));
-          let t=0, o=0;
-          zones.forEach(zone=>{ for(let i=1;i<=zone.count;i++){t++;if(getSpotData(`${zone.id}-${i}`).status==='occupe')o++;} });
-          const pct = t>0?Math.round((o/t)*100):0;
-          return `<div class="rpt-row">
-            <span class="rpt-label">${g.label}</span>
-            <span>
-              <span class="rpt-val">${g.area.toLocaleString()} pi²</span>
-              <span style="color:var(--gris);font-size:0.68rem;margin-left:8px">${pct}% occ.</span>
-            </span>
-          </div>`;
-        }).join('')}
-        <div class="rpt-row" style="border-top:1px solid rgba(255,255,255,0.1);margin-top:4px;padding-top:10px">
-          <span style="font-weight:700">TOTAL SITE</span>
-          <span class="rpt-val" style="color:var(--cyan)">${totalAreaSite.toLocaleString()} pi²</span>
-        </div>
-      </div>
- 
-      <div class="report-section" style="flex:1">
-        <h3>📊 STATISTIQUES OPÉRATIONNELLES</h3>
-        <div class="rpt-row"><span class="rpt-label">Places occupées</span><span class="rpt-val" style="color:var(--orange)">${occ} / ${total}</span></div>
-        <div class="rpt-row"><span class="rpt-label">Taux d'occupation global</span><span class="rpt-val" style="color:${Math.round(occ/total*100)>=80?'var(--rouge)':'var(--vert)'}">${Math.round(occ/total*100)}%</span></div>
-        <div class="rpt-row"><span class="rpt-label">Durée moyenne de stockage</span><span class="rpt-val">${avgDays} jours</span></div>
-        <div class="rpt-row"><span class="rpt-label">Entrées enregistrées</span><span class="rpt-val" style="color:var(--vert)">${mvtStats['Entrée']}</span></div>
-        <div class="rpt-row"><span class="rpt-label">Sorties enregistrées</span><span class="rpt-val" style="color:var(--rouge)">${mvtStats['Sortie']}</span></div>
-        <div class="rpt-row"><span class="rpt-label">Modifications</span><span class="rpt-val" style="color:var(--cyan)">${mvtStats['Modification']}</span></div>
-        <div class="rpt-row"><span class="rpt-label">Maintenances</span><span class="rpt-val" style="color:var(--gris)">${mvtStats['Maintenance']}</span></div>
-      </div>
-    </div>
- 
-    <!-- Capacité théorique par composante -->
-    <div class="report-section">
-      <h3>🧮 CAPACITÉ THÉORIQUE PAR COMPOSANTE (pi²)</h3>
-      <table class="capa-table">
-        <thead><tr><th>Composante</th><th>Surface/unité (pi²)</th><th>Zone Béton (62 581 pi²)</th><th>Zone P7 (35 288 pi²)</th><th>Zones K-N (12 567 pi²)</th><th>Zone REAR (16 244 pi²)</th></tr></thead>
-        <tbody>
-          ${Object.entries(COMPOSANTE_DIMS).map(([name, dim]) => `
-            <tr>
-              <td style="font-weight:700">${name}</td>
-              <td class="mono" style="color:var(--orange2)">${dim.toLocaleString()}</td>
-              <td class="mono" style="color:var(--jaune)">${Math.floor(62581/dim)}</td>
-              <td class="mono" style="color:var(--violet)">${Math.floor(35288/dim)}</td>
-              <td class="mono" style="color:var(--bleu)">${Math.floor(12567/dim)}</td>
-              <td class="mono" style="color:var(--rouge)">${Math.floor(16244/dim)}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>
-      <div style="font-size:0.64rem;color:var(--gris);margin-top:10px">* Capacité théorique basée sur placement au sol sans allées de circulation. Appliquer un facteur d'utilisation de 0.7-0.8 pour l'usage réel.</div>
-    </div>
- 
-    <!-- Contenus actuellement stockés -->
-    ${Object.keys(contentStats).length > 0 ? `
-    <div class="report-section">
-      <h3>📦 CONTENUS ACTUELLEMENT STOCKÉS</h3>
-      ${Object.entries(contentStats).sort((a,b)=>b[1]-a[1]).map(([content, cnt]) => `
-        <div class="rpt-row">
-          <span class="rpt-label">${content}</span>
-          <span style="display:flex;align-items:center;gap:10px">
-            <div style="width:100px;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden">
-              <div style="width:${Math.min(100,cnt/occ*100*3)}%;height:100%;background:var(--orange);border-radius:3px"></div>
-            </div>
-            <span class="rpt-val">${cnt}</span>
-          </span>
-        </div>`).join('')}
-    </div>` : ''}
- 
-    <!-- Recommandations -->
-    <div class="report-section">
-      <h3>🧠 RECOMMANDATIONS SYSTÈME</h3>
-      ${generateRecommendations(occ, total, avgDays).map(r => `
-        <div class="reco-item">
-          <div class="reco-icon">${r.icon}</div>
-          <div>${r.text}</div>
-        </div>`).join('')}
-    </div>
-  `;
-}
- 
-function generateRecommendations(occ, total, avgDays) {
-  const pct = Math.round(occ/total*100);
-  const recs = [];
-  if (pct >= 85) recs.push({ icon:'🔴', text:`Taux d'occupation critique à ${pct}%. Planifier des sorties prioritaires ou augmenter la capacité de stockage.` });
-  else if (pct >= 70) recs.push({ icon:'🟡', text:`Occupation à ${pct}% — surveiller les entrées à venir pour éviter la saturation.` });
-  else recs.push({ icon:'🟢', text:`Taux d'occupation nominal à ${pct}%. Capacité disponible suffisante.` });
- 
-  if (avgDays > 60) recs.push({ icon:'⏱', text:`Durée moyenne de stockage élevée (${avgDays} jours). Identifier les pièces en attente prolongée et déclencher une revue logistique.` });
-  if (movements.length === 0) recs.push({ icon:'📋', text:`Aucun mouvement enregistré. Commencez à remplir les places pour activer le suivi.` });
- 
-  const kGroups = Object.values(ZONE_AREAS);
-  kGroups.forEach(g => {
-    const zones = ZONES.filter(z => g.ids.includes(z.id));
-    let t=0, o=0;
-    zones.forEach(z=>{ for(let i=1;i<=z.count;i++){t++;if(getSpotData(`${z.id}-${i}`).status==='occupe')o++;} });
-    if (t>0 && Math.round(o/t*100) >= 90) recs.push({ icon:'⚡', text:`${g.label} saturée à ${Math.round(o/t*100)}%. Redistribuer vers une zone moins chargée.` });
-  });
- 
-  if (recs.length === 0) recs.push({ icon:'✅', text:'Toutes les zones opèrent dans les paramètres normaux.' });
-  return recs;
-}
- 
-// ════════════════════════════════════════════════════════
-// TOOLTIP & MODAL
-// ════════════════════════════════════════════════════════
-const tooltip = document.getElementById('tooltip');
-function showTooltip(e, spotId, num, zone) {
-  if (isMapEditMode) return;
-  const data = getSpotData(spotId);
-  const labels = { libre:'Libre', occupe:'Occupée', maintenance:'Maintenance' };
-  let displayDate = '';
-  if (data.date) { const d = new Date(data.date); displayDate = d.toLocaleString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
-  tooltip.innerHTML = `
-    <div class="tt-id">${zone.label} — #${num}</div>
-    <div class="tt-zone">${zone.desc}</div>
-    <span style="display:inline-block;padding:2px 7px;border-radius:3px;font-size:0.62rem;font-weight:700;background:${data.status==='occupe'?'rgba(255,107,43,0.2)':data.status==='libre'?'rgba(0,229,160,0.15)':'rgba(136,146,164,0.15)'};color:${data.status==='occupe'?'var(--orange2)':data.status==='libre'?'var(--vert)':'var(--gris)'}">${labels[data.status]}</span>
-    ${data.content ? `<div class="tt-row"><span>Contenu</span><span>${data.content}</span></div>` : ''}
-    ${data.ref     ? `<div class="tt-row"><span>Réf.</span><span>${data.ref}</span></div>` : ''}
-    ${displayDate  ? `<div class="tt-row"><span>Entrée</span><span>${displayDate}</span></div>` : ''}
-    ${data.operator? `<div class="tt-row"><span>Opérateur</span><span>${data.operator}</span></div>` : ''}
-    <div style="margin-top:5px;font-size:0.6rem;color:var(--gris)">Cliquer pour modifier</div>
-  `;
-  tooltip.style.display = 'block';
-  moveTooltip(e);
-}
-function moveTooltip(e) { const x = Math.min(e.clientX + 16, window.innerWidth - 240); tooltip.style.left = x + 'px'; tooltip.style.top = (e.clientY - 10) + 'px'; }
-function hideTooltip() { tooltip.style.display = 'none'; }
- 
-let currentSpot = null;
-function openModal(spotId, num, zone) {
-  currentSpot = { spotId, num, zone };
-  const data = getSpotData(spotId);
-  document.getElementById('modalTitle').textContent = `${zone.label} — Place #${num}`;
-  document.getElementById('modalZone').textContent = zone.desc;
-  document.getElementById('modalStatus').value = data.status;
-  document.getElementById('modalContent').value = data.content;
-  document.getElementById('modalRef').value = data.ref;
-  document.getElementById('modalDate').value = data.date ? data.date.substring(0, 16) : '';
-  document.getElementById('modalOperator').value = data.operator || '';
-  document.getElementById('modalNotes').value = data.notes;
-  document.getElementById('savingIndicator').textContent = '';
+
+function openModal(id,num,zone){
+  curSpot={id,num,zone};const d=getData(id);
+  document.getElementById('modalTitle').textContent=`${zone.label} — Place #${num}`;
+  document.getElementById('modalZone').textContent=zone.desc;
+  document.getElementById('modalStatus').value=d.status;
+  document.getElementById('modalRef').value=d.ref;
+  document.getElementById('modalDate').value=d.date?d.date.substring(0,16):'';
+  document.getElementById('modalOp').value=d.operator||'';
+  document.getElementById('modalNotes').value=d.notes;
+  document.getElementById('savingInd').textContent='';
+  buildContent(zone.id,d.content,d.status);
   document.getElementById('modalBg').classList.add('open');
 }
-function closeModal() { document.getElementById('modalBg').classList.remove('open'); currentSpot = null; }
- 
-async function saveSpot() {
-  if (!currentSpot) return;
-  const { spotId, num, zone } = currentSpot;
-  const oldData = { ...getSpotData(spotId) };
-  const newData = {
-    status:   document.getElementById('modalStatus').value,
-    content:  document.getElementById('modalContent').value,
-    ref:      document.getElementById('modalRef').value,
-    date:     document.getElementById('modalDate').value,
-    operator: document.getElementById('modalOperator').value,
-    notes:    document.getElementById('modalNotes').value,
-  };
-  // Log le mouvement AVANT de sauvegarder
-  logMovement(spotId, zone.id, num, oldData, newData);
-  parcData[spotId] = newData;
-  updateSpotElement(spotId);
-  updateStats();
-  const ok = await saveToSupabase(spotId, zone.id, num, newData);
-  if (ok) setTimeout(closeModal, 800);
+function closeModal(){document.getElementById('modalBg').classList.remove('open');curSpot=null;}
+function clearModal(){
+  document.getElementById('modalStatus').value='libre';
+  document.getElementById('modalRef').value='';
+  document.getElementById('modalDate').value='';
+  document.getElementById('modalOp').value='';
+  document.getElementById('modalNotes').value='';
+  onStatusChange();
 }
- 
-document.getElementById('btnClear').addEventListener('click', () => {
-  ['modalContent','modalRef','modalNotes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('modalStatus').value = 'libre';
-  document.getElementById('modalDate').value = '';
-  document.getElementById('modalOperator').value = '';
-});
-document.getElementById('modalBg').addEventListener('click', e => { if (e.target === document.getElementById('modalBg')) closeModal(); });
- 
-// ════════════════════════════════════════════════════════
-// STATS GLOBALES
-// ════════════════════════════════════════════════════════
-function updateStats() {
-  let libre = 0, occupe = 0, total = 0;
-  ZONES.forEach(zone => {
-    let zoneOccupe = 0;
-    for (let i = 1; i <= zone.count; i++) {
-      const d = getSpotData(`${zone.id}-${i}`);
-      total++;
-      if (d.status === 'libre') libre++;
-      else if (d.status === 'occupe') { occupe++; zoneOccupe++; }
-    }
-    const el = document.getElementById(`count-${zone.id}`);
-    if (el) el.textContent = `${zoneOccupe} / ${zone.count} occupées`;
+function getContent(){
+  const opts=ZONE_CONTENT[curSpot?.zone?.id]||[];
+  if(opts.length===1)return opts[0];
+  return document.getElementById('modalContent')?.value||'';
+}
+async function saveSpot(){
+  if(!curSpot)return;
+  const{id,num,zone}=curSpot,old={...getData(id)};
+  const nw={status:document.getElementById('modalStatus').value,content:getContent(),ref:document.getElementById('modalRef').value,date:document.getElementById('modalDate').value,operator:document.getElementById('modalOp').value,notes:document.getElementById('modalNotes').value};
+  const opts=ZONE_CONTENT[zone.id]||[];
+  if(nw.status==='occupe'&&opts.length>1&&!nw.content){document.getElementById('savingInd').textContent='⚠️ Sélectionnez un contenu';return;}
+  logMvt(id,zone.id,num,old,nw);
+  parcData[id]=nw;updateEl(id);updateStats();
+  const ok=await saveToDB(id,zone.id,num,nw);
+  if(ok)setTimeout(closeModal,700);
+}
+document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
+
+// ══════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════
+function updateStats(){
+  let libre=0,occ=0,total=0;
+  ZONES.forEach(z=>{let zo=0;for(let i=1;i<=z.count;i++){const d=getData(`${z.id}-${i}`);total++;if(d.status==='libre')libre++;else if(d.status==='occupe'){occ++;zo++;}};const el=document.getElementById(`count-${z.id}`);if(el)el.textContent=`${zo}/${z.count} occupées`;});
+  document.getElementById('totalSpots').textContent=total;
+  document.getElementById('countLibre').textContent=libre;
+  document.getElementById('countOccupe').textContent=occ;
+  document.getElementById('countMvtToday').textContent=todayCount();
+}
+
+// ══════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════
+function renderDash(){
+  let total=0,occ=0,maint=0;
+  ZONES.forEach(z=>{for(let i=1;i<=z.count;i++){total++;const d=getData(`${z.id}-${i}`);if(d.status==='occupe')occ++;else if(d.status==='maintenance')maint++;}});
+  const pct=total?Math.round(occ/total*100):0,kc=pct>=85?'var(--rouge)':pct>=70?'var(--jaune)':'var(--vert)';
+  const el=document.getElementById('dashboardView');
+  el.innerHTML=`
+    <div><div class="page-title">TABLEAU DE BORD</div><div class="page-sub">${new Date().toLocaleDateString('fr-CA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div></div>
+    <div class="weather-widget">
+      <span style="font-size:2.4rem">🌤</span>
+      <div><div class="wt-cond">9°C · Partiellement nuageux — Montréal, QC</div><div class="wt-detail">💨 18 km/h ONO &nbsp;·&nbsp; 💧 Humidité : 62% &nbsp;·&nbsp; ☀️ UV : 2 (Faible)</div></div>
+      <div class="weather-ok">✓ Conditions normales</div>
+    </div>
+    <div class="dash-row">
+      <div class="dash-card" style="border-top:3px solid ${kc}"><div class="card-title">◈ Taux d'occupation</div><div class="dash-kpi" style="color:${kc}">${pct}%</div><div class="dash-kpi-sub">${occ} / ${total} emplacements</div></div>
+      <div class="dash-card" style="border-top:3px solid var(--vert)"><div class="card-title">✓ Places libres</div><div class="dash-kpi" style="color:var(--vert)">${total-occ-maint}</div><div class="dash-kpi-sub">${maint} en maintenance</div></div>
+      <div class="dash-card" style="border-top:3px solid var(--cyan)"><div class="card-title">⇄ Mouvements aujourd'hui</div><div class="dash-kpi" style="color:var(--cyan)">${todayCount()}</div><div class="dash-kpi-sub">${movements.length} total historique</div></div>
+      <div class="dash-card" style="border-top:3px solid var(--violet)"><div class="card-title">🏗 Sites actifs</div><div class="dash-kpi" style="color:var(--violet)">2</div><div class="dash-kpi-sub">Cour principale + Mirlog</div></div>
+    </div>
+    <div><div class="section-title">OCCUPATION PAR ZONE</div><div class="zone-occ-grid" id="dashGrid"></div></div>
+    <div><div class="section-title">DERNIERS MOUVEMENTS</div>
+    ${movements.length===0?'<div style="color:var(--gris);font-size:.78rem;padding:12px 0">Aucun mouvement enregistré.</div>':
+    `<div class="mvt-table-wrap"><table class="mvt-table"><thead><tr><th>Date</th><th>Type</th><th>Place</th><th>Zone</th><th>Contenu</th><th>Réf.</th><th>Opérateur</th></tr></thead><tbody>
+    ${movements.slice(0,6).map(m=>`<tr><td class="mono" style="color:var(--gris);font-size:.64rem;white-space:nowrap">${fmtDate(m.date)}</td><td><span class="mvt-badge ${mClass(m.type)}">${m.type}</span></td><td class="mono" style="color:var(--orange2)">${m.spotId}</td><td style="color:var(--gris);font-size:.68rem">${m.zoneLabel}</td><td>${m.content||'—'}</td><td class="mono" style="color:var(--cyan);font-size:.66rem">${m.ref||'—'}</td><td style="color:var(--gris)">${m.operator||'—'}</td></tr>`).join('')}
+    </tbody></table></div>`}</div>`;
+  const grid=document.getElementById('dashGrid');
+  ZONES.forEach(z=>{
+    let o=0;for(let i=1;i<=z.count;i++){if(getData(`${z.id}-${i}`).status==='occupe')o++;}
+    const p=Math.round(o/z.count*100),col=p>=90?'var(--rouge)':p>=70?'var(--jaune)':z.color;
+    const c=document.createElement('div');c.className='zone-occ-card';
+    c.innerHTML=`<div class="zone-occ-header"><div class="zone-occ-name" style="color:${z.color}">${z.icon} ${z.label}</div><div style="color:${col};font-size:.68rem;font-family:monospace">${o}/${z.count}</div></div><div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${col}"></div></div><div class="zone-occ-pct" style="color:${col}">${p}% occupé</div>`;
+    grid.appendChild(c);
   });
-  document.getElementById('totalSpots').textContent = total;
-  document.getElementById('countLibre').textContent = libre;
-  document.getElementById('countOccupe').textContent = occupe;
-  document.getElementById('countMvtToday').textContent = getTodayMvtCount();
 }
- 
-// ════════════════════════════════════════════════════════
-// RECHERCHE TEMPS RÉEL
-// ════════════════════════════════════════════════════════
-document.getElementById('searchInput').addEventListener('input', function(e) {
-  const term = e.target.value.toLowerCase().trim();
-  const body = document.body;
-  if (term === '') { body.classList.remove('searching'); document.querySelectorAll('.spot').forEach(el => el.classList.remove('search-match')); return; }
+
+// ══════════════════════════════════════════════════════
+// MOUVEMENTS
+// ══════════════════════════════════════════════════════
+function mClass(t){return t==='Entrée'?'mvt-entree':t==='Sortie'?'mvt-sortie':t==='Maintenance'?'mvt-maint':'mvt-modif';}
+function renderMvt(){
+  const el=document.getElementById('mouvementsView');
+  const f=mvtFilter==='Tous'?movements:movements.filter(m=>m.type===mvtFilter);
+  el.innerHTML=`
+    <div><div class="page-title">JOURNAL DES MOUVEMENTS</div><div class="page-sub">${movements.length} entrée(s)</div></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+      ${['Tous','Entrée','Sortie','Modification','Maintenance'].map(ft=>`<button class="filter-chip ${mvtFilter===ft?'active':''}" onclick="setMF('${ft}')">${ft}</button>`).join('')}
+      <span style="margin-left:auto;color:var(--gris);font-size:.68rem">${f.length} résultat(s)</span>
+      <button class="export-btn" onclick="expCSV()">⬇ CSV</button>
+      <button class="export-btn" style="color:var(--rouge);border-color:rgba(255,68,68,.3)" onclick="clrMvt()">🗑 Vider</button>
+    </div>
+    <div class="mvt-table-wrap"><table class="mvt-table">
+      <thead><tr><th>Date / Heure</th><th>Type</th><th>Place</th><th>Zone</th><th>Statut</th><th>Contenu</th><th>Référence</th><th>Opérateur</th><th>Notes</th></tr></thead>
+      <tbody>${f.length===0?`<tr><td colspan="9" class="mvt-empty">Aucun mouvement.<br><span style="font-size:.7rem">Modifiez une place pour commencer.</span></td></tr>`:
+      f.map(m=>`<tr>
+        <td class="mono" style="color:var(--gris);font-size:.64rem;white-space:nowrap">${fmtDate(m.date)}</td>
+        <td><span class="mvt-badge ${mClass(m.type)}">${m.type}</span></td>
+        <td class="mono" style="color:var(--orange2)">${m.spotId}</td>
+        <td style="font-size:.68rem;color:var(--gris)">${m.zoneLabel}</td>
+        <td style="font-size:.66rem"><span style="color:var(--gris)">${m.ancienStatut} → </span><span style="color:${m.nouveauStatut==='occupe'?'var(--orange)':m.nouveauStatut==='libre'?'var(--vert)':'var(--gris)'};font-weight:700">${m.nouveauStatut}</span></td>
+        <td style="font-size:.72rem">${m.content||'—'}</td>
+        <td class="mono" style="color:var(--cyan);font-size:.66rem">${m.ref||'—'}</td>
+        <td style="font-size:.72rem">${m.operator||'—'}</td>
+        <td style="color:var(--gris);font-size:.66rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes||'—'}</td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+function setMF(f){mvtFilter=f;renderMvt();}
+function expCSV(){
+  const h=['Date','Type','Place','Zone','Ancien statut','Nouveau statut','Contenu','Référence','Opérateur','Notes'];
+  const rows=movements.map(m=>[fmtDate(m.date),m.type,m.spotId,m.zoneLabel,m.ancienStatut,m.nouveauStatut,m.content,m.ref,m.operator,m.notes].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent([h.join(','),...rows].join('\n'));a.download=`mouvements_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+function clrMvt(){if(!confirm('Vider tout l\'historique des mouvements ?'))return;movements=[];localStorage.removeItem(MVT_KEY);renderMvt();document.getElementById('countMvtToday').textContent='0';}
+
+// ══════════════════════════════════════════════════════
+// RAPPORTS
+// ══════════════════════════════════════════════════════
+function renderRpts(){
+  let total=0,occ=0;ZONES.forEach(z=>{for(let i=1;i<=z.count;i++){total++;if(getData(`${z.id}-${i}`).status==='occupe')occ++;}});
+  const totalArea=Object.values(ZONE_AREAS).reduce((a,z)=>a+(z.area||0),0);
+  let td=0,cd=0;Object.values(parcData).forEach(d=>{if(d.status==='occupe'&&d.date){const dy=Math.round((Date.now()-new Date(d.date))/86400000);if(!isNaN(dy)&&dy>=0){td+=dy;cd++;}}});
+  const avg=cd>0?Math.round(td/cd):0;
+  const ms={Entrée:0,Sortie:0,Modification:0,Maintenance:0};movements.forEach(m=>{if(ms[m.type]!==undefined)ms[m.type]++;});
+  const cs={};Object.values(parcData).forEach(d=>{if(d.status==='occupe'&&d.content){const k=d.content.trim();cs[k]=(cs[k]||0)+1;}});
+  const el=document.getElementById('rapportsView');
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+      <div><div class="page-title">RAPPORTS & ANALYSE</div><div class="page-sub">Données en temps réel</div></div>
+      <button class="export-btn" onclick="expCSV()">⬇ Export CSV</button>
+    </div>
+    <div class="dash-row">
+      <div class="report-section" style="flex:1;min-width:220px"><h3>📐 SURFACES</h3>${Object.values(ZONE_AREAS).map(g=>{const zs=ZONES.filter(z=>g.ids.includes(z.id));let t=0,o=0;zs.forEach(z=>{for(let i=1;i<=z.count;i++){t++;if(getData(`${z.id}-${i}`).status==='occupe')o++;}});const p=t>0?Math.round(o/t*100):0;return`<div class="rpt-row"><span class="rpt-label">${g.label}</span><span><span class="rpt-val">${g.area>0?g.area.toLocaleString()+' pi²':'—'}</span><span style="color:var(--gris);font-size:.64rem;margin-left:6px">${p}%</span></span></div>`;}).join('')}<div class="rpt-row" style="border-top:1px solid rgba(255,255,255,.1);margin-top:4px;padding-top:10px"><span style="font-weight:700">TOTAL</span><span class="rpt-val" style="color:var(--cyan)">${totalArea.toLocaleString()} pi²</span></div></div>
+      <div class="report-section" style="flex:1;min-width:220px"><h3>📊 STATISTIQUES</h3>
+        <div class="rpt-row"><span class="rpt-label">Occupation globale</span><span class="rpt-val" style="color:${Math.round(occ/total*100)>=80?'var(--rouge)':'var(--vert)'}">${Math.round(occ/total*100)}%</span></div>
+        <div class="rpt-row"><span class="rpt-label">Durée moy. stockage</span><span class="rpt-val">${avg} jours</span></div>
+        <div class="rpt-row"><span class="rpt-label">Entrées</span><span class="rpt-val" style="color:var(--vert)">${ms['Entrée']}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Sorties</span><span class="rpt-val" style="color:var(--rouge)">${ms['Sortie']}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Modifications</span><span class="rpt-val" style="color:var(--cyan)">${ms['Modification']}</span></div>
+      </div>
+    </div>
+    <div class="report-section"><h3>🧮 CAPACITÉ THÉORIQUE PAR COMPOSANTE</h3><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.72rem">
+      <thead><tr style="background:rgba(0,0,0,.2)"><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Composante</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">pi²/unité</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Béton (62 581)</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">P7 (35 288)</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">K-N (12 567)</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">REAR (16 244)</th></tr></thead>
+      <tbody>${Object.entries(DIMS).map(([n,d])=>`<tr style="border-bottom:1px solid rgba(255,255,255,.04)"><td style="padding:8px 12px;font-weight:700">${n}</td><td style="padding:8px 12px;font-family:monospace;color:var(--orange2)">${d.toLocaleString()}</td><td style="padding:8px 12px;font-family:monospace;color:var(--jaune)">${Math.floor(62581/d)}</td><td style="padding:8px 12px;font-family:monospace;color:var(--violet)">${Math.floor(35288/d)}</td><td style="padding:8px 12px;font-family:monospace;color:var(--bleu)">${Math.floor(12567/d)}</td><td style="padding:8px 12px;font-family:monospace;color:var(--rouge)">${Math.floor(16244/d)}</td></tr>`).join('')}</tbody>
+    </table></div><div style="font-size:.62rem;color:var(--gris);margin-top:8px">* Capacité théorique brute — facteur d'utilisation réel ≈ 0.7</div></div>
+    ${Object.keys(cs).length>0?`<div class="report-section"><h3>📦 CONTENUS STOCKÉS</h3>${Object.entries(cs).sort((a,b)=>b[1]-a[1]).map(([c,n])=>`<div class="rpt-row"><span class="rpt-label">${c}</span><span style="display:flex;align-items:center;gap:10px"><div style="width:90px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden"><div style="width:${Math.min(100,n/occ*100*3)}%;height:100%;background:var(--orange);border-radius:3px"></div></div><span class="rpt-val">${n}</span></span></div>`).join('')}</div>`:''}
+    <div class="report-section"><h3>🧠 RECOMMANDATIONS</h3>${genRecos(occ,total,avg).map(r=>`<div class="reco-item"><div style="font-size:1.1rem;flex-shrink:0">${r.i}</div><div>${r.t}</div></div>`).join('')}</div>`;
+}
+function genRecos(occ,total,avg){
+  const p=Math.round(occ/total*100),r=[];
+  if(p>=85)r.push({i:'🔴',t:`Occupation critique à ${p}%. Planifier des sorties prioritaires.`});
+  else if(p>=70)r.push({i:'🟡',t:`Occupation à ${p}% — surveiller les entrées à venir.`});
+  else r.push({i:'🟢',t:`Occupation nominale à ${p}%. Capacité disponible suffisante.`});
+  if(avg>60)r.push({i:'⏱',t:`Durée moy. de stockage élevée (${avg}j). Réviser les priorités de sortie.`});
+  if(movements.length===0)r.push({i:'📋',t:`Aucun mouvement enregistré. Le journal se remplit dès qu'une place est modifiée.`});
+  ZONES.forEach(z=>{let t=z.count,o=0;for(let i=1;i<=t;i++){if(getData(`${z.id}-${i}`).status==='occupe')o++;}if(Math.round(o/t*100)>=90)r.push({i:'⚡',t:`${z.label} saturée à ${Math.round(o/t*100)}%. Redistribuer vers une zone moins chargée.`});});
+  if(!r.length)r.push({i:'✅',t:'Toutes les zones opèrent dans les paramètres normaux.'});
+  return r;
+}
+
+// ══════════════════════════════════════════════════════
+// RECHERCHE
+// ══════════════════════════════════════════════════════
+document.getElementById('searchInput').addEventListener('input',function(e){
+  const term=e.target.value.toLowerCase().trim(),body=document.body;
+  if(!term){body.classList.remove('searching');document.querySelectorAll('.spot').forEach(el=>el.classList.remove('search-match'));return;}
   body.classList.add('searching');
-  ZONES.forEach(zone => {
-    for (let i = 1; i <= zone.count; i++) {
-      const spotId = `${zone.id}-${i}`;
-      const data = getSpotData(spotId);
-      const isMatch = (data.ref     && data.ref.toLowerCase().includes(term)) ||
-                      (data.content && data.content.toLowerCase().includes(term)) ||
-                      (data.notes   && data.notes.toLowerCase().includes(term));
-      const elements = document.querySelectorAll(`[data-spot-id="${spotId}"]`);
-      elements.forEach(el => { if (isMatch && data.status !== 'libre') el.classList.add('search-match'); else el.classList.remove('search-match'); });
-    }
-  });
+  ZONES.forEach(z=>{for(let i=1;i<=z.count;i++){
+    const id=`${z.id}-${i}`,d=getData(id);
+    const match=(d.ref&&d.ref.toLowerCase().includes(term))||(d.content&&d.content.toLowerCase().includes(term))||(d.notes&&d.notes.toLowerCase().includes(term));
+    document.querySelectorAll(`[data-spot-id="${id}"]`).forEach(el=>{if(match&&d.status!=='libre')el.classList.add('search-match');else el.classList.remove('search-match');});
+  }});
 });
- 
-// ════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════
 // INIT
-// ════════════════════════════════════════════════════════
-async function init() {
-  const ok = await loadFromSupabase();
+// ══════════════════════════════════════════════════════
+async function init(){
+  const ok=await loadDB();
   document.getElementById('loadingScreen').classList.add('hidden');
-  render();
-  updateStats();
-  if (ok) subscribeRealtime();
+  render();updateStats();
+  if(ok)subscribeRT();
 }
 init();
 </script>
