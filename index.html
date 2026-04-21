@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -11,48 +12,49 @@
   --bg:#0d1117; --surface:#16213e; --surface2:#0f1929; --surface3:#1a2744;
   --orange:#ff6b2b; --orange2:#ff9a5c; --vert:#00e5a0; --gris:#8892a4;
   --blanc:#e0e0e0; --cyan:#00d4ff; --rouge:#ff4444; --jaune:#fbbf24;
-  --violet:#a78bfa; --bleu:#38bdf8; --rose:#f472b6; --lime:#84cc16;
+  --violet:#a78bfa; --bleu:#38bdf8; --rose:#f472b6;
 }
 body { background:var(--bg); font-family:'Segoe UI',Arial,sans-serif; color:var(--blanc); min-height:100vh; display:flex; flex-direction:column; }
 
 /* ═══ HEADER ═══════════════════════════════════════════ */
-.header { background:var(--surface); border-bottom:2px solid var(--orange); padding:10px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; position:sticky; top:0; z-index:100; }
+.header { background:var(–surface); border-bottom:2px solid var(–orange); padding:10px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; position:sticky; top:0; z-index:100; }
 .header-brand h1 { font-size:1rem; font-weight:800; color:#fff; }
-.header-brand h1 span { color:var(--orange); }
-.header-brand p { font-size:0.58rem; color:var(--gris); letter-spacing:0.12em; text-transform:uppercase; margin-top:1px; }
-.sync-dot { display:flex; align-items:center; gap:6px; font-size:0.65rem; color:var(--gris); margin-top:4px; }
-.dot { width:8px; height:8px; border-radius:50%; background:var(--gris); }
-.dot.ok { background:var(--vert); animation:pulse 2s infinite; }
-.dot.loading { background:var(--orange); animation:pulse 0.5s infinite; }
-.dot.error { background:var(--rouge); }
+.header-brand h1 span { color:var(–orange); }
+.header-brand p { font-size:0.58rem; color:var(–gris); letter-spacing:0.12em; text-transform:uppercase; margin-top:1px; }
+.sync-dot { display:flex; align-items:center; gap:6px; font-size:0.65rem; color:var(–gris); margin-top:4px; }
+.dot { width:8px; height:8px; border-radius:50%; background:var(–gris); }
+.dot.ok { background:var(–vert); animation:pulse 2s infinite; }
+.dot.loading { background:var(–orange); animation:pulse 0.5s infinite; }
+.dot.error { background:var(–rouge); }
 @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
 .stats-bar { display:flex; gap:8px; flex-wrap:wrap; }
-.stat-box { text-align:center; background:var(--surface2); border-radius:6px; padding:4px 12px; min-width:56px; border-top:2px solid transparent; }
-.stat-box.s-vert { border-top-color:var(--vert); } .stat-box.s-orange { border-top-color:var(--orange); }
-.stat-box.s-cyan { border-top-color:var(--cyan); } .stat-box.s-jaune { border-top-color:var(--jaune); }
+.stat-box { text-align:center; background:var(–surface2); border-radius:6px; padding:4px 12px; min-width:56px; border-top:2px solid transparent; }
+.stat-box.s-vert{border-top-color:var(–vert)} .stat-box.s-orange{border-top-color:var(–orange)}
+.stat-box.s-cyan{border-top-color:var(–cyan)} .stat-box.s-jaune{border-top-color:var(–jaune)}
 .stat-box .val { font-size:1.15rem; font-weight:800; line-height:1; }
 .stat-box .lbl { font-size:0.55rem; opacity:.6; letter-spacing:.1em; text-transform:uppercase; }
-.val.libre{color:var(--vert)} .val.occupe{color:var(--orange)} .val.cyan{color:var(--cyan)} .val.jaune{color:var(--jaune)}
+.val.libre{color:var(–vert)} .val.occupe{color:var(–orange)} .val.cyan{color:var(–cyan)} .val.jaune{color:var(–jaune)}
 
 /* ═══ TOOLBAR ═══════════════════════════════════════════ */
 .toolbar { display:flex; gap:8px; padding:8px 20px; background:#12192e; border-bottom:1px solid rgba(0,0,0,.2); flex-wrap:wrap; align-items:center; }
 .view-toggles { display:flex; gap:5px; flex-wrap:wrap; }
-.view-btn { padding:5px 12px; border-radius:6px; border:none; background:var(--surface2); color:var(--gris); font-size:0.72rem; font-weight:700; cursor:pointer; transition:.2s; white-space:nowrap; }
-.view-btn.active { background:var(--orange); color:#fff; }
-.view-btn:hover:not(.active) { background:var(--surface3); color:var(--blanc); }
-#btnEditMap { display:none; margin-left:auto; color:var(--cyan); border:1px solid var(--cyan); background:rgba(0,212,255,.08); }
-#btnEditMap.editing { background:var(--rouge); border-color:var(--rouge); color:#fff; animation:pulseEdit 1.5s infinite; }
+.view-btn { padding:5px 12px; border-radius:6px; border:none; background:var(–surface2); color:var(–gris); font-size:0.72rem; font-weight:700; cursor:pointer; transition:.2s; white-space:nowrap; }
+.view-btn.active { background:var(–orange); color:#fff; }
+.view-btn:hover:not(.active) { background:var(–surface3); color:var(–blanc); }
+#btnEditMap { display:none; margin-left:auto; color:var(–cyan); border:1px solid var(–cyan); background:rgba(0,212,255,.08); }
+#btnEditMap.editing { background:var(–rouge); border-color:var(–rouge); color:#fff; animation:pulseEdit 1.5s infinite; }
 @keyframes pulseEdit{0%{box-shadow:0 0 0 0 rgba(255,68,68,.4)}70%{box-shadow:0 0 0 6px rgba(255,68,68,0)}100%{box-shadow:0 0 0 0 rgba(255,68,68,0)}}
 .sep { width:1px; height:20px; background:rgba(255,255,255,.07); flex-shrink:0; }
-.leg { display:flex; align-items:center; gap:5px; font-size:0.66rem; color:var(--gris); }
+.leg { display:flex; align-items:center; gap:5px; font-size:0.66rem; color:var(–gris); }
 .leg-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
-.search-bar { padding:5px 12px; border-radius:6px; border:1px solid rgba(255,255,255,.15); background:var(--surface2); color:var(--blanc); font-size:0.73rem; outline:none; width:200px; transition:border-color .2s; }
-.search-bar:focus { border-color:var(--cyan); box-shadow:0 0 8px rgba(0,212,255,.25); }
+.search-bar { padding:5px 12px; border-radius:6px; border:1px solid rgba(255,255,255,.15); background:var(–surface2); color:var(–blanc); font-size:0.73rem; outline:none; width:200px; transition:border-color .2s; }
+.search-bar:focus { border-color:var(–cyan); box-shadow:0 0 8px rgba(0,212,255,.25); }
 
 /* ═══ LOADING ═════════════════════════════════════════ */
-.loading-screen { position:fixed; inset:0; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:9999; }
+.loading-screen { position:fixed; inset:0; background:var(–surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:9999; }
 .loading-screen.hidden { display:none; }
-.spinner { width:40px; height:40px; border:3px solid rgba(255,107,43,.2); border-top-color:var(--orange); border-radius:50%; animation:spin .8s linear infinite; }
+.spinner { width:40px; height:40px; border:3px solid rgba(255,107,43,.2); border-top-color:var(–orange); border-radius:50%; animation:spin .8s linear infinite; }
+.loading-txt { color:var(–gris); font-size:.8rem; }
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ═══ VIEWS ═══════════════════════════════════════════ */
@@ -61,40 +63,39 @@ body { background:var(--bg); font-family:'Segoe UI',Arial,sans-serif; color:var(
 #mapView { align-items:center; padding:10px 16px; gap:10px; }
 #dashboardView,#mouvementsView,#rapportsView { overflow-y:auto; }
 
-/* ═══ MAP SELECTOR ════════════════════════════════════ */
+/* ═══ MAP ═════════════════════════════════════════════ */
 .map-selector { display:flex; gap:8px; align-self:flex-start; width:100%; align-items:center; flex-wrap:wrap; }
-.map-sel-btn { padding:7px 18px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:var(--surface2); color:var(--gris); font-size:0.76rem; font-weight:700; cursor:pointer; transition:.2s; }
-.map-sel-btn.active { background:var(--surface3); border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 12px rgba(0,212,255,.15); }
-.map-sel-btn:hover:not(.active) { background:var(--surface3); color:var(--blanc); }
-.map-label { font-size:0.65rem; color:var(--gris); letter-spacing:.1em; text-transform:uppercase; }
+.map-sel-btn { padding:7px 18px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:var(–surface2); color:var(–gris); font-size:0.76rem; font-weight:700; cursor:pointer; transition:.2s; }
+.map-sel-btn.active { background:var(–surface3); border-color:var(–cyan); color:var(–cyan); box-shadow:0 0 12px rgba(0,212,255,.15); }
+.map-sel-btn:hover:not(.active) { background:var(–surface3); color:var(–blanc); }
+.map-label { font-size:0.65rem; color:var(–gris); letter-spacing:.1em; text-transform:uppercase; }
 #mapContainer { position:relative; width:100%; height:82vh; background-size:100% 100%; background-repeat:no-repeat; background-position:center; border-radius:10px; border:1px solid rgba(255,255,255,.07); overflow:hidden; background-color:#0d2010; box-shadow:0 10px 30px rgba(0,0,0,.3); }
 
 /* ═══ GRID ════════════════════════════════════════════ */
 .group-row { display:flex; gap:12px; flex-wrap:wrap; }
 .group-row .zone-block { flex:1; min-width:180px; }
-.zone-block { background:var(--surface); border:1px solid rgba(255,255,255,.06); border-radius:8px; overflow:hidden; }
+.zone-block { background:var(–surface); border:1px solid rgba(255,255,255,.06); border-radius:8px; overflow:hidden; }
 .zone-header { display:flex; align-items:center; justify-content:space-between; padding:7px 12px; background:rgba(0,0,0,.25); border-bottom:1px solid rgba(255,255,255,.05); }
 .zone-name { font-size:0.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
-.zone-count { font-size:0.58rem; color:var(--gris); }
+.zone-count { font-size:0.58rem; color:var(–gris); }
 .zone-body { padding:10px 12px; display:flex; flex-wrap:wrap; gap:5px; }
-.zone-section-title { font-size:0.62rem; color:var(--gris); letter-spacing:.14em; text-transform:uppercase; padding:4px 2px 2px; width:100%; border-top:1px solid rgba(255,255,255,.05); margin-top:4px; }
+.zone-section-title { font-size:0.62rem; color:var(–gris); letter-spacing:.14em; text-transform:uppercase; padding:4px 2px 2px; width:100%; border-top:1px solid rgba(255,255,255,.05); margin-top:4px; }
 
 /* ═══ SPOTS ═══════════════════════════════════════════ */
 .spot { width:42px; height:52px; border-radius:5px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; font-size:.58rem; font-weight:700; transition:transform .15s,filter .15s,box-shadow .15s; position:relative; user-select:none; border:2px solid transparent; }
 .spot:hover { transform:scale(1.12); filter:brightness(1.25); z-index:10; box-shadow:0 4px 16px rgba(0,0,0,.5); }
 .spot:active { transform:scale(.96); }
-.spot.libre { background:rgba(0,229,160,.12); border-color:var(--vert); color:var(--vert); }
-.spot.occupe { background:rgba(255,107,43,.16); border-color:var(--orange); color:var(--orange2); }
-.spot.maintenance { background:rgba(136,146,164,.1); border-color:var(--gris); color:var(--gris); }
+.spot.libre { background:rgba(0,229,160,.12); border-color:var(–vert); color:var(–vert); }
+.spot.occupe { background:rgba(255,107,43,.16); border-color:var(–orange); color:var(–orange2); }
+.spot.maintenance { background:rgba(136,146,164,.1); border-color:var(–gris); color:var(–gris); }
 .spot-icon { font-size:.95rem; margin-bottom:1px; }
 .spot-id { font-size:.65rem; font-weight:800; }
-
-.spot-map { position:absolute!important; display:block!important; transform:translate(-50%,-50%) rotate(var(--rot,0deg))!important; border-radius:2px!important; border:1px solid rgba(0,0,0,.7)!important; }
-.spot-map:hover { transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.3)!important; box-shadow:0 4px 12px rgba(0,0,0,.8); z-index:50; }
-.spot-map:active { transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(.95)!important; }
+.spot-map { position:absolute!important; display:block!important; transform:translate(-50%,-50%) rotate(var(–rot,0deg))!important; border-radius:2px!important; border:1px solid rgba(0,0,0,.7)!important; }
+.spot-map:hover { transform:translate(-50%,-50%) rotate(var(–rot,0deg)) scale(1.3)!important; box-shadow:0 4px 12px rgba(0,0,0,.8); z-index:50; }
+.spot-map:active { transform:translate(-50%,-50%) rotate(var(–rot,0deg)) scale(.95)!important; }
 .spot-map .spot-icon,.spot-map .spot-id { display:none; }
-.spot-map.libre { background-color:var(--vert)!important; }
-.spot-map.maintenance { background-color:var(--gris)!important; }
+.spot-map.libre { background-color:var(–vert)!important; }
+.spot-map.maintenance { background-color:var(–gris)!important; }
 body:not(.map-edit-mode) #mapView .spot-map.libre { display:none!important; }
 body.map-edit-mode .spot-map { cursor:grab!important; border:2px dashed #fff!important; }
 body.map-edit-mode .spot-map:active { cursor:grabbing!important; }
@@ -102,97 +103,100 @@ body.map-edit-mode .spot-map.libre { display:block!important; opacity:.6; }
 
 /* ═══ SEARCH ══════════════════════════════════════════ */
 body.searching .spot:not(.search-match) { opacity:.07!important; pointer-events:none; filter:grayscale(100%); }
-body.searching .spot.search-match { z-index:100!important; border-color:var(--cyan)!important; background-color:rgba(0,212,255,.25)!important; }
+body.searching .spot.search-match { z-index:100!important; border-color:var(–cyan)!important; background-color:rgba(0,212,255,.25)!important; }
 body.searching #gridView .spot.search-match { animation:pSG 1.2s infinite; }
-@keyframes pSG{0%{transform:scale(1)}50%{transform:scale(1.15);box-shadow:0 0 20px var(--cyan)}100%{transform:scale(1)}}
+@keyframes pSG{0%{transform:scale(1)}50%{transform:scale(1.15);box-shadow:0 0 20px var(–cyan)}100%{transform:scale(1)}}
 body.searching #mapView .spot-map.search-match { animation:pSM 1.2s infinite; }
-@keyframes pSM{0%{transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1)}50%{transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.4);box-shadow:0 0 20px var(--cyan)}100%{transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1)}}
+@keyframes pSM{0%{transform:translate(-50%,-50%) rotate(var(–rot,0deg)) scale(1)}50%{transform:translate(-50%,-50%) rotate(var(–rot,0deg)) scale(1.4);box-shadow:0 0 20px var(–cyan)}100%{transform:translate(-50%,-50%) rotate(var(–rot,0deg)) scale(1)}}
 
 /* ═══ TOOLTIP ═════════════════════════════════════════ */
-#tooltip { position:fixed; background:#0a1020; border:1px solid var(--orange); border-radius:10px; padding:11px 14px; font-size:.72rem; pointer-events:none; z-index:500; display:none; max-width:230px; box-shadow:0 8px 24px rgba(0,0,0,.8); line-height:1.6; }
-.tt-id { font-weight:800; font-size:.88rem; color:var(--orange2); margin-bottom:2px; }
-.tt-zone { font-size:.6rem; color:var(--gris); margin-bottom:6px; text-transform:uppercase; letter-spacing:.08em; }
+#tooltip { position:fixed; background:#0a1020; border:1px solid var(–orange); border-radius:10px; padding:11px 14px; font-size:.72rem; pointer-events:none; z-index:500; display:none; max-width:230px; box-shadow:0 8px 24px rgba(0,0,0,.8); line-height:1.6; }
+.tt-id { font-weight:800; font-size:.88rem; color:var(–orange2); margin-bottom:2px; }
+.tt-zone { font-size:.6rem; color:var(–gris); margin-bottom:6px; text-transform:uppercase; letter-spacing:.08em; }
 .tt-row { display:flex; justify-content:space-between; gap:8px; font-size:.68rem; margin-top:2px; }
-.tt-row span:first-child { color:var(--gris); }
+.tt-row span:first-child { color:var(–gris); }
 
 /* ═══ MODAL ═══════════════════════════════════════════ */
 .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.82); z-index:2000; align-items:center; justify-content:center; padding:16px; }
 .modal-bg.open { display:flex; }
-.modal { background:var(--surface); border:1px solid var(--orange); border-radius:14px; padding:22px; width:100%; max-width:400px; box-shadow:0 20px 60px rgba(0,0,0,.85); max-height:92vh; overflow-y:auto; }
-.modal h2 { font-size:1rem; font-weight:800; color:var(--orange2); margin-bottom:2px; }
-.modal .modal-sub { font-size:.6rem; color:var(--gris); letter-spacing:.1em; text-transform:uppercase; background:rgba(255,255,255,.05); border-radius:4px; padding:2px 7px; display:inline-block; margin-bottom:14px; }
+.modal { background:var(–surface); border:1px solid var(–orange); border-radius:14px; padding:22px; width:100%; max-width:400px; box-shadow:0 20px 60px rgba(0,0,0,.85); max-height:92vh; overflow-y:auto; }
+.modal h2 { font-size:1rem; font-weight:800; color:var(–orange2); margin-bottom:2px; }
+.modal .modal-sub { font-size:.6rem; color:var(–gris); letter-spacing:.1em; text-transform:uppercase; background:rgba(255,255,255,.05); border-radius:4px; padding:2px 7px; display:inline-block; margin-bottom:14px; }
 .modal label { display:block; font-size:.68rem; color:#aaa; margin-bottom:3px; margin-top:10px; }
-.f-base { width:100%; background:var(--surface2); border:1px solid rgba(255,255,255,.12); border-radius:7px; padding:9px 11px; color:var(--blanc); font-size:.8rem; outline:none; transition:border-color .2s; -webkit-appearance:none; }
-.f-base:focus { border-color:var(--orange); box-shadow:0 0 0 2px rgba(255,107,43,.12); }
-.f-base option { background:var(--surface); }
-input[type="datetime-local"].f-base { color-scheme:dark; }
-.content-locked { display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid rgba(255,255,255,.08); border-radius:7px; padding:9px 11px; font-size:.8rem; }
+.f-base { width:100%; background:var(–surface2); border:1px solid rgba(255,255,255,.12); border-radius:7px; padding:9px 11px; color:var(–blanc); font-size:.8rem; outline:none; transition:border-color .2s; -webkit-appearance:none; }
+.f-base:focus { border-color:var(–orange); box-shadow:0 0 0 2px rgba(255,107,43,.12); }
+.f-base option { background:var(–surface); }
+input[type=“datetime-local”].f-base { color-scheme:dark; }
+.content-locked { display:flex; align-items:center; gap:8px; background:var(–surface2); border:1px solid rgba(255,255,255,.08); border-radius:7px; padding:9px 11px; font-size:.8rem; }
 .modal-btns { display:flex; gap:8px; margin-top:18px; }
 .btn { flex:1; padding:10px; border-radius:7px; border:none; font-size:.78rem; font-weight:700; cursor:pointer; transition:opacity .2s,transform .1s; }
-.btn:active { transform:scale(.97); } .btn:hover { opacity:.85; }
-.btn-save { background:var(--orange); color:#fff; }
+.btn:active{transform:scale(.97)} .btn:hover{opacity:.85}
+.btn-save { background:var(–orange); color:#fff; }
 .btn-cancel { background:rgba(255,255,255,.07); color:#ccc; }
 .btn-clear { background:rgba(255,50,50,.1); color:#ff7070; border:1px solid rgba(255,50,50,.18); }
-.saving-indicator { text-align:center; font-size:.7rem; color:var(--gris); margin-top:8px; min-height:18px; }
+.saving-indicator { text-align:center; font-size:.7rem; color:var(–gris); margin-top:8px; min-height:18px; }
 
-/* ═══ SHARED COMPONENTS ══════════════════════════════ */
+/* ═══ SHARED UI ══════════════════════════════════════ */
 .dash-row { display:flex; gap:12px; flex-wrap:wrap; }
-.dash-card { background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:15px 18px; flex:1; min-width:130px; }
-.card-title { font-size:.6rem; color:var(--gris); letter-spacing:.12em; text-transform:uppercase; margin-bottom:9px; }
+.dash-card { background:var(–surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:15px 18px; flex:1; min-width:130px; }
+.card-title { font-size:.6rem; color:var(–gris); letter-spacing:.12em; text-transform:uppercase; margin-bottom:9px; }
 .dash-kpi { font-size:2rem; font-weight:900; line-height:1; }
-.dash-kpi-sub { font-size:.68rem; color:var(--gris); margin-top:5px; }
-.weather-widget { background:linear-gradient(135deg,var(--surface),var(--surface3)); border:1px solid rgba(56,189,248,.2); border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.dash-kpi-sub { font-size:.68rem; color:var(–gris); margin-top:5px; }
+.weather-widget { background:linear-gradient(135deg,var(–surface),var(–surface3)); border:1px solid rgba(56,189,248,.2); border-radius:10px; padding:14px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
 .wt-cond { font-size:1rem; font-weight:700; }
-.wt-detail { font-size:.68rem; color:var(--gris); margin-top:3px; }
-.weather-ok { margin-left:auto; color:var(--vert); font-size:.7rem; font-weight:700; }
+.wt-detail { font-size:.68rem; color:var(–gris); margin-top:3px; }
+.weather-ok { margin-left:auto; color:var(–vert); font-size:.7rem; font-weight:700; }
 .zone-occ-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
-.zone-occ-card { background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:8px; padding:12px 14px; }
+.zone-occ-card { background:var(–surface); border:1px solid rgba(255,255,255,.07); border-radius:8px; padding:12px 14px; }
 .zone-occ-header { display:flex; justify-content:space-between; margin-bottom:4px; }
 .zone-occ-name { font-size:.74rem; font-weight:700; }
 .bar-track { background:rgba(255,255,255,.06); border-radius:4px; height:7px; overflow:hidden; }
 .bar-fill { height:100%; border-radius:4px; transition:width 1s ease; }
 .zone-occ-pct { font-size:.64rem; margin-top:3px; }
-.mvt-table-wrap { background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; overflow:hidden; overflow-x:auto; }
-.mvt-table { width:100%; border-collapse:collapse; font-size:.72rem; min-width:680px; }
-.mvt-table th { padding:9px 13px; text-align:left; color:var(--gris); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; background:rgba(0,0,0,.2); border-bottom:1px solid rgba(255,255,255,.06); white-space:nowrap; }
+.mvt-table-wrap { background:var(–surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; overflow:hidden; overflow-x:auto; }
+.mvt-table { width:100%; border-collapse:collapse; font-size:.72rem; min-width:720px; }
+.mvt-table th { padding:9px 13px; text-align:left; color:var(–gris); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; background:rgba(0,0,0,.2); border-bottom:1px solid rgba(255,255,255,.06); white-space:nowrap; }
 .mvt-table td { padding:9px 13px; border-bottom:1px solid rgba(255,255,255,.04); vertical-align:middle; }
 .mvt-table tr:last-child td { border-bottom:none; }
 .mvt-table tr:hover td { background:rgba(255,255,255,.02); }
 .mvt-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.62rem; font-weight:700; white-space:nowrap; }
-.mvt-entree { background:rgba(0,229,160,.12); color:var(--vert); border:1px solid rgba(0,229,160,.25); }
-.mvt-sortie { background:rgba(255,68,68,.12); color:var(--rouge); border:1px solid rgba(255,68,68,.25); }
-.mvt-modif  { background:rgba(0,212,255,.1); color:var(--cyan); border:1px solid rgba(0,212,255,.2); }
-.mvt-maint  { background:rgba(136,146,164,.1); color:var(--gris); border:1px solid rgba(136,146,164,.22); }
-.mvt-empty  { text-align:center; padding:40px; color:var(--gris); }
-.filter-chip { padding:4px 12px; border-radius:20px; border:1px solid rgba(255,255,255,.1); background:transparent; color:var(--gris); font-size:.68rem; cursor:pointer; transition:.2s; }
-.filter-chip:hover,.filter-chip.active { background:var(--orange); border-color:var(--orange); color:#fff; }
-.report-section { background:var(--surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:18px 20px; }
-.report-section h3 { font-size:.62rem; color:var(--gris); letter-spacing:.12em; text-transform:uppercase; margin-bottom:14px; }
+.mvt-entree { background:rgba(0,229,160,.12); color:var(–vert); border:1px solid rgba(0,229,160,.25); }
+.mvt-sortie { background:rgba(255,68,68,.12); color:var(–rouge); border:1px solid rgba(255,68,68,.25); }
+.mvt-modif  { background:rgba(0,212,255,.1); color:var(–cyan); border:1px solid rgba(0,212,255,.2); }
+.mvt-maint  { background:rgba(136,146,164,.1); color:var(–gris); border:1px solid rgba(136,146,164,.22); }
+.filter-chip { padding:4px 12px; border-radius:20px; border:1px solid rgba(255,255,255,.1); background:transparent; color:var(–gris); font-size:.68rem; cursor:pointer; transition:.2s; }
+.filter-chip:hover,.filter-chip.active { background:var(–orange); border-color:var(–orange); color:#fff; }
+.report-section { background:var(–surface); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:18px 20px; }
+.report-section h3 { font-size:.62rem; color:var(–gris); letter-spacing:.12em; text-transform:uppercase; margin-bottom:14px; }
 .rpt-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.04); font-size:.76rem; }
-.rpt-row:last-child { border-bottom:none; }
-.rpt-label { color:var(--gris); }
-.rpt-val { font-weight:700; font-family:monospace; }
+.rpt-row:last-child{border-bottom:none}
+.rpt-label{color:var(–gris)} .rpt-val{font-weight:700;font-family:monospace}
 .reco-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.04); align-items:flex-start; font-size:.76rem; }
-.reco-item:last-child { border-bottom:none; }
-.export-btn { padding:6px 14px; border-radius:6px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); color:var(--gris); font-size:.7rem; font-weight:700; cursor:pointer; transition:.2s; }
-.export-btn:hover { background:rgba(255,107,43,.1); border-color:var(--orange); color:var(--orange); }
-.page-title { font-size:1.05rem; font-weight:800; letter-spacing:.04em; }
-.page-sub { font-size:.68rem; color:var(--gris); margin-top:3px; }
-.section-title { font-size:.62rem; color:var(--gris); letter-spacing:.14em; text-transform:uppercase; margin-bottom:10px; }
-.mono { font-family:monospace; }
+.reco-item:last-child{border-bottom:none}
+.export-btn { padding:6px 14px; border-radius:6px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); color:var(–gris); font-size:.7rem; font-weight:700; cursor:pointer; transition:.2s; }
+.export-btn:hover { background:rgba(255,107,43,.1); border-color:var(–orange); color:var(–orange); }
+.page-title{font-size:1.05rem;font-weight:800;letter-spacing:.04em}
+.page-sub{font-size:.68rem;color:var(–gris);margin-top:3px}
+.section-title{font-size:.62rem;color:var(–gris);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.mono{font-family:monospace}
+.empty-state{text-align:center;padding:48px 20px;color:var(–gris)}
+.empty-state .es-icon{font-size:2.5rem;margin-bottom:10px}
+.empty-state p{font-size:.8rem}
 @media(max-width:600px){.spot{width:36px;height:46px}.toolbar{padding:8px 10px;gap:6px}.dash-kpi{font-size:1.5rem}}
 </style>
+
 </head>
 <body>
 
 <div class="loading-screen" id="loadingScreen">
   <div class="spinner"></div>
-  <p style="color:var(--gris);font-size:.8rem">Connexion à la base de données…</p>
+  <p class="loading-txt" id="loadingTxt">Connexion à la base de données…</p>
 </div>
 
 <div id="tooltip"></div>
 
 <!-- ═══ MODAL ════════════════════════════════════════════ -->
+
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h2 id="modalTitle">Place</h2>
@@ -209,7 +213,7 @@ input[type="datetime-local"].f-base { color-scheme:dark; }
     <input type="text" id="modalRef" class="f-base" placeholder="Ex: MSN-4521-TC">
     <label>Date et Heure d'entrée</label>
     <input type="datetime-local" id="modalDate" class="f-base">
-    <label>Opérateur</label>
+    <label>Opérateur responsable</label>
     <select id="modalOp" class="f-base">
       <option value="">— Sélectionner —</option>
       <option>J. Tremblay</option><option>M. Gagnon</option><option>S. Roy</option>
@@ -228,6 +232,7 @@ input[type="datetime-local"].f-base { color-scheme:dark; }
 </div>
 
 <!-- ═══ HEADER ════════════════════════════════════════════ -->
+
 <div class="header">
   <div class="header-brand">
     <h1>Parc <span>Aéro</span></h1>
@@ -246,6 +251,7 @@ input[type="datetime-local"].f-base { color-scheme:dark; }
 </div>
 
 <!-- ═══ TOOLBAR ═══════════════════════════════════════════ -->
+
 <div class="toolbar">
   <div class="view-toggles">
     <button class="view-btn active" onclick="switchView('grid',this)">🔲 Grille</button>
@@ -338,50 +344,199 @@ const DIMS = { MID:1110,Tailcone:189,Rear:640,Wings:1336,Hstab:587,Vstab:316,FWD
 // ══════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════
-let parcData = {}, PLACES = [], isMapEditMode = false, currentView = 'grid', currentMap = 'cour', mvtFilter = 'Tous';
-const MVT_KEY = 'parc_mvt_v4';
-let movements = [];
-try { movements = JSON.parse(localStorage.getItem(MVT_KEY)||'[]'); } catch(e) { movements=[]; }
+let parcData = {}, PLACES = [];
+let isMapEditMode = false, currentView = 'grid', currentMap = 'cour', mvtFilter = 'Tous';
+let movements = []; // ← chargé depuis Supabase
 
-ZONES.forEach((z,zi) => { for(let i=1;i<=z.count;i++) PLACES.push({spotId:`${z.id}-${i}`,zoneId:z.id,num:i,x:5+(i*1.5),y:10+(zi*5)}); });
+ZONES.forEach((z,zi) => {
+  for(let i=1;i<=z.count;i++)
+    PLACES.push({spotId:`${z.id}-${i}`,zoneId:z.id,num:i,x:5+(i*1.5),y:10+(zi*5)});
+});
 
 // ══════════════════════════════════════════════════════
-// MOVEMENTS
+// HELPERS
 // ══════════════════════════════════════════════════════
-function detectType(o,n) {
-  if(n.status==='maintenance') return 'Maintenance';
-  if((!o||o.status!=='occupe')&&n.status==='occupe') return 'Entrée';
-  if(o&&o.status==='occupe'&&n.status==='libre') return 'Sortie';
-  if(n.content&&(!o||!o.content)) return 'Entrée';
-  if(!n.content&&o&&o.content) return 'Sortie';
-  return 'Modification';
+function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function fmtDate(iso){
+  if(!iso)return'—';
+  return new Date(iso).toLocaleString('fr-CA',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
-function logMvt(spotId,zoneId,num,old,nw) {
+function todayCount(){
+  const t=new Date().toDateString();
+  return movements.filter(m=>new Date(m.created_at||m.date).toDateString()===t).length;
+}
+function mClass(t){return t==='Entrée'?'mvt-entree':t==='Sortie'?'mvt-sortie':t==='Maintenance'?'mvt-maint':'mvt-modif';}
+function detectType(o,n){
+  if(n.status==='maintenance')return'Maintenance';
+  if((!o||o.status!=='occupe')&&n.status==='occupe')return'Entrée';
+  if(o&&o.status==='occupe'&&n.status==='libre')return'Sortie';
+  if(n.content&&(!o||!o.content))return'Entrée';
+  if(!n.content&&o&&o.content)return'Sortie';
+  return'Modification';
+}
+function getData(id){ return parcData[id]||{status:'libre',content:'',ref:'',date:'',notes:'',operator:''}; }
+function setSS(t,l){ document.getElementById('syncDot').className='dot '+t; document.getElementById('syncLabel').textContent=l; }
+function setLoadTxt(t){ const el=document.getElementById('loadingTxt');if(el)el.textContent=t; }
+
+// ══════════════════════════════════════════════════════
+// SUPABASE — SPOTS
+// ══════════════════════════════════════════════════════
+async function loadSpots(){
+  setLoadTxt('Chargement des emplacements…');
+  const {data,error}=await db.from('spots').select('*');
+  if(error){console.error(error);return;}
+  parcData={};
+  (data||[]).forEach(row=>{
+    parcData[row.id]={
+      status:row.status||'libre', content:row.content||'',
+      ref:row.ref||'', date:row.date_entree||'',
+      notes:row.notes||'', operator:row.operator||''
+    };
+    const p=PLACES.find(pl=>pl.spotId===row.id);
+    if(p&&row.pos_x!=null){p.x=row.pos_x;p.y=row.pos_y;}
+  });
+}
+
+async function saveSpotToDB(spotId,zoneId,num,data){
+  setSS('loading','Sauvegarde…');
+  document.getElementById('savingInd').textContent='⏳ Enregistrement…';
+  const p=PLACES.find(pl=>pl.spotId===spotId);
+  const {error}=await db.from('spots').upsert({
+    id:spotId, zone_id:zoneId, num:num,
+    status:data.status,
+    content:data.content||null,
+    ref:data.ref||null,
+    client:null,
+    date_entree:data.date||null,
+    notes:data.notes||null,
+    operator:data.operator||null,   // ✅ colonne ajoutée
+    pos_x:p?p.x:null, pos_y:p?p.y:null,
+    updated_at:new Date().toISOString(),
+  });
+  if(error){
+    setSS('error','Erreur sauvegarde');
+    document.getElementById('savingInd').textContent='❌ '+error.message;
+    console.error(error);
+    return false;
+  }
+  setSS('ok','Synchronisé');
+  document.getElementById('savingInd').textContent='✅ Enregistré !';
+  setTimeout(()=>document.getElementById('savingInd').textContent='',2000);
+  return true;
+}
+
+async function saveLayoutToDB(){
+  setSS('loading','Sauvegarde du plan…');
+  try{
+    const updates=PLACES.map(p=>{
+      const d=getData(p.spotId);
+      return{id:p.spotId,zone_id:p.zoneId,num:p.num,status:d.status||'libre',
+        content:d.content||null,ref:d.ref||null,client:null,
+        date_entree:d.date||null,notes:d.notes||null,
+        operator:d.operator||null,
+        pos_x:p.x,pos_y:p.y,updated_at:new Date().toISOString()};
+    });
+    const{error}=await db.from('spots').upsert(updates);
+    if(error)throw error;
+    alert('✅ Plan sauvegardé !');
+    setSS('ok','Synchronisé');
+  }catch(err){alert('❌ Erreur : '+(err.message||JSON.stringify(err)));setSS('error','Erreur');}
+  document.getElementById('btnEditMap').innerHTML='🔓 Configurer le Plan';
+}
+
+// ══════════════════════════════════════════════════════
+// SUPABASE — MOVEMENTS
+// ══════════════════════════════════════════════════════
+async function loadMovements(){
+  setLoadTxt('Chargement des mouvements…');
+  const {data,error}=await db.from('movements').select('*').order('created_at',{ascending:false}).limit(500);
+  if(error){console.error('Erreur chargement mouvements:',error);return;}
+  movements=data||[];
+}
+
+async function logMvt(spotId,zoneId,num,old,nw){
   const z=ZONES.find(z=>z.id===zoneId);
-  movements.unshift({id:Date.now()+Math.random(),spotId,zoneId,spotNum:num,zoneLabel:z?z.label:zoneId,type:detectType(old,nw),ancienStatut:old?old.status:'libre',nouveauStatut:nw.status,content:nw.content||'',ref:nw.ref||'',operator:nw.operator||'—',notes:nw.notes||'',date:new Date().toISOString()});
-  if(movements.length>300) movements=movements.slice(0,300);
-  try{localStorage.setItem(MVT_KEY,JSON.stringify(movements));}catch(e){}
+  const mvt={
+    id: uid(),
+    spot_id: spotId,
+    zone_id: zoneId,
+    spot_num: num,
+    zone_label: z?z.label:zoneId,
+    type: detectType(old,nw),
+    ancien_statut: old?old.status:'libre',
+    nouveau_statut: nw.status,
+    content: nw.content||'',
+    ref: nw.ref||'',
+    operator: nw.operator||'',
+    notes: nw.notes||'',
+    created_at: new Date().toISOString(),
+  };
+  // Insérer dans Supabase
+  const{error}=await db.from('movements').insert(mvt);
+  if(error){
+    console.error('Erreur sauvegarde mouvement:',error);
+    // Fallback localStorage si erreur
+    movements.unshift(mvt);
+  }else{
+    movements.unshift(mvt);
+    if(movements.length>500)movements=movements.slice(0,500);
+  }
   document.getElementById('countMvtToday').textContent=todayCount();
+  if(currentView==='mouvements')renderMvt();
+  if(currentView==='dashboard')renderDash();
 }
-function todayCount(){const t=new Date().toDateString();return movements.filter(m=>new Date(m.date).toDateString()===t).length;}
-function fmtDate(iso){if(!iso)return'—';return new Date(iso).toLocaleString('fr-CA',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+
+// ══════════════════════════════════════════════════════
+// REALTIME — Spots + Movements
+// ══════════════════════════════════════════════════════
+function subscribeRT(){
+  // Spots en temps réel
+  db.channel('rt-spots').on('postgres_changes',{event:'*',schema:'public',table:'spots'},(p)=>{
+    const row=p.new||p.old;if(!row)return;
+    if(p.eventType==='DELETE'){delete parcData[row.id];}
+    else{
+      parcData[row.id]={status:row.status||'libre',content:row.content||'',ref:row.ref||'',date:row.date_entree||'',notes:row.notes||'',operator:row.operator||''};
+      const pl=PLACES.find(pl=>pl.spotId===row.id);
+      if(pl&&row.pos_x!=null){
+        pl.x=row.pos_x;pl.y=row.pos_y;
+        const el=document.querySelector(`.spot-map[data-spot-id="${row.id}"]`);
+        if(el){el.style.left=`${row.pos_x}%`;el.style.top=`${row.pos_y}%`;}
+      }
+    }
+    updateEl(row.id);updateStats();
+  }).subscribe();
+
+  // Mouvements en temps réel
+  db.channel('rt-movements').on('postgres_changes',{event:'INSERT',schema:'public',table:'movements'},(p)=>{
+    const row=p.new;if(!row)return;
+    // Éviter doublon si c'est notre propre insertion
+    if(!movements.find(m=>m.id===row.id)){
+      movements.unshift(row);
+      if(movements.length>500)movements=movements.slice(0,500);
+      document.getElementById('countMvtToday').textContent=todayCount();
+      if(currentView==='mouvements')renderMvt();
+      if(currentView==='dashboard')renderDash();
+    }
+  }).subscribe();
+}
 
 // ══════════════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════════════
-function switchView(v,btn) {
+function switchView(v,btn){
   currentView=v;
   document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   ['grid','map','dashboard','mouvements','rapports'].forEach(n=>document.getElementById(n+'View').classList.remove('active'));
   document.getElementById(v+'View').classList.add('active');
   document.getElementById('btnEditMap').style.display=v==='map'?'block':'none';
-  if(v!=='map'&&isMapEditMode) toggleMapEdit();
-  if(v==='dashboard') renderDash();
-  if(v==='mouvements') renderMvt();
-  if(v==='rapports') renderRpts();
+  if(v!=='map'&&isMapEditMode)toggleMapEdit();
+  if(v==='dashboard')renderDash();
+  if(v==='mouvements')renderMvt();
+  if(v==='rapports')renderRpts();
 }
-function switchMap(map) {
+
+function switchMap(map){
   currentMap=map;
   document.getElementById('mapBtnCour').classList.toggle('active',map==='cour');
   document.getElementById('mapBtnMirlog').classList.toggle('active',map==='mirlog');
@@ -392,15 +547,19 @@ function switchMap(map) {
 // ══════════════════════════════════════════════════════
 // DRAG & DROP
 // ══════════════════════════════════════════════════════
-function toggleMapEdit() {
+function toggleMapEdit(){
   isMapEditMode=!isMapEditMode;
   const btn=document.getElementById('btnEditMap');
   document.body.classList.toggle('map-edit-mode',isMapEditMode);
   if(isMapEditMode){btn.classList.add('editing');btn.innerHTML='🔒 Sauvegarder le Plan';}
-  else{btn.classList.remove('editing');btn.innerHTML='⏳ Enregistrement…';saveLayout();}
+  else{btn.classList.remove('editing');btn.innerHTML='⏳ Enregistrement…';saveLayoutToDB();}
 }
 let drag={on:false,el:null};
-document.addEventListener('mousedown',e=>{if(!isMapEditMode)return;const s=e.target.closest('.spot-map');if(s){drag.on=true;drag.el=s;s.style.zIndex=1000;}});
+document.addEventListener('mousedown',e=>{
+  if(!isMapEditMode)return;
+  const s=e.target.closest('.spot-map');
+  if(s){drag.on=true;drag.el=s;s.style.zIndex=1000;}
+});
 document.addEventListener('mousemove',e=>{
   if(!drag.on||!drag.el)return;
   const r=document.getElementById('mapContainer').getBoundingClientRect(),step=0.2;
@@ -410,93 +569,31 @@ document.addEventListener('mousemove',e=>{
   drag.el.style.top=Math.max(0,Math.min(y,100))+'%';
 });
 document.addEventListener('mouseup',()=>{
-  if(drag.on&&drag.el){drag.el.style.zIndex='';const p=PLACES.find(pl=>pl.spotId===drag.el.dataset.spotId);if(p){p.x=parseFloat(drag.el.style.left);p.y=parseFloat(drag.el.style.top);}drag.on=false;drag.el=null;}
-});
-
-// ══════════════════════════════════════════════════════
-// SUPABASE — CORRIGÉ : 'operator' retiré (colonne inexistante)
-// ══════════════════════════════════════════════════════
-async function loadDB() {
-  setSS('loading','Chargement…');
-  try {
-    const {data,error}=await db.from('spots').select('*');
-    if(error)throw error;
-    parcData={};
-    (data||[]).forEach(row=>{
-      parcData[row.id]={status:row.status||'libre',content:row.content||'',ref:row.ref||'',date:row.date_entree||'',notes:row.notes||'',operator:''};
-      const p=PLACES.find(pl=>pl.spotId===row.id);
-      if(p&&row.pos_x!=null){p.x=row.pos_x;p.y=row.pos_y;}
-    });
-    setSS('ok','Synchronisé');return true;
-  }catch(e){setSS('error','Erreur connexion');return false;}
-}
-
-async function saveToDB(spotId,zoneId,num,data) {
-  setSS('loading','Sauvegarde…');
-  document.getElementById('savingInd').textContent='⏳ Enregistrement…';
-  const p=PLACES.find(pl=>pl.spotId===spotId);
-  try {
-    // ✅ FIX : 'operator' retiré car colonne absente de la table
-    // Pour l'ajouter plus tard : ALTER TABLE spots ADD COLUMN operator text;
-    const {error}=await db.from('spots').upsert({
-      id:spotId,zone_id:zoneId,num:num,status:data.status,
-      content:data.content||null,ref:data.ref||null,
-      client:null,
-      date_entree:data.date||null,notes:data.notes||null,
-      pos_x:p?p.x:null,pos_y:p?p.y:null,
-      updated_at:new Date().toISOString(),
-    });
-    if(error)throw error;
-    setSS('ok','Synchronisé');
-    document.getElementById('savingInd').textContent='✅ Enregistré !';
-    setTimeout(()=>document.getElementById('savingInd').textContent='',2000);
-    return true;
-  }catch(e){
-    setSS('error','Erreur sauvegarde');
-    document.getElementById('savingInd').textContent='❌ '+( e.message||'Erreur');
-    console.error(e);return false;
+  if(drag.on&&drag.el){
+    drag.el.style.zIndex='';
+    const p=PLACES.find(pl=>pl.spotId===drag.el.dataset.spotId);
+    if(p){p.x=parseFloat(drag.el.style.left);p.y=parseFloat(drag.el.style.top);}
+    drag.on=false;drag.el=null;
   }
-}
-
-async function saveLayout() {
-  setSS('loading','Sauvegarde du plan…');
-  try {
-    const updates=PLACES.map(p=>{const d=getData(p.spotId);return{id:p.spotId,zone_id:p.zoneId,num:p.num,status:d.status||'libre',content:d.content||null,ref:d.ref||null,client:null,date_entree:d.date||null,notes:d.notes||null,pos_x:p.x,pos_y:p.y,updated_at:new Date().toISOString()};});
-    const {error}=await db.from('spots').upsert(updates);
-    if(error)throw error;
-    alert('✅ Plan sauvegardé !');setSS('ok','Synchronisé');
-  }catch(err){alert('❌ Erreur : '+(err.message||JSON.stringify(err)));setSS('error','Erreur');}
-  document.getElementById('btnEditMap').innerHTML='🔓 Configurer le Plan';
-}
-
-function subscribeRT() {
-  db.channel('spots-rt').on('postgres_changes',{event:'*',schema:'public',table:'spots'},(p)=>{
-    const row=p.new||p.old;if(!row)return;
-    if(p.eventType==='DELETE')delete parcData[row.id];
-    else{
-      parcData[row.id]={status:row.status||'libre',content:row.content||'',ref:row.ref||'',date:row.date_entree||'',notes:row.notes||'',operator:''};
-      const pl=PLACES.find(pl=>pl.spotId===row.id);
-      if(pl&&row.pos_x!=null){pl.x=row.pos_x;pl.y=row.pos_y;const el=document.querySelector(`.spot-map[data-spot-id="${row.id}"]`);if(el){el.style.left=`${row.pos_x}%`;el.style.top=`${row.pos_y}%`;}}
-    }
-    updateEl(row.id);updateStats();
-  }).subscribe();
-}
-function setSS(t,l){document.getElementById('syncDot').className='dot '+t;document.getElementById('syncLabel').textContent=l;}
-function getData(id){return parcData[id]||{status:'libre',content:'',ref:'',date:'',notes:'',operator:''};}
+});
 
 // ══════════════════════════════════════════════════════
 // RENDER GRILLE
 // ══════════════════════════════════════════════════════
 function render(){renderGrid();renderMap();}
+
 function renderGrid(){
   const el=document.getElementById('gridView');el.innerHTML='';
-  const rows=[['tailcone','hstab','vstab'],['remorque','remorque-vide'],['fwd','béton'],['k','l','m','n'],['rear'],['mirlog1','mirlog2']];
-  const titles={
-    'tailcone,hstab,vstab':'✈️  QUEUE & STABILISATEURS','remorque,remorque-vide':'🚛  REMORQUES — Parc principal',
-    'fwd,béton':'✈️  FUSELAGE AVANT & BÉTON','k,l,m,n':'✈️  ZONES K / L / M / N','rear':'✈️  STOCKAGE REAR','mirlog1,mirlog2':'🏗  SITE MIRLOG',
-  };
-  rows.forEach(ids=>{
-    const st=document.createElement('div');st.className='zone-section-title';st.textContent=titles[ids.join(',')]||'';el.appendChild(st);
+  const rows=[
+    {ids:['tailcone','hstab','vstab'], title:'✈️  QUEUE & STABILISATEURS'},
+    {ids:['remorque','remorque-vide'], title:'🚛  REMORQUES — Parc principal'},
+    {ids:['fwd','béton'],             title:'✈️  FUSELAGE AVANT & BÉTON'},
+    {ids:['k','l','m','n'],           title:'✈️  ZONES K / L / M / N'},
+    {ids:['rear'],                    title:'✈️  STOCKAGE REAR'},
+    {ids:['mirlog1','mirlog2'],        title:'🏗  SITE MIRLOG'},
+  ];
+  rows.forEach(({ids,title})=>{
+    const st=document.createElement('div');st.className='zone-section-title';st.textContent=title;el.appendChild(st);
     const row=document.createElement('div');row.className='group-row';
     ids.forEach(id=>{
       const zone=ZONES.find(z=>z.id===id);
@@ -504,8 +601,8 @@ function renderGrid(){
       block.innerHTML=`<div class="zone-header"><div class="zone-name" style="color:${zone.color}">${zone.icon} ${zone.label}</div><div class="zone-count" id="count-${zone.id}"></div></div>`;
       const body=document.createElement('div');body.className='zone-body';
       for(let i=1;i<=zone.count;i++){
-        const sId=`${zone.id}-${i}`,data=getData(sId);
-        const div=document.createElement('div');div.className=`spot ${data.status}`;div.dataset.spotId=sId;
+        const sId=`${zone.id}-${i}`,d=getData(sId);
+        const div=document.createElement('div');div.className=`spot ${d.status}`;div.dataset.spotId=sId;
         div.innerHTML=`<div class="spot-icon">${zone.icon}</div><div class="spot-id">${i}</div>`;
         div.addEventListener('mouseenter',e=>showTT(e,sId,i,zone));
         div.addEventListener('mousemove',moveTT);div.addEventListener('mouseleave',hideTT);
@@ -526,13 +623,13 @@ function renderMap(){
   c.style.backgroundImage=currentMap==='mirlog'?"url('Mirlog.png')":`url('plan-cour.png')`;
   PLACES.filter(p=>{const z=ZONES.find(z=>z.id===p.zoneId);return z&&z.mapZone===currentMap;}).forEach(place=>{
     const zone=ZONES.find(z=>z.id===place.zoneId);if(!zone)return;
-    const data=getData(place.spotId);
-    const div=document.createElement('div');div.className=`spot spot-map ${data.status}`;div.dataset.spotId=place.spotId;
+    const d=getData(place.spotId);
+    const div=document.createElement('div');div.className=`spot spot-map ${d.status}`;div.dataset.spotId=place.spotId;
     div.style.left=`${place.x}%`;div.style.top=`${place.y}%`;
     if(zone.mapWidth) div.style.setProperty('width',`${zone.mapWidth}%`,'important');
     if(zone.mapHeight) div.style.setProperty('height',`${zone.mapHeight}%`,'important');
     if(zone.mapRotation) div.style.setProperty('--rot',`${zone.mapRotation}deg`);
-    if(data.status==='occupe'&&zone.color){div.style.setProperty('background-color',zone.color,'important');div.style.setProperty('border-color',zone.color,'important');}
+    if(d.status==='occupe'&&zone.color){div.style.setProperty('background-color',zone.color,'important');div.style.setProperty('border-color',zone.color,'important');}
     div.addEventListener('mouseenter',e=>showTT(e,place.spotId,place.num,zone));
     div.addEventListener('mousemove',moveTT);div.addEventListener('mouseleave',hideTT);
     div.addEventListener('click',()=>{if(isMapEditMode)return;hideTT();openModal(place.spotId,place.num,zone);});
@@ -541,13 +638,13 @@ function renderMap(){
 }
 
 function updateEl(id){
-  const data=getData(id),zone=ZONES.find(z=>id.startsWith(z.id+'-'));
+  const d=getData(id),zone=ZONES.find(z=>id.startsWith(z.id+'-'));
   document.querySelectorAll(`[data-spot-id="${id}"]`).forEach(el=>{
     if(el.classList.contains('spot-map')){
-      el.className=`spot spot-map ${data.status}`;
-      if(data.status==='occupe'&&zone?.color){el.style.setProperty('background-color',zone.color,'important');el.style.setProperty('border-color',zone.color,'important');}
+      el.className=`spot spot-map ${d.status}`;
+      if(d.status==='occupe'&&zone?.color){el.style.setProperty('background-color',zone.color,'important');el.style.setProperty('border-color',zone.color,'important');}
       else{el.style.removeProperty('background-color');el.style.removeProperty('border-color');}
-    }else{el.className=`spot ${data.status}`;}
+    }else{el.className=`spot ${d.status}`;}
   });
 }
 
@@ -557,12 +654,16 @@ function updateEl(id){
 const TT=document.getElementById('tooltip');
 function showTT(e,id,num,zone){
   if(isMapEditMode)return;
-  const d=getData(id),lb={libre:'🟢 Libre',occupe:'🟠 Occupée',maintenance:'⚪ Maintenance'};
-  let dd='';if(d.date){const dt=new Date(d.date);dd=dt.toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
-  TT.innerHTML=`<div class="tt-id">${zone.label} — #${num}</div><div class="tt-zone">${zone.desc}</div>
+  const d=getData(id);
+  let dd='';if(d.date){dd=new Date(d.date).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+  const lb={libre:'🟢 Libre',occupe:'🟠 Occupée',maintenance:'⚪ Maintenance'};
+  TT.innerHTML=`
+    <div class="tt-id">${zone.label} — #${num}</div>
+    <div class="tt-zone">${zone.desc}</div>
     <div style="font-size:.68rem;font-weight:700;margin-bottom:4px">${lb[d.status]||d.status}</div>
     ${d.content?`<div class="tt-row"><span>Contenu</span><span style="font-weight:700">${d.content}</span></div>`:''}
     ${d.ref?`<div class="tt-row"><span>Réf.</span><span style="color:var(--cyan)">${d.ref}</span></div>`:''}
+    ${d.operator?`<div class="tt-row"><span>Opérateur</span><span style="color:var(--orange2)">${d.operator}</span></div>`:''}
     ${dd?`<div class="tt-row"><span>Entrée</span><span>${dd}</span></div>`:''}
     <div style="margin-top:5px;font-size:.6rem;color:var(--gris)">Cliquer pour modifier</div>`;
   TT.style.display='block';moveTT(e);
@@ -571,7 +672,7 @@ function moveTT(e){const x=Math.min(e.clientX+16,window.innerWidth-245);TT.style
 function hideTT(){TT.style.display='none';}
 
 // ══════════════════════════════════════════════════════
-// MODAL — Liste déroulante par zone
+// MODAL
 // ══════════════════════════════════════════════════════
 let curSpot=null;
 
@@ -585,7 +686,10 @@ function buildContent(zoneId,val,status){
     const icon=ZONES.find(z=>z.id===zoneId)?.icon||'✈️';
     wrap.innerHTML=`<div class="content-locked" style="color:var(--orange2);border-color:rgba(255,107,43,.2)">${icon} <strong>${opts[0]}</strong></div><input type="hidden" id="modalContent" value="${opts[0]}">`;
   }else{
-    wrap.innerHTML=`<select id="modalContent" class="f-base"><option value="">— Sélectionner le contenu —</option>${opts.map(o=>`<option value="${o}"${val===o?' selected':''}>${o}</option>`).join('')}</select>`;
+    wrap.innerHTML=`<select id="modalContent" class="f-base">
+      <option value="">— Sélectionner le contenu —</option>
+      ${opts.map(o=>`<option value="${o}"${val===o?' selected':''}>${o}</option>`).join('')}
+    </select>`;
   }
 }
 
@@ -599,7 +703,8 @@ function onStatusChange(){
 }
 
 function openModal(id,num,zone){
-  curSpot={id,num,zone};const d=getData(id);
+  curSpot={id,num,zone};
+  const d=getData(id);
   document.getElementById('modalTitle').textContent=`${zone.label} — Place #${num}`;
   document.getElementById('modalZone').textContent=zone.desc;
   document.getElementById('modalStatus').value=d.status;
@@ -611,7 +716,9 @@ function openModal(id,num,zone){
   buildContent(zone.id,d.content,d.status);
   document.getElementById('modalBg').classList.add('open');
 }
+
 function closeModal(){document.getElementById('modalBg').classList.remove('open');curSpot=null;}
+
 function clearModal(){
   document.getElementById('modalStatus').value='libre';
   document.getElementById('modalRef').value='';
@@ -620,22 +727,40 @@ function clearModal(){
   document.getElementById('modalNotes').value='';
   onStatusChange();
 }
+
 function getContent(){
   const opts=ZONE_CONTENT[curSpot?.zone?.id]||[];
   if(opts.length===1)return opts[0];
   return document.getElementById('modalContent')?.value||'';
 }
+
 async function saveSpot(){
   if(!curSpot)return;
-  const{id,num,zone}=curSpot,old={...getData(id)};
-  const nw={status:document.getElementById('modalStatus').value,content:getContent(),ref:document.getElementById('modalRef').value,date:document.getElementById('modalDate').value,operator:document.getElementById('modalOp').value,notes:document.getElementById('modalNotes').value};
+  const{id,num,zone}=curSpot;
+  const old={...getData(id)};
+  const nw={
+    status:document.getElementById('modalStatus').value,
+    content:getContent(),
+    ref:document.getElementById('modalRef').value,
+    date:document.getElementById('modalDate').value,
+    operator:document.getElementById('modalOp').value,
+    notes:document.getElementById('modalNotes').value,
+  };
   const opts=ZONE_CONTENT[zone.id]||[];
-  if(nw.status==='occupe'&&opts.length>1&&!nw.content){document.getElementById('savingInd').textContent='⚠️ Sélectionnez un contenu';return;}
-  logMvt(id,zone.id,num,old,nw);
-  parcData[id]=nw;updateEl(id);updateStats();
-  const ok=await saveToDB(id,zone.id,num,nw);
-  if(ok)setTimeout(closeModal,700);
+  if(nw.status==='occupe'&&opts.length>1&&!nw.content){
+    document.getElementById('savingInd').textContent='⚠️ Sélectionnez un contenu';return;
+  }
+  // Sauvegarder dans Supabase
+  const ok=await saveSpotToDB(id,zone.id,num,nw);
+  if(!ok)return;
+  // Enregistrer le mouvement dans Supabase
+  await logMvt(id,zone.id,num,old,nw);
+  parcData[id]=nw;
+  updateEl(id);
+  updateStats();
+  setTimeout(closeModal,700);
 }
+
 document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
 
 // ══════════════════════════════════════════════════════
@@ -643,7 +768,11 @@ document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===do
 // ══════════════════════════════════════════════════════
 function updateStats(){
   let libre=0,occ=0,total=0;
-  ZONES.forEach(z=>{let zo=0;for(let i=1;i<=z.count;i++){const d=getData(`${z.id}-${i}`);total++;if(d.status==='libre')libre++;else if(d.status==='occupe'){occ++;zo++;}};const el=document.getElementById(`count-${z.id}`);if(el)el.textContent=`${zo}/${z.count} occupées`;});
+  ZONES.forEach(z=>{
+    let zo=0;
+    for(let i=1;i<=z.count;i++){const d=getData(`${z.id}-${i}`);total++;if(d.status==='libre')libre++;else if(d.status==='occupe'){occ++;zo++;}}
+    const el=document.getElementById(`count-${z.id}`);if(el)el.textContent=`${zo}/${z.count} occupées`;
+  });
   document.getElementById('totalSpots').textContent=total;
   document.getElementById('countLibre').textContent=libre;
   document.getElementById('countOccupe').textContent=occ;
@@ -651,38 +780,181 @@ function updateStats(){
 }
 
 // ══════════════════════════════════════════════════════
+// PERTES PAR ZONE (espaces non utilisables)
+// béton = 30%, toutes les autres = 15%
+// ══════════════════════════════════════════════════════
+function getLossFactor(zoneId){
+  return zoneId === 'béton' ? 0.30 : 0.15;
+}
+// Capacité effective d'une zone (slots utilisables réels)
+function effectiveCap(zone){
+  return Math.floor(zone.count * (1 - getLossFactor(zone.id)));
+}
+// Calcul global des capacités avec pertes
+function calcCapacites(){
+  let totalBrut=0, totalEffectif=0, totalOcc=0, totalMaint=0;
+  ZONES.forEach(z=>{
+    let occ=0,maint=0;
+    for(let i=1;i<=z.count;i++){
+      const d=getData(`${z.id}-${i}`);
+      if(d.status==='occupe')occ++;
+      else if(d.status==='maintenance')maint++;
+    }
+    totalBrut      += z.count;
+    totalEffectif  += effectiveCap(z);
+    totalOcc       += occ;
+    totalMaint     += maint;
+  });
+  const restant = Math.max(0, totalEffectif - totalOcc);
+  const pctEffectif = totalEffectif ? Math.round(totalOcc / totalEffectif * 100) : 0;
+  return { totalBrut, totalEffectif, totalOcc, totalMaint, restant, pctEffectif };
+}
+
+// ══════════════════════════════════════════════════════
 // DASHBOARD
 // ══════════════════════════════════════════════════════
 function renderDash(){
-  let total=0,occ=0,maint=0;
-  ZONES.forEach(z=>{for(let i=1;i<=z.count;i++){total++;const d=getData(`${z.id}-${i}`);if(d.status==='occupe')occ++;else if(d.status==='maintenance')maint++;}});
-  const pct=total?Math.round(occ/total*100):0,kc=pct>=85?'var(--rouge)':pct>=70?'var(--jaune)':'var(--vert)';
+  const { totalBrut, totalEffectif, totalOcc, totalMaint, restant, pctEffectif } = calcCapacites();
+  const kc = pctEffectif>=90?'var(--rouge)':pctEffectif>=75?'var(--jaune)':'var(--vert)';
+  const rcol = restant<=5?'var(--rouge)':restant<=15?'var(--jaune)':'var(--cyan)';
+  const recent=movements.slice(0,6);
   const el=document.getElementById('dashboardView');
+
   el.innerHTML=`
-    <div><div class="page-title">TABLEAU DE BORD</div><div class="page-sub">${new Date().toLocaleDateString('fr-CA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div></div>
+    <div>
+      <div class="page-title">TABLEAU DE BORD</div>
+      <div class="page-sub">${new Date().toLocaleDateString('fr-CA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+    </div>
+
+    <!-- Météo -->
     <div class="weather-widget">
       <span style="font-size:2.4rem">🌤</span>
-      <div><div class="wt-cond">9°C · Partiellement nuageux — Montréal, QC</div><div class="wt-detail">💨 18 km/h ONO &nbsp;·&nbsp; 💧 Humidité : 62% &nbsp;·&nbsp; ☀️ UV : 2 (Faible)</div></div>
+      <div>
+        <div class="wt-cond">9°C · Partiellement nuageux — Montréal, QC</div>
+        <div class="wt-detail">💨 18 km/h ONO &nbsp;·&nbsp; 💧 Humidité : 62% &nbsp;·&nbsp; ☀️ UV : 2 (Faible)</div>
+      </div>
       <div class="weather-ok">✓ Conditions normales</div>
     </div>
+
+    <!-- KPIs ligne 1 — Occupation & mouvements -->
     <div class="dash-row">
-      <div class="dash-card" style="border-top:3px solid ${kc}"><div class="card-title">◈ Taux d'occupation</div><div class="dash-kpi" style="color:${kc}">${pct}%</div><div class="dash-kpi-sub">${occ} / ${total} emplacements</div></div>
-      <div class="dash-card" style="border-top:3px solid var(--vert)"><div class="card-title">✓ Places libres</div><div class="dash-kpi" style="color:var(--vert)">${total-occ-maint}</div><div class="dash-kpi-sub">${maint} en maintenance</div></div>
-      <div class="dash-card" style="border-top:3px solid var(--cyan)"><div class="card-title">⇄ Mouvements aujourd'hui</div><div class="dash-kpi" style="color:var(--cyan)">${todayCount()}</div><div class="dash-kpi-sub">${movements.length} total historique</div></div>
-      <div class="dash-card" style="border-top:3px solid var(--violet)"><div class="card-title">🏗 Sites actifs</div><div class="dash-kpi" style="color:var(--violet)">2</div><div class="dash-kpi-sub">Cour principale + Mirlog</div></div>
+      <div class="dash-card" style="border-top:3px solid ${kc}">
+        <div class="card-title">◈ Taux d'occupation réel</div>
+        <div class="dash-kpi" style="color:${kc}">${pctEffectif}%</div>
+        <div class="dash-kpi-sub">${totalOcc} occupés / ${totalEffectif} places utiles</div>
+      </div>
+      <div class="dash-card" style="border-top:3px solid var(--vert)">
+        <div class="card-title">✓ Places libres (brut)</div>
+        <div class="dash-kpi" style="color:var(--vert)">${totalBrut - totalOcc - totalMaint}</div>
+        <div class="dash-kpi-sub">${totalMaint} en maintenance · ${totalBrut} total brut</div>
+      </div>
+      <div class="dash-card" style="border-top:3px solid var(--cyan)">
+        <div class="card-title">⇄ Mouvements aujourd'hui</div>
+        <div class="dash-kpi" style="color:var(--cyan)">${todayCount()}</div>
+        <div class="dash-kpi-sub">${movements.length} total historique</div>
+      </div>
+      <div class="dash-card" style="border-top:3px solid var(--violet)">
+        <div class="card-title">🏗 Sites actifs</div>
+        <div class="dash-kpi" style="color:var(--violet)">2</div>
+        <div class="dash-kpi-sub">Cour principale + Mirlog</div>
+      </div>
     </div>
-    <div><div class="section-title">OCCUPATION PAR ZONE</div><div class="zone-occ-grid" id="dashGrid"></div></div>
-    <div><div class="section-title">DERNIERS MOUVEMENTS</div>
-    ${movements.length===0?'<div style="color:var(--gris);font-size:.78rem;padding:12px 0">Aucun mouvement enregistré.</div>':
-    `<div class="mvt-table-wrap"><table class="mvt-table"><thead><tr><th>Date</th><th>Type</th><th>Place</th><th>Zone</th><th>Contenu</th><th>Réf.</th><th>Opérateur</th></tr></thead><tbody>
-    ${movements.slice(0,6).map(m=>`<tr><td class="mono" style="color:var(--gris);font-size:.64rem;white-space:nowrap">${fmtDate(m.date)}</td><td><span class="mvt-badge ${mClass(m.type)}">${m.type}</span></td><td class="mono" style="color:var(--orange2)">${m.spotId}</td><td style="color:var(--gris);font-size:.68rem">${m.zoneLabel}</td><td>${m.content||'—'}</td><td class="mono" style="color:var(--cyan);font-size:.66rem">${m.ref||'—'}</td><td style="color:var(--gris)">${m.operator||'—'}</td></tr>`).join('')}
-    </tbody></table></div>`}</div>`;
+
+    <!-- KPIs ligne 2 — Stockage avec pertes -->
+    <div style="background:rgba(255,107,43,0.04);border:1px solid rgba(255,107,43,0.15);border-radius:10px;padding:14px 18px">
+      <div style="font-size:.62rem;color:var(--orange2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+        📐 CAPACITÉ RÉELLE (après facteur de perte)
+        <span style="font-size:.6rem;color:var(--gris);font-weight:400;text-transform:none;letter-spacing:0">— Béton : −30% · Toutes autres zones : −15%</span>
+      </div>
+      <div class="dash-row">
+        <div class="dash-card" style="border-top:3px solid var(--orange);background:rgba(255,107,43,0.07)">
+          <div class="card-title">📦 Stockage actuel (occupé)</div>
+          <div class="dash-kpi" style="color:var(--orange)">${totalOcc}</div>
+          <div class="dash-kpi-sub">places occupées sur le site</div>
+        </div>
+        <div class="dash-card" style="border-top:3px solid ${rcol};background:rgba(0,0,0,0.15)">
+          <div class="card-title">🔓 Stockage restant (disponible réel)</div>
+          <div class="dash-kpi" style="color:${rcol}">${restant}</div>
+          <div class="dash-kpi-sub">sur ${totalEffectif} places utiles · ${totalBrut - totalEffectif} perdues (pertes)</div>
+        </div>
+        <div class="dash-card" style="border-top:3px solid var(--gris);background:rgba(0,0,0,0.15)">
+          <div class="card-title">⛔ Places non utilisables</div>
+          <div class="dash-kpi" style="color:var(--gris)">${totalBrut - totalEffectif}</div>
+          <div class="dash-kpi-sub">allées, manœuvres, marges</div>
+        </div>
+      </div>
+      <!-- Barre globale capacité réelle -->
+      <div style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:5px">
+          <span style="color:var(--gris)">Utilisation capacité effective</span>
+          <span style="color:${kc};font-weight:700">${pctEffectif}%</span>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:6px;height:12px;overflow:hidden;position:relative">
+          <div style="width:${pctEffectif}%;height:100%;background:linear-gradient(90deg,${kc},${kc}cc);border-radius:6px;transition:width 1s ease"></div>
+          <!-- Marqueur 75% -->
+          <div style="position:absolute;left:75%;top:0;bottom:0;width:2px;background:rgba(251,191,36,.6)"></div>
+          <!-- Marqueur 90% -->
+          <div style="position:absolute;left:90%;top:0;bottom:0;width:2px;background:rgba(255,68,68,.6)"></div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:5px;font-size:.6rem;color:var(--gris)">
+          <span>|&nbsp; 75% : Attention</span>
+          <span>|&nbsp; 90% : Critique</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Occupation par zone -->
+    <div>
+      <div class="section-title">OCCUPATION PAR ZONE <span style="color:var(--gris);font-weight:400;font-size:.58rem">(capacité effective après pertes)</span></div>
+      <div class="zone-occ-grid" id="dashGrid"></div>
+    </div>
+
+    <!-- Derniers mouvements -->
+    <div>
+      <div class="section-title">DERNIERS MOUVEMENTS <span style="color:var(--cyan);font-size:.65rem;margin-left:8px">● SUPABASE SYNC</span></div>
+      ${recent.length===0
+        ?`<div class="empty-state"><div class="es-icon">📋</div><p>Aucun mouvement enregistré.<br>Modifiez une place pour commencer.</p></div>`
+        :`<div class="mvt-table-wrap"><table class="mvt-table">
+          <thead><tr><th>Date</th><th>Type</th><th>Place</th><th>Zone</th><th>Contenu</th><th>Réf.</th><th>Opérateur</th></tr></thead>
+          <tbody>${recent.map(m=>`<tr>
+            <td class="mono" style="color:var(--gris);font-size:.64rem;white-space:nowrap">${fmtDate(m.created_at||m.date)}</td>
+            <td><span class="mvt-badge ${mClass(m.type)}">${m.type}</span></td>
+            <td class="mono" style="color:var(--orange2)">${m.spot_id||m.spotId}</td>
+            <td style="color:var(--gris);font-size:.68rem">${m.zone_label||m.zoneLabel}</td>
+            <td>${m.content||'—'}</td>
+            <td class="mono" style="color:var(--cyan);font-size:.66rem">${m.ref||'—'}</td>
+            <td style="color:var(--orange2)">${m.operator||'—'}</td>
+          </tr>`).join('')}</tbody>
+        </table></div>`}
+    </div>`;
+
+  // ── Barres de zones avec capacité effective ─────────
   const grid=document.getElementById('dashGrid');
   ZONES.forEach(z=>{
-    let o=0;for(let i=1;i<=z.count;i++){if(getData(`${z.id}-${i}`).status==='occupe')o++;}
-    const p=Math.round(o/z.count*100),col=p>=90?'var(--rouge)':p>=70?'var(--jaune)':z.color;
+    let occ=0;
+    for(let i=1;i<=z.count;i++){if(getData(`${z.id}-${i}`).status==='occupe')occ++;}
+    const effCap = effectiveCap(z);
+    const perte  = z.count - effCap;
+    const loss   = getLossFactor(z.id);
+    // % calculé sur la capacité effective, pas brute
+    const pct    = effCap ? Math.round(occ/effCap*100) : 0;
+    const col    = pct>=90?'var(--rouge)':pct>=75?'var(--jaune)':z.color;
+    const restZ  = Math.max(0, effCap - occ);
+
     const c=document.createElement('div');c.className='zone-occ-card';
-    c.innerHTML=`<div class="zone-occ-header"><div class="zone-occ-name" style="color:${z.color}">${z.icon} ${z.label}</div><div style="color:${col};font-size:.68rem;font-family:monospace">${o}/${z.count}</div></div><div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${col}"></div></div><div class="zone-occ-pct" style="color:${col}">${p}% occupé</div>`;
+    c.style.cssText='position:relative;overflow:hidden';
+    c.innerHTML=`
+      ${loss===0.30?`<div style="position:absolute;top:0;right:0;background:rgba(251,191,36,.15);color:var(--jaune);font-size:.55rem;padding:2px 6px;border-radius:0 8px 0 4px;font-weight:700">−30% perte</div>`:
+                   `<div style="position:absolute;top:0;right:0;background:rgba(136,146,164,.1);color:var(--gris);font-size:.55rem;padding:2px 6px;border-radius:0 8px 0 4px">−15%</div>`}
+      <div class="zone-occ-header" style="padding-right:40px">
+        <div class="zone-occ-name" style="color:${z.color}">${z.icon} ${z.label}</div>
+        <div style="color:${col};font-size:.68rem;font-family:monospace">${occ}/${effCap}</div>
+      </div>
+      <div style="font-size:.58rem;color:var(--gris);margin-bottom:6px">${perte} place(s) non utilisable(s) · ${restZ} restante(s)</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${Math.min(pct,100)}%;background:${col}"></div>
+      </div>
+      <div class="zone-occ-pct" style="color:${col}">${pct}% de la capacité effective</div>`;
     grid.appendChild(c);
   });
 }
@@ -690,76 +962,171 @@ function renderDash(){
 // ══════════════════════════════════════════════════════
 // MOUVEMENTS
 // ══════════════════════════════════════════════════════
-function mClass(t){return t==='Entrée'?'mvt-entree':t==='Sortie'?'mvt-sortie':t==='Maintenance'?'mvt-maint':'mvt-modif';}
 function renderMvt(){
   const el=document.getElementById('mouvementsView');
   const f=mvtFilter==='Tous'?movements:movements.filter(m=>m.type===mvtFilter);
   el.innerHTML=`
-    <div><div class="page-title">JOURNAL DES MOUVEMENTS</div><div class="page-sub">${movements.length} entrée(s)</div></div>
+    <div>
+      <div class="page-title">JOURNAL DES MOUVEMENTS</div>
+      <div class="page-sub">${movements.length} entrée(s) — synchronisé via Supabase <span style="color:var(--cyan)">●</span></div>
+    </div>
     <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
       ${['Tous','Entrée','Sortie','Modification','Maintenance'].map(ft=>`<button class="filter-chip ${mvtFilter===ft?'active':''}" onclick="setMF('${ft}')">${ft}</button>`).join('')}
       <span style="margin-left:auto;color:var(--gris);font-size:.68rem">${f.length} résultat(s)</span>
-      <button class="export-btn" onclick="expCSV()">⬇ CSV</button>
-      <button class="export-btn" style="color:var(--rouge);border-color:rgba(255,68,68,.3)" onclick="clrMvt()">🗑 Vider</button>
+      <button class="export-btn" onclick="expCSV()">⬇ Export CSV</button>
     </div>
-    <div class="mvt-table-wrap"><table class="mvt-table">
-      <thead><tr><th>Date / Heure</th><th>Type</th><th>Place</th><th>Zone</th><th>Statut</th><th>Contenu</th><th>Référence</th><th>Opérateur</th><th>Notes</th></tr></thead>
-      <tbody>${f.length===0?`<tr><td colspan="9" class="mvt-empty">Aucun mouvement.<br><span style="font-size:.7rem">Modifiez une place pour commencer.</span></td></tr>`:
-      f.map(m=>`<tr>
-        <td class="mono" style="color:var(--gris);font-size:.64rem;white-space:nowrap">${fmtDate(m.date)}</td>
-        <td><span class="mvt-badge ${mClass(m.type)}">${m.type}</span></td>
-        <td class="mono" style="color:var(--orange2)">${m.spotId}</td>
-        <td style="font-size:.68rem;color:var(--gris)">${m.zoneLabel}</td>
-        <td style="font-size:.66rem"><span style="color:var(--gris)">${m.ancienStatut} → </span><span style="color:${m.nouveauStatut==='occupe'?'var(--orange)':m.nouveauStatut==='libre'?'var(--vert)':'var(--gris)'};font-weight:700">${m.nouveauStatut}</span></td>
-        <td style="font-size:.72rem">${m.content||'—'}</td>
-        <td class="mono" style="color:var(--cyan);font-size:.66rem">${m.ref||'—'}</td>
-        <td style="font-size:.72rem">${m.operator||'—'}</td>
-        <td style="color:var(--gris);font-size:.66rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes||'—'}</td>
-      </tr>`).join('')}
-      </tbody>
-    </table></div>`;
+    <div class="mvt-table-wrap">
+      <table class="mvt-table">
+        <thead>
+          <tr><th>Date / Heure</th><th>Type</th><th>Place</th><th>Zone</th><th>Statut</th><th>Contenu</th><th>Référence</th><th>Opérateur</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          ${f.length===0
+            ?`<tr><td colspan="9" style="text-align:center;padding:48px;color:var(--gris)">Aucun mouvement.<br><span style="font-size:.7rem">Modifiez une place pour commencer.</span></td></tr>`
+            :f.map(m=>`<tr>
+              <td class="mono" style="color:var(--gris);font-size:.64rem;white-space:nowrap">${fmtDate(m.created_at||m.date)}</td>
+              <td><span class="mvt-badge ${mClass(m.type)}">${m.type}</span></td>
+              <td class="mono" style="color:var(--orange2)">${m.spot_id||m.spotId}</td>
+              <td style="font-size:.68rem;color:var(--gris)">${m.zone_label||m.zoneLabel}</td>
+              <td style="font-size:.66rem">
+                <span style="color:var(--gris)">${m.ancien_statut||m.ancienStatut||'—'}</span>
+                <span style="color:var(--gris)"> → </span>
+                <span style="color:${(m.nouveau_statut||m.nouveauStatut)==='occupe'?'var(--orange)':(m.nouveau_statut||m.nouveauStatut)==='libre'?'var(--vert)':'var(--gris)'};font-weight:700">${m.nouveau_statut||m.nouveauStatut||'—'}</span>
+              </td>
+              <td style="font-size:.72rem">${m.content||'—'}</td>
+              <td class="mono" style="color:var(--cyan);font-size:.66rem">${m.ref||'—'}</td>
+              <td style="color:var(--orange2);font-size:.72rem">${m.operator||'—'}</td>
+              <td style="color:var(--gris);font-size:.66rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes||'—'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
 }
+
 function setMF(f){mvtFilter=f;renderMvt();}
+
 function expCSV(){
   const h=['Date','Type','Place','Zone','Ancien statut','Nouveau statut','Contenu','Référence','Opérateur','Notes'];
-  const rows=movements.map(m=>[fmtDate(m.date),m.type,m.spotId,m.zoneLabel,m.ancienStatut,m.nouveauStatut,m.content,m.ref,m.operator,m.notes].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent([h.join(','),...rows].join('\n'));a.download=`mouvements_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  const rows=movements.map(m=>[
+    fmtDate(m.created_at||m.date),m.type,m.spot_id||m.spotId,m.zone_label||m.zoneLabel,
+    m.ancien_statut||m.ancienStatut,m.nouveau_statut||m.nouveauStatut,
+    m.content,m.ref,m.operator,m.notes
+  ].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent([h.join(','),...rows].join('\n'));
+  a.download=`mouvements_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
 }
-function clrMvt(){if(!confirm('Vider tout l\'historique des mouvements ?'))return;movements=[];localStorage.removeItem(MVT_KEY);renderMvt();document.getElementById('countMvtToday').textContent='0';}
 
 // ══════════════════════════════════════════════════════
 // RAPPORTS
 // ══════════════════════════════════════════════════════
 function renderRpts(){
-  let total=0,occ=0;ZONES.forEach(z=>{for(let i=1;i<=z.count;i++){total++;if(getData(`${z.id}-${i}`).status==='occupe')occ++;}});
+  const { totalBrut:total, totalEffectif, totalOcc:occ, restant } = calcCapacites();
   const totalArea=Object.values(ZONE_AREAS).reduce((a,z)=>a+(z.area||0),0);
-  let td=0,cd=0;Object.values(parcData).forEach(d=>{if(d.status==='occupe'&&d.date){const dy=Math.round((Date.now()-new Date(d.date))/86400000);if(!isNaN(dy)&&dy>=0){td+=dy;cd++;}}});
+  let td=0,cd=0;
+  Object.values(parcData).forEach(d=>{if(d.status==='occupe'&&d.date){const dy=Math.round((Date.now()-new Date(d.date))/86400000);if(!isNaN(dy)&&dy>=0){td+=dy;cd++;}}});
   const avg=cd>0?Math.round(td/cd):0;
-  const ms={Entrée:0,Sortie:0,Modification:0,Maintenance:0};movements.forEach(m=>{if(ms[m.type]!==undefined)ms[m.type]++;});
-  const cs={};Object.values(parcData).forEach(d=>{if(d.status==='occupe'&&d.content){const k=d.content.trim();cs[k]=(cs[k]||0)+1;}});
+  const ms={Entrée:0,Sortie:0,Modification:0,Maintenance:0};
+  movements.forEach(m=>{if(ms[m.type]!==undefined)ms[m.type]++;});
+  const cs={};
+  Object.values(parcData).forEach(d=>{if(d.status==='occupe'&&d.content){const k=d.content.trim();cs[k]=(cs[k]||0)+1;}});
+  // Stats opérateurs
+  const ops={};
+  movements.forEach(m=>{if(m.operator){ops[m.operator]=(ops[m.operator]||0)+1;}});
+
   const el=document.getElementById('rapportsView');
   el.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
-      <div><div class="page-title">RAPPORTS & ANALYSE</div><div class="page-sub">Données en temps réel</div></div>
+      <div><div class="page-title">RAPPORTS & ANALYSE</div><div class="page-sub">Données en temps réel — Supabase</div></div>
       <button class="export-btn" onclick="expCSV()">⬇ Export CSV</button>
     </div>
     <div class="dash-row">
-      <div class="report-section" style="flex:1;min-width:220px"><h3>📐 SURFACES</h3>${Object.values(ZONE_AREAS).map(g=>{const zs=ZONES.filter(z=>g.ids.includes(z.id));let t=0,o=0;zs.forEach(z=>{for(let i=1;i<=z.count;i++){t++;if(getData(`${z.id}-${i}`).status==='occupe')o++;}});const p=t>0?Math.round(o/t*100):0;return`<div class="rpt-row"><span class="rpt-label">${g.label}</span><span><span class="rpt-val">${g.area>0?g.area.toLocaleString()+' pi²':'—'}</span><span style="color:var(--gris);font-size:.64rem;margin-left:6px">${p}%</span></span></div>`;}).join('')}<div class="rpt-row" style="border-top:1px solid rgba(255,255,255,.1);margin-top:4px;padding-top:10px"><span style="font-weight:700">TOTAL</span><span class="rpt-val" style="color:var(--cyan)">${totalArea.toLocaleString()} pi²</span></div></div>
-      <div class="report-section" style="flex:1;min-width:220px"><h3>📊 STATISTIQUES</h3>
-        <div class="rpt-row"><span class="rpt-label">Occupation globale</span><span class="rpt-val" style="color:${Math.round(occ/total*100)>=80?'var(--rouge)':'var(--vert)'}">${Math.round(occ/total*100)}%</span></div>
+      <div class="report-section" style="flex:1;min-width:220px">
+        <h3>📐 SURFACES DES ZONES</h3>
+        ${Object.values(ZONE_AREAS).map(g=>{
+          const zs=ZONES.filter(z=>g.ids.includes(z.id));let t=0,o=0;
+          zs.forEach(z=>{for(let i=1;i<=z.count;i++){t++;if(getData(`${z.id}-${i}`).status==='occupe')o++;}});
+          const p=t>0?Math.round(o/t*100):0;
+          return`<div class="rpt-row"><span class="rpt-label">${g.label}</span><span><span class="rpt-val">${g.area>0?g.area.toLocaleString()+' pi²':'—'}</span><span style="color:var(--gris);font-size:.64rem;margin-left:6px">${p}%</span></span></div>`;
+        }).join('')}
+        <div class="rpt-row" style="border-top:1px solid rgba(255,255,255,.1);margin-top:4px;padding-top:10px">
+          <span style="font-weight:700">TOTAL</span>
+          <span class="rpt-val" style="color:var(--cyan)">${totalArea.toLocaleString()} pi²</span>
+        </div>
+      </div>
+      <div class="report-section" style="flex:1;min-width:220px">
+        <h3>📊 STATISTIQUES OPÉRATIONNELLES</h3>
+        <div class="rpt-row"><span class="rpt-label">Occupation (capacité réelle)</span><span class="rpt-val" style="color:${totalEffectif&&Math.round(occ/totalEffectif*100)>=80?'var(--rouge)':'var(--vert)'}">${totalEffectif?Math.round(occ/totalEffectif*100):0}%</span></div>
+        <div class="rpt-row"><span class="rpt-label">Places utilisables (−pertes)</span><span class="rpt-val" style="color:var(--cyan)">${totalEffectif}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Stockage restant (disponible)</span><span class="rpt-val" style="color:var(--vert)">${restant}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Places non utilisables</span><span class="rpt-val" style="color:var(--gris)">${total - totalEffectif}</span></div>
         <div class="rpt-row"><span class="rpt-label">Durée moy. stockage</span><span class="rpt-val">${avg} jours</span></div>
-        <div class="rpt-row"><span class="rpt-label">Entrées</span><span class="rpt-val" style="color:var(--vert)">${ms['Entrée']}</span></div>
-        <div class="rpt-row"><span class="rpt-label">Sorties</span><span class="rpt-val" style="color:var(--rouge)">${ms['Sortie']}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Entrées totales</span><span class="rpt-val" style="color:var(--vert)">${ms['Entrée']}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Sorties totales</span><span class="rpt-val" style="color:var(--rouge)">${ms['Sortie']}</span></div>
         <div class="rpt-row"><span class="rpt-label">Modifications</span><span class="rpt-val" style="color:var(--cyan)">${ms['Modification']}</span></div>
+        <div class="rpt-row"><span class="rpt-label">Maintenances</span><span class="rpt-val" style="color:var(--gris)">${ms['Maintenance']}</span></div>
       </div>
     </div>
-    <div class="report-section"><h3>🧮 CAPACITÉ THÉORIQUE PAR COMPOSANTE</h3><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.72rem">
-      <thead><tr style="background:rgba(0,0,0,.2)"><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Composante</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">pi²/unité</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Béton (62 581)</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">P7 (35 288)</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">K-N (12 567)</th><th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">REAR (16 244)</th></tr></thead>
-      <tbody>${Object.entries(DIMS).map(([n,d])=>`<tr style="border-bottom:1px solid rgba(255,255,255,.04)"><td style="padding:8px 12px;font-weight:700">${n}</td><td style="padding:8px 12px;font-family:monospace;color:var(--orange2)">${d.toLocaleString()}</td><td style="padding:8px 12px;font-family:monospace;color:var(--jaune)">${Math.floor(62581/d)}</td><td style="padding:8px 12px;font-family:monospace;color:var(--violet)">${Math.floor(35288/d)}</td><td style="padding:8px 12px;font-family:monospace;color:var(--bleu)">${Math.floor(12567/d)}</td><td style="padding:8px 12px;font-family:monospace;color:var(--rouge)">${Math.floor(16244/d)}</td></tr>`).join('')}</tbody>
-    </table></div><div style="font-size:.62rem;color:var(--gris);margin-top:8px">* Capacité théorique brute — facteur d'utilisation réel ≈ 0.7</div></div>
-    ${Object.keys(cs).length>0?`<div class="report-section"><h3>📦 CONTENUS STOCKÉS</h3>${Object.entries(cs).sort((a,b)=>b[1]-a[1]).map(([c,n])=>`<div class="rpt-row"><span class="rpt-label">${c}</span><span style="display:flex;align-items:center;gap:10px"><div style="width:90px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden"><div style="width:${Math.min(100,n/occ*100*3)}%;height:100%;background:var(--orange);border-radius:3px"></div></div><span class="rpt-val">${n}</span></span></div>`).join('')}</div>`:''}
-    <div class="report-section"><h3>🧠 RECOMMANDATIONS</h3>${genRecos(occ,total,avg).map(r=>`<div class="reco-item"><div style="font-size:1.1rem;flex-shrink:0">${r.i}</div><div>${r.t}</div></div>`).join('')}</div>`;
+
+    ${Object.keys(ops).length>0?`
+    <div class="report-section">
+      <h3>👤 ACTIVITÉ PAR OPÉRATEUR</h3>
+      ${Object.entries(ops).sort((a,b)=>b[1]-a[1]).map(([op,cnt])=>`
+        <div class="rpt-row">
+          <span class="rpt-label" style="color:var(--orange2)">${op}</span>
+          <span style="display:flex;align-items:center;gap:10px">
+            <div style="width:100px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden">
+              <div style="width:${Math.min(100,cnt/movements.length*100*3)}%;height:100%;background:var(--orange);border-radius:3px"></div>
+            </div>
+            <span class="rpt-val">${cnt} mouvement(s)</span>
+          </span>
+        </div>`).join('')}
+    </div>`:''}
+
+    <div class="report-section">
+      <h3>🧮 CAPACITÉ THÉORIQUE PAR COMPOSANTE</h3>
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:.72rem">
+        <thead><tr style="background:rgba(0,0,0,.2)">
+          ${['Composante','pi²/unité','Béton (62 581)','P7 (35 288)','K-N (12 567)','REAR (16 244)'].map(h=>`<th style="padding:7px 12px;text-align:left;color:var(--gris);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap">${h}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${Object.entries(DIMS).map(([n,d])=>`<tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+            <td style="padding:8px 12px;font-weight:700">${n}</td>
+            <td style="padding:8px 12px;font-family:monospace;color:var(--orange2)">${d.toLocaleString()}</td>
+            <td style="padding:8px 12px;font-family:monospace;color:var(--jaune)">${Math.floor(62581/d)}</td>
+            <td style="padding:8px 12px;font-family:monospace;color:var(--violet)">${Math.floor(35288/d)}</td>
+            <td style="padding:8px 12px;font-family:monospace;color:var(--bleu)">${Math.floor(12567/d)}</td>
+            <td style="padding:8px 12px;font-family:monospace;color:var(--rouge)">${Math.floor(16244/d)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      </div>
+      <div style="font-size:.62rem;color:var(--gris);margin-top:8px">* Capacité théorique brute — facteur d'utilisation réel ≈ 0.7</div>
+    </div>
+
+    ${Object.keys(cs).length>0?`
+    <div class="report-section">
+      <h3>📦 CONTENUS STOCKÉS ACTUELLEMENT</h3>
+      ${Object.entries(cs).sort((a,b)=>b[1]-a[1]).map(([c,n])=>`
+        <div class="rpt-row">
+          <span class="rpt-label">${c}</span>
+          <span style="display:flex;align-items:center;gap:10px">
+            <div style="width:90px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden">
+              <div style="width:${Math.min(100,n/occ*100*3)}%;height:100%;background:var(--orange);border-radius:3px"></div>
+            </div>
+            <span class="rpt-val">${n}</span>
+          </span>
+        </div>`).join('')}
+    </div>`:''}
+
+    <div class="report-section">
+      <h3>🧠 RECOMMANDATIONS</h3>
+      ${genRecos(occ,total,avg).map(r=>`<div class="reco-item"><div style="font-size:1.1rem;flex-shrink:0">${r.i}</div><div>${r.t}</div></div>`).join('')}
+    </div>`;
 }
+
 function genRecos(occ,total,avg){
   const p=Math.round(occ/total*100),r=[];
   if(p>=85)r.push({i:'🔴',t:`Occupation critique à ${p}%. Planifier des sorties prioritaires.`});
@@ -768,7 +1135,7 @@ function genRecos(occ,total,avg){
   if(avg>60)r.push({i:'⏱',t:`Durée moy. de stockage élevée (${avg}j). Réviser les priorités de sortie.`});
   if(movements.length===0)r.push({i:'📋',t:`Aucun mouvement enregistré. Le journal se remplit dès qu'une place est modifiée.`});
   ZONES.forEach(z=>{let t=z.count,o=0;for(let i=1;i<=t;i++){if(getData(`${z.id}-${i}`).status==='occupe')o++;}if(Math.round(o/t*100)>=90)r.push({i:'⚡',t:`${z.label} saturée à ${Math.round(o/t*100)}%. Redistribuer vers une zone moins chargée.`});});
-  if(!r.length)r.push({i:'✅',t:'Toutes les zones opèrent dans les paramètres normaux.'});
+  if(r.length===0)r.push({i:'✅',t:'Toutes les zones opèrent dans les paramètres normaux.'});
   return r;
 }
 
@@ -781,7 +1148,7 @@ document.getElementById('searchInput').addEventListener('input',function(e){
   body.classList.add('searching');
   ZONES.forEach(z=>{for(let i=1;i<=z.count;i++){
     const id=`${z.id}-${i}`,d=getData(id);
-    const match=(d.ref&&d.ref.toLowerCase().includes(term))||(d.content&&d.content.toLowerCase().includes(term))||(d.notes&&d.notes.toLowerCase().includes(term));
+    const match=(d.ref&&d.ref.toLowerCase().includes(term))||(d.content&&d.content.toLowerCase().includes(term))||(d.notes&&d.notes.toLowerCase().includes(term))||(d.operator&&d.operator.toLowerCase().includes(term));
     document.querySelectorAll(`[data-spot-id="${id}"]`).forEach(el=>{if(match&&d.status!=='libre')el.classList.add('search-match');else el.classList.remove('search-match');});
   }});
 });
@@ -790,12 +1157,23 @@ document.getElementById('searchInput').addEventListener('input',function(e){
 // INIT
 // ══════════════════════════════════════════════════════
 async function init(){
-  const ok=await loadDB();
+  setSS('loading','Connexion…');
+  try {
+    await loadSpots();
+    setLoadTxt('Chargement des mouvements…');
+    await loadMovements();
+    setSS('ok','Synchronisé');
+  } catch(e) {
+    setSS('error','Erreur connexion');
+    console.error(e);
+  }
   document.getElementById('loadingScreen').classList.add('hidden');
-  render();updateStats();
-  if(ok)subscribeRT();
+  render();
+  updateStats();
+  subscribeRT();
 }
 init();
 </script>
+
 </body>
 </html>
