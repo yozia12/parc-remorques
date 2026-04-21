@@ -880,20 +880,21 @@ function renderDash(){
       </div>
       <!-- Barre globale capacité réelle -->
       <div style="margin-top:14px">
-        <div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:5px">
-          <span style="color:var(--gris)">Utilisation capacité effective</span>
-          <span style="color:${kc};font-weight:700">${pctEffectif}%</span>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:7px">
+          <span style="color:#8892a4">Utilisation capacité effective</span>
+          <span style="color:${pctEffectif>=90?'#ff4444':pctEffectif>=75?'#fbbf24':'#00e5a0'};font-weight:800;font-size:.85rem">${pctEffectif}%</span>
         </div>
-        <div style="background:rgba(255,255,255,.06);border-radius:6px;height:12px;overflow:hidden;position:relative">
-          <div style="width:${pctEffectif}%;height:100%;background:linear-gradient(90deg,${kc},${kc}cc);border-radius:6px;transition:width 1s ease"></div>
-          <!-- Marqueur 75% -->
-          <div style="position:absolute;left:75%;top:0;bottom:0;width:2px;background:rgba(251,191,36,.6)"></div>
-          <!-- Marqueur 90% -->
-          <div style="position:absolute;left:90%;top:0;bottom:0;width:2px;background:rgba(255,68,68,.6)"></div>
+        <div style="background:#1a2744;border-radius:8px;height:18px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08)">
+          <div style="width:${Math.min(pctEffectif,100)}%;height:100%;background:${pctEffectif>=90?'#ff4444':pctEffectif>=75?'#fbbf24':'#00e5a0'};border-radius:8px;transition:width 1.2s ease;opacity:.9"></div>
+          <div style="position:absolute;left:75%;top:0;bottom:0;width:2px;background:#fbbf24;opacity:.8"></div>
+          <div style="position:absolute;left:90%;top:0;bottom:0;width:2px;background:#ff4444;opacity:.8"></div>
         </div>
-        <div style="display:flex;gap:16px;margin-top:5px;font-size:.6rem;color:var(--gris)">
-          <span>|&nbsp; 75% : Attention</span>
-          <span>|&nbsp; 90% : Critique</span>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:.62rem;color:#8892a4">
+          <span style="display:flex;gap:16px">
+            <span><span style="color:#fbbf24">▎</span> 75% : Attention</span>
+            <span><span style="color:#ff4444">▎</span> 90% : Critique</span>
+          </span>
+          <span style="color:#8892a4">${totalOcc} occupés · ${restant} disponibles · ${totalBrut - totalEffectif} perdus</span>
         </div>
       </div>
     </div>
