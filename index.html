@@ -821,14 +821,14 @@ function renderDash(){
       <div class="page-sub">${new Date().toLocaleDateString('fr-CA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
     </div>
 
-    <!-- Météo -->
-    <div class="weather-widget">
-      <span style="font-size:2.4rem">🌤</span>
-      <div>
-        <div class="wt-cond">9°C · Partiellement nuageux — Montréal, QC</div>
-        <div class="wt-detail">💨 18 km/h ONO &nbsp;·&nbsp; 💧 Humidité : 62% &nbsp;·&nbsp; ☀️ UV : 2 (Faible)</div>
+    <!-- Météo temps réel Open-Meteo -->
+    <div id="meteoWidget" class="weather-widget">
+      <span style="font-size:2.4rem" id="meteoIcon">⏳</span>
+      <div style="flex:1">
+        <div class="wt-cond" id="meteoCond" style="color:#8892a4">Chargement météo en cours…</div>
+        <div class="wt-detail" id="meteoDetail" style="color:#484f58">Mirabel, QC — Open-Meteo</div>
       </div>
-      <div class="weather-ok">✓ Conditions normales</div>
+      <div id="meteoAlert"></div>
     </div>
 
     <!-- KPIs ligne 1 — Occupation & mouvements -->
@@ -953,6 +953,8 @@ function renderDash(){
       <div class="zone-occ-pct" style="color:${col}">${pct}% de la capacité effective</div>`;
     grid.appendChild(c);
   });
+  // Re-injecter la météo si déjà chargée (dashboard re-render)
+  if(meteoData) renderMeteo();
 }
 
 // ══════════════════════════════════════════════════════
@@ -1150,6 +1152,127 @@ document.getElementById('searchInput').addEventListener('input',function(e){
 });
 
 // ══════════════════════════════════════════════════════
+// MÉTÉO TEMPS RÉEL — Open-Meteo (gratuit, sans clé API)
+// Coordonnées : Mirabel, QC  lat=45.65  lon=-74.08
+// ══════════════════════════════════════════════════════
+const METEO_URL = 'https://api.open-meteo.com/v1/forecast'
+  + '?latitude=45.65&longitude=-74.08'
+  + '&current=temperature_2m,apparent_temperature,relative_humidity_2m,'
+  + 'wind_speed_10m,wind_direction_10m,weather_code,precipitation,uv_index'
+  + '&wind_speed_unit=kmh&timezone=America%2FToronto';
+
+// WMO weather codes → icône + description + niveau d'alerte
+function decodeWMO(code){
+  if(code===0)  return{icon:'☀️', desc:'Ciel dégagé',     alert:null};
+  if(code<=2)   return{icon:'🌤', desc:'Peu nuageux',      alert:null};
+  if(code===3)  return{icon:'☁️', desc:'Couvert',          alert:null};
+  if(code<=49)  return{icon:'🌫', desc:'Brouillard',       alert:{lvl:'warn', msg:'⚠️ Visibilité réduite — Vigilance lors des manœuvres'}};
+  if(code<=55)  return{icon:'🌦', desc:'Bruine',           alert:{lvl:'warn', msg:'⚠️ Bruine — Surveiller les pièces sensibles'}};
+  if(code<=65)  return{icon:'🌧', desc:'Pluie',            alert:{lvl:'danger', msg:'🔴 Pluie — Couvrir les matériaux sensibles'}};
+  if(code<=77)  return{icon:'🌨', desc:'Chutes de neige',  alert:{lvl:'danger', msg:'🔴 Neige — Vérifier les fixations et accès'}};
+  if(code<=82)  return{icon:'🌦', desc:'Averses',          alert:{lvl:'warn', msg:'⚠️ Averses — Surveillance recommandée'}};
+  if(code<=86)  return{icon:'❄️', desc:'Averses de neige', alert:{lvl:'danger', msg:'🔴 Neige — Risque verglas, sécuriser les zones'}};
+  if(code<=99)  return{icon:'⛈', desc:'Orage',            alert:{lvl:'danger', msg:'🔴 Orage — Stopper les opérations extérieures'}};
+  return{icon:'🌡',desc:'Conditions inconnues',alert:null};
+}
+
+function windDir(deg){
+  const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
+  return dirs[Math.round(deg/22.5)%16];
+}
+
+function uvLabel(uv){
+  if(uv<=2) return'Faible';
+  if(uv<=5) return'Modéré';
+  if(uv<=7) return'Élevé';
+  if(uv<=10)return'Très élevé';
+  return'Extrême';
+}
+
+let meteoData = null; // cache global
+
+async function loadMeteo(){
+  try{
+    const res  = await fetch(METEO_URL);
+    const json = await res.json();
+    const c    = json.current;
+    const wmo  = decodeWMO(c.weather_code);
+
+    meteoData = {
+      temp:      Math.round(c.temperature_2m),
+      ressentie: Math.round(c.apparent_temperature),
+      humidite:  c.relative_humidity_2m,
+      vent:      Math.round(c.wind_speed_10m),
+      ventDir:   windDir(c.wind_direction_10m),
+      precip:    c.precipitation,
+      uv:        c.uv_index,
+      icon:      wmo.icon,
+      desc:      wmo.desc,
+      alert:     wmo.alert,
+      heure:     new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'}),
+    };
+    renderMeteo();
+  }catch(e){
+    console.warn('Météo indisponible:',e);
+    renderMeteoError();
+  }
+}
+
+function renderMeteo(){
+  const m = meteoData;
+  if(!m) return;
+
+  // Widget dans le dashboard (si présent)
+  const icon   = document.getElementById('meteoIcon');
+  const cond   = document.getElementById('meteoCond');
+  const detail = document.getElementById('meteoDetail');
+  const alertEl= document.getElementById('meteoAlert');
+  if(!icon) return;
+
+  icon.textContent = m.icon;
+
+  cond.style.color = '#e0e0e0';
+  cond.textContent = `${m.temp}°C (ressenti ${m.ressentie}°C) · ${m.desc} — Mirabel, QC`;
+
+  const precipTxt = m.precip > 0 ? ` &nbsp;·&nbsp; 🌧 Précip : ${m.precip} mm` : '';
+  detail.style.color = '#8892a4';
+  detail.innerHTML  =
+    `💨 Vent : ${m.vent} km/h ${m.ventDir}`
+    + ` &nbsp;·&nbsp; 💧 Humidité : ${m.humidite}%`
+    + ` &nbsp;·&nbsp; ☀️ UV : ${m.uv} (${uvLabel(m.uv)})`
+    + precipTxt
+    + ` &nbsp;·&nbsp; <span style="color:#484f58;font-size:.65rem">Mis à jour ${m.heure}</span>`;
+
+  // Alerte météo
+  if(m.alert){
+    const alertColor = m.alert.lvl==='danger' ? '#ff4444' : '#fbbf24';
+    const alertBg    = m.alert.lvl==='danger' ? 'rgba(255,68,68,.12)' : 'rgba(251,191,36,.1)';
+    alertEl.innerHTML = `<div style="background:${alertBg};border:1px solid ${alertColor}44;border-radius:8px;padding:8px 14px;color:${alertColor};font-size:.72rem;font-weight:700;max-width:280px">${m.alert.msg}</div>`;
+  }else{
+    alertEl.innerHTML = `<div style="color:#00e5a0;font-size:.72rem;font-weight:700;margin-left:auto">✓ Conditions normales</div>`;
+  }
+
+  // Ajouter alerte météo dans les recommandations du dashboard si orage/neige/pluie
+  if(m.alert?.lvl==='danger' && currentView==='dashboard'){
+    const rptEl = document.getElementById('meteoRecoAlert');
+    if(rptEl) rptEl.style.display='flex';
+  }
+}
+
+function renderMeteoError(){
+  const cond = document.getElementById('meteoCond');
+  const detail = document.getElementById('meteoDetail');
+  if(cond) { cond.textContent='Météo non disponible'; cond.style.color='#484f58'; }
+  if(detail){ detail.textContent='Vérifiez votre connexion internet'; detail.style.color='#484f58'; }
+}
+
+// Recharge la météo toutes les 10 minutes
+function startMeteoRefresh(){
+  loadMeteo();
+  setInterval(loadMeteo, 10 * 60 * 1000);
+}
+
+// ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
 async function init(){
@@ -1167,6 +1290,8 @@ async function init(){
   render();
   updateStats();
   subscribeRT();
+  // Météo : démarre après le rendu, ne bloque pas le chargement
+  startMeteoRefresh();
 }
 init();
 </script>
