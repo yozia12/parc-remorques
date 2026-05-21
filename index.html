@@ -193,7 +193,6 @@ input[type="datetime-local"].f-base { color-scheme:dark; }
 
 <div id="tooltip"></div>
 
-<!-- ═══ MODAL ════════════════════════════════════════════ -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h2 id="modalTitle">Place</h2>
@@ -228,7 +227,6 @@ input[type="datetime-local"].f-base { color-scheme:dark; }
   </div>
 </div>
 
-<!-- ═══ HEADER ════════════════════════════════════════════ -->
 <div class="header">
   <div class="header-brand">
     <h1>Parc <span>Aéro</span></h1>
@@ -246,7 +244,6 @@ input[type="datetime-local"].f-base { color-scheme:dark; }
   </div>
 </div>
 
-<!-- ═══ TOOLBAR ═══════════════════════════════════════════ -->
 <div class="toolbar">
   <div class="view-toggles">
     <button class="view-btn active" onclick="switchView('grid',this)">🔲 Grille</button>
@@ -271,6 +268,7 @@ input[type="datetime-local"].f-base { color-scheme:dark; }
     <span class="map-label">Site :</span>
     <button class="map-sel-btn active" id="mapBtnCour" onclick="switchMap('cour')">🏭 Plan Cour principale</button>
     <button class="map-sel-btn" id="mapBtnMirlog" onclick="switchMap('mirlog')">🏗 Site Mirlog</button>
+    <button class="map-sel-btn" id="mapBtnEmpRem" onclick="switchMap('emp_remorque')">🚚 Emplacement Remorque</button>
   </div>
   <div id="mapContainer"></div>
 </div>
@@ -294,8 +292,8 @@ const ZONE_CONTENT = {
   'hstab':         ['HSTAB'],
   'vstab':         ['VSTAB'],
   'tailcone':      ['Tailcone'],
-  'remorque':      ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque'],
-  'remorque-vide': ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque'],
+  'remorque':      ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque', 'Remorque vide'],
+  'remorque-vide': ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque', 'Remorque vide'],
   'béton':         ['MID','Aile','Remorque'],
   'fwd':           ['FWD'],
   'rear':          ['REAR'],
@@ -303,8 +301,10 @@ const ZONE_CONTENT = {
   'l':             ['MID','Aile','Remorque'],
   'm':             ['MID','Aile','Remorque'],
   'n':             ['MID','Aile','Remorque'],
-  'mirlog1':       ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque'],
-  'mirlog2':       ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque'],
+  'mirlog1':       ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque', 'Remorque vide'],
+  'mirlog2':       ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque', 'Remorque vide'],
+  // ✨ NOUVEAU CONTENU POUR LE 3E EMPLACEMENT ✨
+  'emp_remorque':  ['Remorque désynchro','Remorque cockpit','Remorque mobile','Remorque', 'Remorque vide'],
 };
 
 // ══════════════════════════════════════════════════════
@@ -312,27 +312,30 @@ const ZONE_CONTENT = {
 // ══════════════════════════════════════════════════════
 const ZONES = [
   { id:'tailcone',      label:'Zone Tailcone',         count:16, color:'#e84393', icon:'✈️', desc:'Tailcone',              mapZone:'cour',   mapWidth:1,   mapHeight:1 },
-  { id:'hstab',         label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'HSTAB',                mapZone:'cour',   mapWidth:1.5, mapHeight:1.5 },
-  { id:'vstab',         label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'VSTAB',                mapZone:'cour',   mapWidth:1.5, mapHeight:1 },
-  { id:'remorque',      label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques',            mapZone:'cour',   mapWidth:4,   mapHeight:1.5 },
-  { id:'remorque-vide', label:'Zone Remorque Vide',    count:5,  color:'#fb923c', icon:'🚛', desc:'Remorques vides',      mapZone:'cour',   mapWidth:0.8, mapHeight:6.5 },
-  { id:'fwd',           label:'Zone FWD',              count:20, color:'#34d399', icon:'✈️', desc:'Forward',              mapZone:'cour',   mapWidth:1.3, mapHeight:1.5 },
+  { id:'hstab',         label:'Zone Hstab',            count:8,  color:'#a78bfa', icon:'✈️', desc:'HSTAB',                 mapZone:'cour',   mapWidth:1.5, mapHeight:1.5 },
+  { id:'vstab',         label:'Zone Vstab',            count:8,  color:'#60a5fa', icon:'✈️', desc:'VSTAB',                 mapZone:'cour',   mapWidth:1.5, mapHeight:1 },
+  { id:'remorque',      label:'Zone Remorque',         count:20, color:'#ff6b2b', icon:'🚛', desc:'Remorques',             mapZone:'cour',   mapWidth:4,   mapHeight:1.5 },
+  { id:'remorque-vide', label:'Zone Remorque Vide',    count:5,  color:'#fb923c', icon:'🚛', desc:'Remorques vides',       mapZone:'cour',   mapWidth:0.8, mapHeight:6.5 },
+  { id:'fwd',           label:'Zone FWD',              count:20, color:'#34d399', icon:'✈️', desc:'Forward',               mapZone:'cour',   mapWidth:1.3, mapHeight:1.5 },
   { id:'béton',         label:'Zone Béton',            count:18, color:'#fbbf24', icon:'✈️', desc:'MID / Ailes / Remo.',  mapZone:'cour',   mapWidth:0.8, mapHeight:7 },
   { id:'k',             label:'Zone K',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone K', mapZone:'cour',   mapWidth:0.8, mapHeight:7, mapRotation:25 },
   { id:'l',             label:'Zone L',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone L', mapZone:'cour',   mapWidth:0.8, mapHeight:7, mapRotation:25 },
   { id:'m',             label:'Zone M',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone M', mapZone:'cour',   mapWidth:0.8, mapHeight:7, mapRotation:25 },
   { id:'n',             label:'Zone N',                count:7,  color:'#38bdf8', icon:'✈️', desc:'MID / Ailes — Zone N', mapZone:'cour',   mapWidth:0.8, mapHeight:7, mapRotation:25 },
-  { id:'rear',          label:'Stockage REAR',         count:24, color:'#ef4444', icon:'✈️', desc:'REAR',                 mapZone:'cour',   mapWidth:0.8, mapHeight:5 },
+  { id:'rear',          label:'Stockage REAR',         count:24, color:'#ef4444', icon:'✈️', desc:'REAR',                  mapZone:'cour',   mapWidth:0.8, mapHeight:5 },
   { id:'mirlog1',       label:'Mirlog 1',              count:10, color:'#c084fc', icon:'🚛', desc:'Remorques — Mirlog 1', mapZone:'mirlog', mapWidth:1.5, mapHeight:5 },
   { id:'mirlog2',       label:'Mirlog 2',              count:10, color:'#f472b6', icon:'🚛', desc:'Remorques — Mirlog 2', mapZone:'mirlog', mapWidth:1.5, mapHeight:5 },
+  // ✨ NOUVELLE ZONE POUR LE 3E EMPLACEMENT ✨
+  { id:'emp_remorque',  label:'Emplacement Remorque',  count:5,  color:'#f59e0b', icon:'🚛', desc:'Stockage Remorques',    mapZone:'emp_remorque', mapWidth:2.5, mapHeight:5 },
 ];
 
 const ZONE_AREAS = {
-  beton:  { area:62581, label:'Zone Béton (MID/Aile/FWD)',               ids:['béton','fwd'] },
-  p7:     { area:35288, label:'Zone P7 (Remo./VSTAB/TAILCONE/HSTAB)',    ids:['remorque','remorque-vide','vstab','tailcone','hstab'] },
-  klmn:   { area:12567, label:'Zones K / L / M / N',                    ids:['k','l','m','n'] },
-  rear:   { area:16244, label:'Zone REAR',                               ids:['rear'] },
-  mirlog: { area:0,     label:'Site Mirlog',                             ids:['mirlog1','mirlog2'] },
+  beton:  { area:62581, label:'Zone Béton (MID/Aile/FWD)',                ids:['béton','fwd'] },
+  p7:     { area:35288, label:'Zone P7 (Remo./VSTAB/TAILCONE/HSTAB)',     ids:['remorque','remorque-vide','vstab','tailcone','hstab'] },
+  klmn:   { area:12567, label:'Zones K / L / M / N',                      ids:['k','l','m','n'] },
+  rear:   { area:16244, label:'Zone REAR',                                ids:['rear'] },
+  mirlog: { area:0,     label:'Site Mirlog',                              ids:['mirlog1','mirlog2'] },
+  emp_rem:{ area:0,     label:'Emplacement Remorque',                     ids:['emp_remorque'] }, // Ajout pour les stats
 };
 const DIMS = { MID:1110,Tailcone:189,Rear:640,Wings:1336,Hstab:587,Vstab:316,FWD:406,Remorque:750 };
 
@@ -404,7 +407,7 @@ async function saveSpotToDB(spotId,zoneId,num,data){
     client:null,
     date_entree:data.date||null,
     notes:data.notes||null,
-    operator:data.operator||null,   // ✅ colonne ajoutée
+    operator:data.operator||null,
     pos_x:p?p.x:null, pos_y:p?p.y:null,
     updated_at:new Date().toISOString(),
   });
@@ -504,7 +507,6 @@ function subscribeRT(){
   // Mouvements en temps réel
   db.channel('rt-movements').on('postgres_changes',{event:'INSERT',schema:'public',table:'movements'},(p)=>{
     const row=p.new;if(!row)return;
-    // Éviter doublon si c'est notre propre insertion
     if(!movements.find(m=>m.id===row.id)){
       movements.unshift(row);
       if(movements.length>500)movements=movements.slice(0,500);
@@ -535,7 +537,13 @@ function switchMap(map){
   currentMap=map;
   document.getElementById('mapBtnCour').classList.toggle('active',map==='cour');
   document.getElementById('mapBtnMirlog').classList.toggle('active',map==='mirlog');
-  document.getElementById('mapContainer').style.backgroundImage=map==='mirlog'?"url('Mirlog.png')":"url('plan-cour.png')";
+  document.getElementById('mapBtnEmpRem').classList.toggle('active',map==='emp_remorque'); // ✨ NOUVEAU
+  
+  let bg = "url('plan-cour.png')";
+  if (map === 'mirlog') bg = "url('Mirlog.png')";
+  if (map === 'emp_remorque') bg = "url('emplacement-remorque.png')"; // Tu pourras changer le nom de l'image ici !
+  
+  document.getElementById('mapContainer').style.backgroundImage = bg;
   renderMap();
 }
 
@@ -582,10 +590,12 @@ function renderGrid(){
   const rows=[
     {ids:['tailcone','hstab','vstab'], title:'✈️  QUEUE & STABILISATEURS'},
     {ids:['remorque','remorque-vide'], title:'🚛  REMORQUES — Parc principal'},
-    {ids:['fwd','béton'],             title:'✈️  FUSELAGE AVANT & BÉTON'},
-    {ids:['k','l','m','n'],           title:'✈️  ZONES K / L / M / N'},
-    {ids:['rear'],                    title:'✈️  STOCKAGE REAR'},
+    {ids:['fwd','béton'],              title:'✈️  FUSELAGE AVANT & BÉTON'},
+    {ids:['k','l','m','n'],            title:'✈️  ZONES K / L / M / N'},
+    {ids:['rear'],                     title:'✈️  STOCKAGE REAR'},
     {ids:['mirlog1','mirlog2'],        title:'🏗  SITE MIRLOG'},
+    // ✨ NOUVELLE LIGNE POUR L'EMPLACEMENT REMORQUE ✨
+    {ids:['emp_remorque'],             title:'🚚  EMPLACEMENT REMORQUE'},
   ];
   rows.forEach(({ids,title})=>{
     const st=document.createElement('div');st.className='zone-section-title';st.textContent=title;el.appendChild(st);
@@ -615,7 +625,13 @@ function renderGrid(){
 // ══════════════════════════════════════════════════════
 function renderMap(){
   const c=document.getElementById('mapContainer');c.innerHTML='';
-  c.style.backgroundImage=currentMap==='mirlog'?"url('Mirlog.png')":`url('plan-cour.png')`;
+  
+  // ✨ LOGIQUE D'IMAGE MODIFIÉE ✨
+  let bg = "url('plan-cour.png')";
+  if (currentMap === 'mirlog') bg = "url('Mirlog.png')";
+  if (currentMap === 'emp_remorque') bg = "url('emplacement-remorque.png')";
+  c.style.backgroundImage = bg;
+  
   PLACES.filter(p=>{const z=ZONES.find(z=>z.id===p.zoneId);return z&&z.mapZone===currentMap;}).forEach(place=>{
     const zone=ZONES.find(z=>z.id===place.zoneId);if(!zone)return;
     const d=getData(place.spotId);
@@ -781,11 +797,9 @@ function updateStats(){
 function getLossFactor(zoneId){
   return zoneId === 'béton' ? 0.30 : 0.15;
 }
-// Capacité effective d'une zone (slots utilisables réels)
 function effectiveCap(zone){
   return Math.floor(zone.count * (1 - getLossFactor(zone.id)));
 }
-// Calcul global des capacités avec pertes
 function calcCapacites(){
   let totalBrut=0, totalEffectif=0, totalOcc=0, totalMaint=0;
   ZONES.forEach(z=>{
@@ -821,7 +835,6 @@ function renderDash(){
       <div class="page-sub">${new Date().toLocaleDateString('fr-CA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
     </div>
 
-    <!-- Météo temps réel Open-Meteo -->
     <div id="meteoWidget" class="weather-widget">
       <span style="font-size:2.4rem" id="meteoIcon">⏳</span>
       <div style="flex:1">
@@ -831,7 +844,6 @@ function renderDash(){
       <div id="meteoAlert"></div>
     </div>
 
-    <!-- KPIs ligne 1 — Occupation & mouvements -->
     <div class="dash-row">
       <div class="dash-card" style="border-top:3px solid ${kc}">
         <div class="card-title">◈ Taux d'occupation réel</div>
@@ -850,12 +862,11 @@ function renderDash(){
       </div>
       <div class="dash-card" style="border-top:3px solid var(--violet)">
         <div class="card-title">🏗 Sites actifs</div>
-        <div class="dash-kpi" style="color:var(--violet)">2</div>
-        <div class="dash-kpi-sub">Cour principale + Mirlog</div>
+        <div class="dash-kpi" style="color:var(--violet)">3</div>
+        <div class="dash-kpi-sub">Cour, Mirlog & Emp. Remorque</div>
       </div>
     </div>
 
-    <!-- KPIs ligne 2 — Stockage avec pertes -->
     <div style="background:rgba(255,107,43,0.04);border:1px solid rgba(255,107,43,0.15);border-radius:10px;padding:14px 18px">
       <div style="font-size:.62rem;color:var(--orange2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px">
         📐 CAPACITÉ RÉELLE (après facteur de perte)
@@ -878,7 +889,6 @@ function renderDash(){
           <div class="dash-kpi-sub">allées, manœuvres, marges</div>
         </div>
       </div>
-      <!-- Barre globale capacité réelle -->
       <div style="margin-top:14px">
         <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:7px">
           <span style="color:#8892a4">Utilisation capacité effective</span>
@@ -899,13 +909,11 @@ function renderDash(){
       </div>
     </div>
 
-    <!-- Occupation par zone -->
     <div>
       <div class="section-title">OCCUPATION PAR ZONE <span style="color:var(--gris);font-weight:400;font-size:.58rem">(capacité effective après pertes)</span></div>
       <div class="zone-occ-grid" id="dashGrid"></div>
     </div>
 
-    <!-- Derniers mouvements -->
     <div>
       <div class="section-title">DERNIERS MOUVEMENTS <span style="color:var(--cyan);font-size:.65rem;margin-left:8px">● SUPABASE SYNC</span></div>
       ${recent.length===0
@@ -932,7 +940,6 @@ function renderDash(){
     const effCap = effectiveCap(z);
     const perte  = z.count - effCap;
     const loss   = getLossFactor(z.id);
-    // % calculé sur la capacité effective, pas brute
     const pct    = effCap ? Math.round(occ/effCap*100) : 0;
     const col    = pct>=90?'var(--rouge)':pct>=75?'var(--jaune)':z.color;
     const restZ  = Math.max(0, effCap - occ);
@@ -941,7 +948,7 @@ function renderDash(){
     c.style.cssText='position:relative;overflow:hidden';
     c.innerHTML=`
       ${loss===0.30?`<div style="position:absolute;top:0;right:0;background:rgba(251,191,36,.15);color:var(--jaune);font-size:.55rem;padding:2px 6px;border-radius:0 8px 0 4px;font-weight:700">−30% perte</div>`:
-                   `<div style="position:absolute;top:0;right:0;background:rgba(136,146,164,.1);color:var(--gris);font-size:.55rem;padding:2px 6px;border-radius:0 8px 0 4px">−15%</div>`}
+                    `<div style="position:absolute;top:0;right:0;background:rgba(136,146,164,.1);color:var(--gris);font-size:.55rem;padding:2px 6px;border-radius:0 8px 0 4px">−15%</div>`}
       <div class="zone-occ-header" style="padding-right:40px">
         <div class="zone-occ-name" style="color:${z.color}">${z.icon} ${z.label}</div>
         <div style="color:${col};font-size:.68rem;font-family:monospace">${occ}/${effCap}</div>
@@ -953,7 +960,6 @@ function renderDash(){
       <div class="zone-occ-pct" style="color:${col}">${pct}% de la capacité effective</div>`;
     grid.appendChild(c);
   });
-  // Re-injecter la météo si déjà chargée (dashboard re-render)
   if(meteoData) renderMeteo();
 }
 
@@ -1152,8 +1158,7 @@ document.getElementById('searchInput').addEventListener('input',function(e){
 });
 
 // ══════════════════════════════════════════════════════
-// MÉTÉO TEMPS RÉEL — Open-Meteo (gratuit, sans clé API)
-// Coordonnées : Mirabel, QC  lat=45.65  lon=-74.08
+// MÉTÉO TEMPS RÉEL
 // ══════════════════════════════════════════════════════
 const METEO_URL = 'https://api.open-meteo.com/v1/forecast'
   + '?latitude=45.65&longitude=-74.08'
@@ -1161,7 +1166,6 @@ const METEO_URL = 'https://api.open-meteo.com/v1/forecast'
   + 'wind_speed_10m,wind_direction_10m,weather_code,precipitation,uv_index'
   + '&wind_speed_unit=kmh&timezone=America%2FToronto';
 
-// WMO weather codes → icône + description + niveau d'alerte
 function decodeWMO(code){
   if(code===0)  return{icon:'☀️', desc:'Ciel dégagé',     alert:null};
   if(code<=2)   return{icon:'🌤', desc:'Peu nuageux',      alert:null};
@@ -1189,7 +1193,7 @@ function uvLabel(uv){
   return'Extrême';
 }
 
-let meteoData = null; // cache global
+let meteoData = null; 
 
 async function loadMeteo(){
   try{
@@ -1221,8 +1225,6 @@ async function loadMeteo(){
 function renderMeteo(){
   const m = meteoData;
   if(!m) return;
-
-  // Widget dans le dashboard (si présent)
   const icon   = document.getElementById('meteoIcon');
   const cond   = document.getElementById('meteoCond');
   const detail = document.getElementById('meteoDetail');
@@ -1230,7 +1232,6 @@ function renderMeteo(){
   if(!icon) return;
 
   icon.textContent = m.icon;
-
   cond.style.color = '#e0e0e0';
   cond.textContent = `${m.temp}°C (ressenti ${m.ressentie}°C) · ${m.desc} — Mirabel, QC`;
 
@@ -1243,19 +1244,12 @@ function renderMeteo(){
     + precipTxt
     + ` &nbsp;·&nbsp; <span style="color:#484f58;font-size:.65rem">Mis à jour ${m.heure}</span>`;
 
-  // Alerte météo
   if(m.alert){
     const alertColor = m.alert.lvl==='danger' ? '#ff4444' : '#fbbf24';
     const alertBg    = m.alert.lvl==='danger' ? 'rgba(255,68,68,.12)' : 'rgba(251,191,36,.1)';
     alertEl.innerHTML = `<div style="background:${alertBg};border:1px solid ${alertColor}44;border-radius:8px;padding:8px 14px;color:${alertColor};font-size:.72rem;font-weight:700;max-width:280px">${m.alert.msg}</div>`;
   }else{
     alertEl.innerHTML = `<div style="color:#00e5a0;font-size:.72rem;font-weight:700;margin-left:auto">✓ Conditions normales</div>`;
-  }
-
-  // Ajouter alerte météo dans les recommandations du dashboard si orage/neige/pluie
-  if(m.alert?.lvl==='danger' && currentView==='dashboard'){
-    const rptEl = document.getElementById('meteoRecoAlert');
-    if(rptEl) rptEl.style.display='flex';
   }
 }
 
@@ -1266,7 +1260,6 @@ function renderMeteoError(){
   if(detail){ detail.textContent='Vérifiez votre connexion internet'; detail.style.color='#484f58'; }
 }
 
-// Recharge la météo toutes les 10 minutes
 function startMeteoRefresh(){
   loadMeteo();
   setInterval(loadMeteo, 10 * 60 * 1000);
@@ -1290,7 +1283,6 @@ async function init(){
   render();
   updateStats();
   subscribeRT();
-  // Météo : démarre après le rendu, ne bloque pas le chargement
   startMeteoRefresh();
 }
 init();
