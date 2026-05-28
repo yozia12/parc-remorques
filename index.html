@@ -710,13 +710,8 @@ function onStatusChange(){
   const v=document.getElementById('modalContent')?.value||'';
   buildContent(curSpot.zone.id,v,s);
   if(s==='libre'){document.getElementById('modalRef').value='';document.getElementById('modalDate').value='';}
-else if (s === 'occupe' && !document.getElementById('modalDate').value) {
-  const now = new Date();
-  // On ajuste l'heure en fonction du décalage horaire local avant de créer le format ISO
-  const tzOffset = now.getTimezoneOffset() * 60000; 
-  const localISOTime = new Date(now - tzOffset).toISOString().slice(0,16);
-  
-  document.getElementById('modalDate').value = localISOTime;
+else if(s==='occupe'&&!document.getElementById('modalDate').value){
+  document.getElementById('modalDate').value=new Date().toISOString().slice(0,16);
 }
 
 function openModal(id,num,zone){
